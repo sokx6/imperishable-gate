@@ -31,3 +31,9 @@ type DeleteResponse struct {
 	Message string      `json:"message"`        // 删除结果消息
 	Data    interface{} `json:"data,omitempty"` // 可选，包含删除链接的详细信息
 }
+
+type ListResponse struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`        // 列表获取结果消息
+	Data    interface{} `json:"data,omitempty"` // 可选，包含链接列表
+}
