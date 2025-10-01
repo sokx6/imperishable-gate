@@ -13,4 +13,5 @@ func RegisterRoutes(e *echo.Echo) {
 
 	// Ping 接口
 	v1.POST("/ping", handlers.PingHandler)
+	v1.POST("/links/add", handlers.AddHandler)
 }
