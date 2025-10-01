@@ -33,7 +33,7 @@ type DeleteResponse struct {
 }
 
 type ListResponse struct {
-	Code    int         `json:"code"`
-	Message string      `json:"message"`        // 列表获取结果消息
-	Data    interface{} `json:"data,omitempty"` // 可选，包含链接列表
+	Code    int      `json:"code"`
+	Message string   `json:"message"` // 列表获取结果消息
+	Data    []string `json:"data"`    // 可选，包含链接列表
 }
