@@ -8,6 +8,7 @@ import (
 )
 
 var Port string
+var Dsn string
 
 // StartCmd 是服务器的启动命令
 var StartCmd = &cobra.Command{
@@ -18,7 +19,7 @@ var StartCmd = &cobra.Command{
 		address := ":" + Port
 		fmt.Printf("Starting Imperishable Gate server on %s...\n", address)
 
-		srv := server.NewServer(address)
+		srv := server.NewServer(address, Dsn)
 		if err := srv.Start(); err != nil {
 			fmt.Println("Server failed to start:", err)
 			return err
@@ -30,4 +31,5 @@ var StartCmd = &cobra.Command{
 
 func init() {
 	StartCmd.Flags().StringVarP(&Port, "port", "p", "1270", "Port to listen on (default: 1270)")
+	StartCmd.Flags().StringVarP(&Dsn, "dsn", "d", "", "Data source name for the database")
 }
