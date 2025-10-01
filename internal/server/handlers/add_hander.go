@@ -3,6 +3,7 @@ package handlers
 
 import (
 	"net/http"
+	"net/url"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -23,6 +24,14 @@ func AddHandler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, types.AddResponse{
 			Code:    -1,
 			Message: "Invalid request data",
+		})
+	}
+
+	// 验证 URL 格式
+	if _, err := url.ParseRequestURI(req.Link); err != nil {
+		return c.JSON(http.StatusBadRequest, types.AddResponse{
+			Code:    -1,
+			Message: "Invalid URL format",
 		})
 	}
 
