@@ -15,10 +15,7 @@ import (
 
 // AddHandler 处理添加链接请求
 func AddHandler(c echo.Context) error {
-	var req struct {
-		Action string `json:"action"` // 应为 "add"
-		Link   string `json:"link"`
-	}
+	var req types.AddRequest
 
 	// 判断请求体数据结构是否与req匹配
 	if err := c.Bind(&req); err != nil || req.Action != "add" || req.Link == "" {
