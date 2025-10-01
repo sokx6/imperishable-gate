@@ -7,5 +7,5 @@ type PingRequest struct {
 
 type PingResponse struct {
 	Action  string `json:"action"`  // 回显 "ping"
-	Message string `json:"message"` // 固定回复 "ping test succeeded"
+	Message string `json:"message"` // 固定回复 "pong"
 }
