@@ -4,11 +4,12 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
+
 	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
-
-	"github.com/labstack/echo/v4"
 )
 
 // AddHandler 处理添加链接请求
@@ -18,7 +19,6 @@ func AddHandler(c echo.Context) error {
 		Link   string `json:"link"`
 	}
 
-	// 验证请求
 	if err := c.Bind(&req); err != nil || req.Action != "add" || req.Link == "" {
 		return c.JSON(http.StatusBadRequest, types.AddResponse{
 			Code:    -1,
@@ -26,17 +26,35 @@ func AddHandler(c echo.Context) error {
 		})
 	}
 
-	// 插入数据库
-	link := model.Link{URL: req.Link}
-	result := database.DB.Create(&link)
+	var link model.Link
 
-	// 处理可能的错误
-	if result.Error != nil {
-		if isUniqueConstraintError(result.Error) {
-			return c.JSON(http.StatusConflict, types.AddResponse{
-				Code:    -1,
-				Message: "The link already exists",
-			})
+	// 开启事务（可选，用于防止并发）
+	err := database.DB.Transaction(func(tx *gorm.DB) error {
+		// 先查找是否已存在该 URL
+		if err := tx.Where("url = ?", req.Link).First(&link).Error; err == nil {
+			// 找到了，说明已存在
+			return echo.NewHTTPError(http.StatusConflict, "The link already exists")
+		}
+
+		// 创建新记录
+		link = model.Link{URL: req.Link}
+		if err := tx.Create(&link).Error; err != nil {
+			// 如果创建失败（其他原因）
+			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create link")
+		}
+
+		return nil
+	})
+
+	// 判断事务返回的错误类型
+	if err != nil {
+		if httpErr, ok := err.(*echo.HTTPError); ok {
+			if httpErr.Code == http.StatusConflict {
+				return c.JSON(http.StatusConflict, types.AddResponse{
+					Code:    -1,
+					Message: "The link already exists",
+				})
+			}
 		}
 		return c.JSON(http.StatusInternalServerError, types.AddResponse{
 			Code:    -1,
@@ -44,7 +62,7 @@ func AddHandler(c echo.Context) error {
 		})
 	}
 
-	// 成功响应
+	// 返回成功结果
 	return c.JSON(http.StatusOK, types.AddResponse{
 		Code:    0,
 		Message: "Added successfully",
@@ -53,11 +71,4 @@ func AddHandler(c echo.Context) error {
 			"url": link.URL,
 		},
 	})
-}
-
-// isUniqueConstraintError 判断是否是唯一性冲突
-func isUniqueConstraintError(err error) bool {
-	msg := err.Error()
-	return msg == `ERROR: duplicate key value violates unique constraint "idx_links_url"` ||
-		msg == `ERROR: duplicate key violates unique constraint "links_url_key"`
 }
