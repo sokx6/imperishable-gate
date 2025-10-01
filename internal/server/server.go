@@ -5,8 +5,11 @@ import (
 
 	"github.com/labstack/echo/v4"
 
+	"imperishable-gate/internal/server/database"
 	"imperishable-gate/internal/server/routes"
 )
+
+const defaultDSN = "host=localhost user=postgres dbname=gate_db port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 
 // Server 封装 Echo 实例和地址
 type Server struct {
@@ -15,8 +18,17 @@ type Server struct {
 }
 
 // NewServer 创建新的服务器实例
-func NewServer(addr string) *Server {
+func NewServer(addr, dsn string) *Server {
+	if dsn == "" {
+		dsn = defaultDSN
+	}
+
 	e := echo.New()
+
+	if err := database.InitDB(dsn); err != nil {
+		e.Logger.Fatal("Failed to connect to database: ", err)
+	}
+
 	routes.RegisterRoutes(e)
 
 	return &Server{
