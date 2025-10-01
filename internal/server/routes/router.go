@@ -14,4 +14,5 @@ func RegisterRoutes(e *echo.Echo) {
 	v1.POST("/ping", handlers.PingHandler)
 	v1.POST("/links/add", handlers.AddHandler)
 	v1.DELETE("/links/delete", handlers.DeleteHandler)
+	v1.GET("/links/list", handlers.ListHandler)
 }
