@@ -20,6 +20,7 @@ func AddHandler(c echo.Context) error {
 		Link   string `json:"link"`
 	}
 
+	// 判断请求体数据结构是否与req匹配
 	if err := c.Bind(&req); err != nil || req.Action != "add" || req.Link == "" {
 		return c.JSON(http.StatusBadRequest, types.AddResponse{
 			Code:    -1,
@@ -35,6 +36,7 @@ func AddHandler(c echo.Context) error {
 		})
 	}
 
+	// 定义link类型
 	var link model.Link
 
 	// 开启事务（可选，用于防止并发）

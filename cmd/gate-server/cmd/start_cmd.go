@@ -16,10 +16,14 @@ var StartCmd = &cobra.Command{
 	Short: "Start the gate server",
 	Long:  `Starts the web server that listens for client requests.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// 定义服务器地址
 		address := ":" + Port
 		fmt.Printf("Starting Imperishable Gate server on %s...\n", address)
 
+		// 创建新的服务器实例
 		srv := server.NewServer(address, Dsn)
+
+		// 启动服务器
 		if err := srv.Start(); err != nil {
 			fmt.Println("Server failed to start:", err)
 			return err

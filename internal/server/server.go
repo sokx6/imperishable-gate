@@ -19,18 +19,23 @@ type Server struct {
 
 // NewServer 创建新的服务器实例
 func NewServer(addr, dsn string) *Server {
+	// 若dsn未设置，则使用默认dsn
 	if dsn == "" {
 		dsn = defaultDSN
 	}
 
+	// 创建新的echo实例
 	e := echo.New()
 
+	// 初始化数据库
 	if err := database.InitDB(dsn); err != nil {
 		e.Logger.Fatal("Failed to connect to database: ", err)
 	}
 
+	// 注册路由
 	routes.RegisterRoutes(e)
 
+	// 返回Server实例
 	return &Server{
 		Echo: e,
 		Addr: addr,
