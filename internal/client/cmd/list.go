@@ -43,7 +43,11 @@ var listCmd = &cobra.Command{
 			return fmt.Errorf("invalid JSON response: %w", err)
 		}
 
-		fmt.Printf("-- Receiving response\n%s\n", respBody)
+		fmt.Println("-- Receiving response")
+
+		for _, link := range result.Data {
+			fmt.Printf("%v\n", link)
+		}
 
 		return nil
 	},
