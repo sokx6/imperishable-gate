@@ -28,7 +28,22 @@ pkg/
 
 ## 快速开始
 
-### 1. 配置数据库
+### 1. 获取项目
+
+```sh
+git clone https://github.com/sokx6/imperishable-gate.git
+cd imperishable-gate
+```
+
+### 2. 构建二进制
+
+```sh
+mkdir -p bin
+go build -o bin/gate-server ./cmd/gate-server
+go build -o bin/gate ./cmd/gate
+```
+
+### 3. 配置数据库
 
 1. 创建数据库：
    ```sh
@@ -39,32 +54,32 @@ pkg/
    export GATE_DSN='host=localhost user=postgres password=postgres dbname=gate_db port=5432 sslmode=disable TimeZone=Asia/Shanghai'
    ```
 
-### 2. 启动服务端
+### 4. 启动服务端
 
 ```sh
-go run cmd/gate-server/main.go start --port 8080 --dsn "$GATE_DSN"
+./bin/gate-server start --port 8080 --dsn "$GATE_DSN"
 ```
 
-### 3. 使用客户端
+### 5. 使用客户端
 
 - **添加链接**
   ```sh
-  go run cmd/gate/main.go add -H localhost:8080/api/v1/links/add -l "https://example.com"
+  ./bin/gate add -H localhost:8080/api/v1/links/add -l "https://example.com"
   ```
 
 - **列出链接**
   ```sh
-  go run cmd/gate/main.go list -H localhost:8080/api/v1/links/list
+  ./bin/gate list -H localhost:8080/api/v1/links/list
   ```
 
 - **删除链接**
   ```sh
-  go run cmd/gate/main.go delete -H localhost:8080/api/v1/links/delete -l "https://example.com"
+  ./bin/gate delete -H localhost:8080/api/v1/links/delete -l "https://example.com"
   ```
 
 - **健康检查**
   ```sh
-  go run cmd/gate/main.go ping -H localhost:8080/api/v1/ping -m "hello"
+  ./bin/gate ping -H localhost:8080/api/v1/ping -m "hello"
   ```
 
 ## HTTP API
