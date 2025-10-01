@@ -11,7 +11,7 @@ func RegisterRoutes(e *echo.Echo) {
 	// v1 API 分组
 	v1 := e.Group("/api/v1")
 
-	// Ping 接口
 	v1.POST("/ping", handlers.PingHandler)
 	v1.POST("/links/add", handlers.AddHandler)
+	v1.DELETE("/links/delete", handlers.DeleteHandler)
 }
