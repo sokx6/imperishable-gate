@@ -57,7 +57,5 @@ var listCmd = &cobra.Command{
 func init() {
 	// 为 list 命令添加参数host，用来指定服务器地址
 	listCmd.Flags().StringP("host", "H", "127.0.0.1:8080", "Server host:port to send list")
-	// 为 list 命令添加参数message，用来指定要发送的消息
-	listCmd.Flags().StringP("message", "m", "default message", "Message to send")
 	rootCmd.AddCommand(listCmd)
 }
