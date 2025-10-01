@@ -22,11 +22,12 @@ type AddResponse struct {
 }
 
 type DeleteRequest struct {
-	Action string `json:"action"` // 应为 "delete"
-	Link   string `json:"link"`   // 需要删除的链接
+	Action string   `json:"action"` // 应为 "delete"
+	Links  []string `json:"link"`   // 需要删除的链接
 }
 
 type DeleteResponse struct {
-	Action string `json:"action"` // 回显 "delete"
-	Link   string `json:"link"`   // 回显删除的链接
+	Code    int         `json:"code"`
+	Message string      `json:"message"`        // 删除结果消息
+	Data    interface{} `json:"data,omitempty"` // 可选，包含删除链接的详细信息
 }
