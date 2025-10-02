@@ -3,11 +3,9 @@ package handlers
 
 import (
 	"errors"
-	"net/http"
 	"net/url"
 
 	"github.com/labstack/echo/v4"
-	"github.com/lib/pq"
 	"gorm.io/gorm"
 
 	types "imperishable-gate/internal"
@@ -17,98 +15,109 @@ import (
 
 func AddWithTagsHandler(c echo.Context) error {
 	var req types.AddRequest
-
-	// 绑定并校验基本数据
 	if err := c.Bind(&req); err != nil || req.Action != "add" || req.Link == "" {
-		return c.JSON(http.StatusBadRequest, types.AddResponse{
-			Code:    -1,
-			Message: "Invalid request data",
+		return c.JSON(400, map[string]interface{}{
+			"code":    -1,
+			"message": "Invalid request",
 		})
 	}
 
-	// 校验 URL 格式
-	if _, err := url.ParseRequestURI(req.Link); err != nil {
-		return c.JSON(http.StatusBadRequest, types.AddResponse{
-			Code:    -1,
-			Message: "Invalid URL format",
+	_, err := url.ParseRequestURI(req.Link)
+	if err != nil {
+		return c.JSON(400, map[string]interface{}{
+			"code":    -1,
+			"message": "Invalid URL format",
 		})
 	}
 
+	tagNames := removeDuplicates(req.Tags)
 	var link model.Link
-	var isCreated bool
 
-	// 使用事务处理原子操作
-	err := database.DB.Transaction(func(tx *gorm.DB) error {
-		result := tx.Where("url = ?", req.Link).First(&link)
+	// Step 1: 查看是否已有该链接
+	result := database.DB.Preload("Tags").Where("url = ?", req.Link).First(&link)
+	isCreating := false
 
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			// 链接不存在 → 创建新记录，并带上去重后的标签
-			tags := removeDuplicates(req.Tags)
-			link = model.Link{
-				Url: req.Link,
-			}
-			if err := tx.Create(&link).Error; err != nil {
-				return err
-			}
-			if len(tags) > 0 {
-				if err := tx.Model(&link).Update("tags", pq.Array(tags)).Error; err != nil {
-					return err
-				}
-				link.Tags = tags // 手动同步内存中的值用于返回
-			}
-			isCreated = true
-		} else if result.Error != nil {
-			// 其他数据库错误
-			return result.Error
-		} else {
-			// 链接已存在 → 合并新旧标签并更新
-			mergedTags := removeDuplicates(append(link.Tags, req.Tags...))
-			if len(mergedTags) > 0 {
-				link.Tags = mergedTags
-				if err := tx.Model(&link).Update("tags", pq.Array(mergedTags)).Error; err != nil {
-					return err
-				}
-			}
-			isCreated = false
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		link.Url = req.Link
+		link.Note = ""
+		isCreating = true
+	} else if result.Error != nil {
+		return c.JSON(500, map[string]interface{}{
+			"code":    -1,
+			"message": "Database error",
+		})
+	}
+
+	// Step 2: 准备标签列表（关键！要先查出来已有的）
+	var finalTags []model.Tag
+
+	if len(tagNames) > 0 {
+		// 查找所有已经存在的 tag
+		var existingTags []model.Tag
+		database.DB.Where("name IN ?", tagNames).Find(&existingTags)
+
+		// 建立 name -> Tag 映射（包含真实 ID）
+		existingNameToTag := make(map[string]model.Tag)
+		for _, t := range existingTags {
+			existingNameToTag[t.Name] = t
 		}
 
-		return nil
-	})
+		// 构造最终需要关联的 Tag 列表
+		for _, name := range tagNames {
+			if name == "" {
+				continue
+			}
+			if existing, ok := existingNameToTag[name]; ok {
+				// 复用已有 tag（带 ID）
+				finalTags = append(finalTags, existing)
+			} else {
+				// 新标签：仅声明名字，GORM 会在 Save 时自动插入
+				finalTags = append(finalTags, model.Tag{Name: name})
+			}
+		}
+	}
 
-	// 处理事务错误
+	// Step 3: 关联到链接
+	link.Tags = finalTags
+
+	// Step 4: 保存（启用 FullSaveAssociations 保证正确级联）
+	err = database.DB.Session(&gorm.Session{
+		FullSaveAssociations: true,
+	}).Save(&link).Error
+
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, types.AddResponse{
-			Code:    -1,
-			Message: "Database error: " + err.Error(),
+		return c.JSON(500, map[string]interface{}{
+			"code":    -1,
+			"message": "Save failed: " + err.Error(),
 		})
 	}
 
-	// 返回成功响应
 	message := "Updated successfully"
-	if isCreated {
+	if isCreating {
 		message = "Added successfully"
 	}
 
-	return c.JSON(http.StatusOK, types.AddResponse{
+	return c.JSON(200, types.AddResponse{
 		Code:    0,
 		Message: message,
 		Data: map[string]interface{}{
-			"id":   link.Id,
 			"url":  link.Url,
 			"tags": link.Tags,
+			"note": link.Note,
 		},
 	})
 }
 
-// 工具函数：去重
-func removeDuplicates(slice []string) []string {
-	seen := make(map[string]bool)
+func removeDuplicates(input []string) []string {
+	seen := make(map[string]struct{})
 	var result []string
-	for _, item := range slice {
-		if item != "" && !seen[item] {
-			seen[item] = true
+
+	for _, item := range input {
+		if _, ok := seen[item]; !ok && item != "" {
+			seen[item] = struct{}{}
 			result = append(result, item)
 		}
 	}
+
 	return result
 }
