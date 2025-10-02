@@ -18,7 +18,6 @@ var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete links from the server database using query parameters",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		host, _ := cmd.Flags().GetString("host")
 		links, _ := cmd.Flags().GetStringSlice("links")
 
 		if len(links) == 0 {
@@ -26,7 +25,7 @@ var deleteCmd = &cobra.Command{
 		}
 
 		// 构建请求 URL 并添加多个 link 查询参数
-		apiURL := fmt.Sprintf("http://%s/api/v1/links/delete", host)
+		apiURL := fmt.Sprintf("http://%s/api/v1/links/delete", Config.Addr)
 		u, err := url.Parse(apiURL)
 		if err != nil {
 			return fmt.Errorf("invalid base URL: %w", err)
@@ -86,7 +85,6 @@ var deleteCmd = &cobra.Command{
 
 // 初始化命令行参数
 func init() {
-	deleteCmd.Flags().StringP("host", "H", "localhost:8080", "Server host address (e.g., localhost:8080)")
 	deleteCmd.Flags().StringSliceP("links", "l", []string{}, "Links to delete (repeat -l or use comma-separated values)")
 	rootCmd.AddCommand(deleteCmd)
 }

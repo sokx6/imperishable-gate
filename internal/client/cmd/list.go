@@ -15,11 +15,10 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the links stored in the server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		host, _ := cmd.Flags().GetString("host")
 
 		// 构造请求 URL
-		url := fmt.Sprintf("http://%s", host)
-		fmt.Printf("-- Requesting GET method to %s\n", host)
+		url := fmt.Sprintf("http://%s/api/v1/links/list", Config.Addr)
+		fmt.Printf("-- Requesting GET method to %s\n", url)
 
 		// 发起 GET 请求
 		resp, err := http.Get(url)

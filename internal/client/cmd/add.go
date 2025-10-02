@@ -16,7 +16,6 @@ var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a new link to the server database",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		host, _ := cmd.Flags().GetString("host")
 		link, _ := cmd.Flags().GetString("link")
 
 		// 构造请求体
@@ -32,8 +31,8 @@ var addCmd = &cobra.Command{
 		}
 
 		// 构造请求 URL
-		url := fmt.Sprintf("http://%s", host)
-		fmt.Printf("-- Requesting POST method to %s with payload\n", host)
+		url := fmt.Sprintf("http://%s/api/v1/links/add", Config.Addr)
+		fmt.Printf("-- Requesting POST method to %s with payload\n", url)
 		fmt.Printf("%s\n", body)
 
 		// 发起 POST 请求
@@ -66,8 +65,6 @@ var addCmd = &cobra.Command{
 
 // 初始化命令行参数
 func init() {
-	// 为 add 命令添加参数host，用来指定服务器地址
-	addCmd.Flags().StringP("host", "H", "127.0.0.1:8080", "Server host:port to send add request")
 	// 为 add 命令添加参数link，用来指定要添加的链接
 	addCmd.Flags().StringP("link", "l", "", "link to add")
 	rootCmd.AddCommand(addCmd)
