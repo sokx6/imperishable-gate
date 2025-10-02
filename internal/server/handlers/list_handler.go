@@ -24,7 +24,7 @@ func ListHandler(c echo.Context) error {
 	// 提取仅包含 URL 的字符串切片（可选）
 	urls := make([]string, len(links))
 	for i, link := range links {
-		urls[i] = link.URL
+		urls[i] = link.Url
 	}
 
 	// 返回成功响应

@@ -45,7 +45,7 @@ func AddHandler(c echo.Context) error {
 		}
 
 		// 创建新记录
-		link = model.Link{URL: req.Link}
+		link = model.Link{Url: req.Link}
 		if err := tx.Create(&link).Error; err != nil {
 			// 如果创建失败（其他原因）
 			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create link")
@@ -75,8 +75,8 @@ func AddHandler(c echo.Context) error {
 		Code:    0,
 		Message: "Added successfully",
 		Data: map[string]interface{}{
-			"id":  link.ID,
-			"url": link.URL,
+			"id":  link.Id,
+			"url": link.Url,
 		},
 	})
 }
