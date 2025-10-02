@@ -4,6 +4,7 @@ go 1.25.1
 
 require (
 	github.com/labstack/echo/v4 v4.13.4
+	github.com/lib/pq v1.10.9
 	github.com/spf13/cobra v1.10.1
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.0
