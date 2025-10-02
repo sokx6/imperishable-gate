@@ -32,7 +32,7 @@ func InitDB(dsn string) error {
 	// 自动迁移数据库
 	// AutoMigrate 会根据 model.Link 结构体的定义
 	// 自动创建或更新数据库中的表结构
-	if err := DB.AutoMigrate(&model.Link{}); err != nil {
+	if err := DB.AutoMigrate(&model.Tag{}, &model.Link{}); err != nil {
 		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
