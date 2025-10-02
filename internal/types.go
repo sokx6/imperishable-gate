@@ -37,3 +37,15 @@ type ListResponse struct {
 	Message string   `json:"message"` // 列表获取结果消息
 	Data    []string `json:"data"`    // 可选，包含链接列表
 }
+
+type AddTagsRequest struct {
+	Action string   `json:"action"` // 应为 "addtags"
+	Link   string   `json:"link"`   // 需要添加标签的链接
+	Tags   []string `json:"tags"`   // 需要添加的标签列表
+}
+
+type AddTagsResponse struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`        // 回显添加的链接
+	Data    interface{} `json:"data,omitempty"` // 可选，包含新添加链接的详细信息
+}
