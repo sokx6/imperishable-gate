@@ -11,8 +11,9 @@ type PingResponse struct {
 }
 
 type AddRequest struct {
-	Action string `json:"action"` // 应为 "add"
-	Link   string `json:"link"`   // 需要添加的链接
+	Action string   `json:"action"` // 应为 "add"
+	Link   string   `json:"link"`   // 需要添加的链接
+	Tags   []string `json:"tags"`   // 需要添加的标签列表
 }
 
 type AddResponse struct {
