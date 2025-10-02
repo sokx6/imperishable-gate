@@ -1,11 +1,13 @@
-// Package handlers 处理 HTTP 请求
+// handlers/upsert_link_handler.go
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"net/url"
 
 	"github.com/labstack/echo/v4"
+	"github.com/lib/pq"
 	"gorm.io/gorm"
 
 	types "imperishable-gate/internal"
@@ -13,11 +15,10 @@ import (
 	"imperishable-gate/internal/server/database"
 )
 
-// AddHandler 处理添加链接请求
-func AddHandler(c echo.Context) error {
+func AddWithTagsHandler(c echo.Context) error {
 	var req types.AddRequest
 
-	// 判断请求体数据结构是否与req匹配
+	// 绑定并校验基本数据
 	if err := c.Bind(&req); err != nil || req.Action != "add" || req.Link == "" {
 		return c.JSON(http.StatusBadRequest, types.AddResponse{
 			Code:    -1,
@@ -25,7 +26,7 @@ func AddHandler(c echo.Context) error {
 		})
 	}
 
-	// 验证 URL 格式
+	// 校验 URL 格式
 	if _, err := url.ParseRequestURI(req.Link); err != nil {
 		return c.JSON(http.StatusBadRequest, types.AddResponse{
 			Code:    -1,
@@ -33,50 +34,81 @@ func AddHandler(c echo.Context) error {
 		})
 	}
 
-	// 定义link类型
 	var link model.Link
+	var isCreated bool
 
-	// 开启事务（可选，用于防止并发）
+	// 使用事务处理原子操作
 	err := database.DB.Transaction(func(tx *gorm.DB) error {
-		// 先查找是否已存在该 URL
-		if err := tx.Where("url = ?", req.Link).First(&link).Error; err == nil {
-			// 找到了，说明已存在
-			return echo.NewHTTPError(http.StatusConflict, "The link already exists")
-		}
+		result := tx.Where("url = ?", req.Link).First(&link)
 
-		// 创建新记录
-		link = model.Link{Url: req.Link}
-		if err := tx.Create(&link).Error; err != nil {
-			// 如果创建失败（其他原因）
-			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create link")
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			// 链接不存在 → 创建新记录，并带上去重后的标签
+			tags := removeDuplicates(req.Tags)
+			link = model.Link{
+				Url: req.Link,
+			}
+			if err := tx.Create(&link).Error; err != nil {
+				return err
+			}
+			if len(tags) > 0 {
+				if err := tx.Model(&link).Update("tags", pq.Array(tags)).Error; err != nil {
+					return err
+				}
+				link.Tags = tags // 手动同步内存中的值用于返回
+			}
+			isCreated = true
+		} else if result.Error != nil {
+			// 其他数据库错误
+			return result.Error
+		} else {
+			// 链接已存在 → 合并新旧标签并更新
+			mergedTags := removeDuplicates(append(link.Tags, req.Tags...))
+			if len(mergedTags) > 0 {
+				link.Tags = mergedTags
+				if err := tx.Model(&link).Update("tags", pq.Array(mergedTags)).Error; err != nil {
+					return err
+				}
+			}
+			isCreated = false
 		}
 
 		return nil
 	})
 
-	// 判断事务返回的错误类型
+	// 处理事务错误
 	if err != nil {
-		if httpErr, ok := err.(*echo.HTTPError); ok {
-			if httpErr.Code == http.StatusConflict {
-				return c.JSON(http.StatusConflict, types.AddResponse{
-					Code:    -1,
-					Message: "The link already exists",
-				})
-			}
-		}
 		return c.JSON(http.StatusInternalServerError, types.AddResponse{
 			Code:    -1,
-			Message: "Database error",
+			Message: "Database error: " + err.Error(),
 		})
 	}
 
-	// 返回成功结果
+	// 返回成功响应
+	message := "Updated successfully"
+	if isCreated {
+		message = "Added successfully"
+	}
+
 	return c.JSON(http.StatusOK, types.AddResponse{
 		Code:    0,
-		Message: "Added successfully",
+		Message: message,
 		Data: map[string]interface{}{
-			"id":  link.Id,
-			"url": link.Url,
+			"id":   link.Id,
+			"url":  link.Url,
+			"tags": link.Tags,
 		},
 	})
+}
+
+// 工具函数：去重
+func removeDuplicates(slice []string) []string {
+	seen := make(map[string]bool)
+	var result []string
+	for _, item := range slice {
+		if item != "" && !seen[item] {
+			seen[item] = true
+			result = append(result, item)
+		}
+	}
+	return result
 }
