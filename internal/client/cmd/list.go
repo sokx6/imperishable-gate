@@ -45,7 +45,8 @@ var listCmd = &cobra.Command{
 		fmt.Println("-- Receiving response")
 
 		for _, link := range result.Data {
-			fmt.Printf("%v\n", link)
+			fmt.Printf("ID: %d\nURL: %s\nTags: %v\nNames: %v\nRemark: %s\n\n",
+				link.ID, link.Url, link.Tags, link.Names, link.Remark)
 		}
 
 		return nil
