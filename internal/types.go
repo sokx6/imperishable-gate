@@ -1,5 +1,7 @@
 package types
 
+import "imperishable-gate/internal/model"
+
 type PingRequest struct {
 	Action  string `json:"action"`  // 应为 "ping"
 	Message string `json:"message"` // 客户端发送的消息
@@ -36,9 +38,9 @@ type DeleteResponse struct {
 }
 
 type ListResponse struct {
-	Code    int      `json:"code"`
-	Message string   `json:"message"` // 列表获取结果消息
-	Data    []string `json:"data"`    // 可选，包含链接列表
+	Code    int          `json:"code"`
+	Message string       `json:"message"` // 列表获取结果消息
+	Data    []model.Link `json:"data"`    // 可选，包含链接列表
 }
 
 type AddTagsRequest struct {
@@ -51,6 +53,29 @@ type AddTagsResponse struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`        // 回显添加的链接
 	Data    interface{} `json:"data,omitempty"` // 可选，包含新添加链接的详细信息
+}
+
+type ListByTagRequest struct {
+	Action string `json:"action"` // 应为 "listbytag"
+	Tag    string `json:"tag"`    // 需要查询的标签
+}
+
+type ListByTagResponse struct {
+	Code    int        `json:"code"`
+	Message string     `json:"message"` // 列表获取结果消息
+	Data    model.Link `json:"data"`    // 可选，包含链接列表
+}
+
+type ListByNameResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    struct {
+		ID     uint
+		Url    string
+		Tags   []string
+		Names  []string
+		Remark string
+	} `json:"data"`
 }
 
 var InvalidURLResponse = struct {
@@ -83,4 +108,12 @@ var RemarkExistsResponse = struct {
 }{
 	Code:    -1,
 	Message: "Remark already exists",
+}
+
+var NameNotFoundResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Name not found",
 }
