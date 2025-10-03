@@ -17,7 +17,13 @@ func ListByNameHandler(c echo.Context) error {
 	var Name model.Name
 	fmt.Println("1")
 	// 查询所有记录
-	if err := database.DB.Preload("Link").Preload("Link.Names").Where("name = ?", c.Param("name")).First(&Name).Error; err != nil {
+	if err :=
+		database.DB.
+			Preload("Link").
+			Preload("Link.Names").
+			Preload("Link.Tags").
+			Where("name = ?", c.Param("name")).
+			First(&Name).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, types.NameNotFoundResponse)
 		}
