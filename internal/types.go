@@ -14,6 +14,8 @@ type AddRequest struct {
 	Action string   `json:"action"` // 应为 "add"
 	Link   string   `json:"link"`   // 需要添加的链接
 	Tags   []string `json:"tags"`   // 需要添加的标签列表
+	Names  []string `json:"names"`  // 需要添加的名称列表
+	Remark string   `json:"remark"` // 备注，可选
 }
 
 type AddResponse struct {
@@ -49,4 +51,36 @@ type AddTagsResponse struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`        // 回显添加的链接
 	Data    interface{} `json:"data,omitempty"` // 可选，包含新添加链接的详细信息
+}
+
+var InvalidURLResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Invalid URL format",
+}
+
+var InvalidRequestResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Invalid request",
+}
+
+var DatabaseErrorResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Database error",
+}
+
+var RemarkExistsResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Remark already exists",
 }
