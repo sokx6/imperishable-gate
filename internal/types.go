@@ -38,9 +38,9 @@ type DeleteResponse struct {
 }
 
 type ListResponse struct {
-	Code    int          `json:"code"`
-	Message string       `json:"message"` // 列表获取结果消息
-	Data    []model.Link `json:"data"`    // 可选，包含链接列表
+	Code    int    `json:"code"`
+	Message string `json:"message"` // 列表获取结果消息
+	Data    []Link `json:"data"`
 }
 
 type AddTagsByLinkRequest struct {
@@ -76,6 +76,14 @@ type ListByNameResponse struct {
 		Names  []string
 		Remark string
 	} `json:"data"`
+}
+
+type Link struct {
+	ID     uint     `json:"id"`
+	Url    string   `json:"url"`
+	Tags   []string `json:"tags"`
+	Names  []string `json:"names"`
+	Remark string   `json:"remark"`
 }
 
 var InvalidURLResponse = struct {
