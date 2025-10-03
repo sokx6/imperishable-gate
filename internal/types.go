@@ -15,9 +15,9 @@ type PingResponse struct {
 type AddRequest struct {
 	Action string   `json:"action"` // 应为 "add"
 	Link   string   `json:"link"`   // 需要添加的链接
-	Tags   []string `json:"tags"`   // 需要添加的标签列表
 	Names  []string `json:"names"`  // 需要添加的名称列表
 	Remark string   `json:"remark"` // 备注，可选
+	Tags   []string `json:"tags"`   // 需要添加的标签列表
 }
 
 type AddResponse struct {
@@ -43,8 +43,8 @@ type ListResponse struct {
 	Data    []model.Link `json:"data"`    // 可选，包含链接列表
 }
 
-type AddTagsRequest struct {
-	Action string   `json:"action"` // 应为 "addtags"
+type AddTagsByLinkRequest struct {
+	Action string   `json:"action"` // 应为 "addtagsbylink"
 	Link   string   `json:"link"`   // 需要添加标签的链接
 	Tags   []string `json:"tags"`   // 需要添加的标签列表
 }
@@ -116,4 +116,28 @@ var NameNotFoundResponse = struct {
 }{
 	Code:    -1,
 	Message: "Name not found",
+}
+
+var NameExistsResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Name already exists",
+}
+
+var LinkNotFoundResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Link not found",
+}
+
+var OKResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    0,
+	Message: "Success",
 }
