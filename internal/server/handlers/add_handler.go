@@ -14,7 +14,7 @@ import (
 
 var ErrLinkAlreadyExists = errors.New("link already exists")
 
-func AddWithTagsHandler(c echo.Context) error {
+func AddHandler(c echo.Context) error {
 	var req types.AddRequest
 	if err := c.Bind(&req); err != nil || req.Action != "add" || req.Link == "" {
 		return c.JSON(400, map[string]interface{}{
