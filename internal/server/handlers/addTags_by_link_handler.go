@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -55,11 +54,21 @@ func AddTagsByLinkHandler(c echo.Context) error {
 }
 
 func CreateTagList(linktags []string) []model.Tag {
-	var tagList []model.Tag
-	for _, n := range linktags {
-		if trimmed := strings.TrimSpace(n); trimmed != "" {
-			tagList = append(tagList, model.Tag{Name: trimmed})
+	var tags []model.Tag
+	database.DB.Where("name IN ?", linktags).Find(&tags)
+	existing := make(map[string]bool)
+	for _, tag := range tags {
+		existing[tag.Name] = true
+	}
+
+	// 2. 过滤 names，只保留不存在于 existing 中的
+	var result []model.Tag
+	for _, name := range linktags {
+		if !existing[name] {
+			result = append(result, model.Tag{Name: name})
 		}
 	}
-	return tagList
+	result = append(result, tags...)
+
+	return result
 }
