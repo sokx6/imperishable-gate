@@ -1,9 +1,9 @@
-// model/link.go 修改版
 package model
 
 type Link struct {
-	ID   uint   `gorm:"primarykey" json:"id"`
-	Url  string `gorm:"not null;uniqueIndex" json:"url"`
-	Tags []Tag  `gorm:"many2many:link_tags;" json:"tags"` // 改为关联 Tags
-	Note string `json:"note"`                             // 备注字段新增
+	ID     uint   `gorm:"primarykey" json:"id"`
+	Url    string `gorm:"not null;uniqueIndex" json:"url"`
+	Tags   []Tag  `gorm:"many2many:link_tags;" json:"tags"`
+	Names  []Name `gorm:"foreignKey:LinkID;constraint:OnDelete:CASCADE;" json:"names"` // 注意字段名用复数更合适！
+	Remark string `json:"remark"`
 }
