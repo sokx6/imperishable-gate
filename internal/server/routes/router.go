@@ -22,6 +22,9 @@ func RegisterRoutes(e *echo.Echo) {
 	v1.POST("/tags", handlers.AddTagsByLinkHandler)
 	v1.POST("/name/:name/remark", handlers.AddRemarkByNameHandler)
 	v1.POST("/name/:name/tags", handlers.AddTagsByNameHandler)
+	v1.PATCH("/links/names/remove", handlers.DeleteNamesByLinkHandler)
+	v1.PATCH("/links/by-url/tags/remove", handlers.DeleteTagsByLinkHandler)
+	v1.PATCH("/links/by-name/tags/remove", handlers.DeleteTagsByNameHandler)
 
 	v1.DELETE("/links/name/:name", handlers.DeleteByNameHandler)
 	v1.DELETE("/links/delete", handlers.DeleteHandler)
