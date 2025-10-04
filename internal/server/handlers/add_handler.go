@@ -17,17 +17,11 @@ var ErrLinkAlreadyExists = errors.New("link already exists")
 func AddHandler(c echo.Context) error {
 	var req types.AddRequest
 	if err := c.Bind(&req); err != nil || req.Action != "add" || req.Link == "" {
-		return c.JSON(400, map[string]interface{}{
-			"code":    -1,
-			"message": "Invalid request",
-		})
+		return c.JSON(400, types.InvalidUrlResponse)
 	}
 
 	if _, err := url.ParseRequestURI(req.Link); err != nil {
-		return c.JSON(400, map[string]interface{}{
-			"code":    -1,
-			"message": "Invalid URL format",
-		})
+		return c.JSON(400, types.InvalidUrlFormatResponse)
 	}
 
 	var link model.Link
@@ -49,23 +43,10 @@ func AddHandler(c echo.Context) error {
 		return ErrLinkAlreadyExists
 
 	}); errors.Is(err, ErrLinkAlreadyExists) {
-		return c.JSON(400, map[string]interface{}{
-			"code":    -1,
-			"message": "Link already exists",
-		})
+		return c.JSON(400, types.LinkExistsResponse)
 	} else if err != nil {
-		return c.JSON(500, map[string]interface{}{
-			"code":    -1,
-			"message": "Database error",
-		})
+		return c.JSON(500, types.DatabaseErrorResponse)
 	}
 
-	return c.JSON(200, types.AddResponse{
-		Code:    0,
-		Message: "Added successfully",
-		Data: map[string]interface{}{
-			"id":  link.ID,
-			"url": link.Url,
-		},
-	})
+	return c.JSON(200, types.AddLinkSuccessResponse)
 }

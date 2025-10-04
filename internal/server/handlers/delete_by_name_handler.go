@@ -28,7 +28,7 @@ func DeleteByNameHandler(c echo.Context) error {
 	var Name model.Name
 
 	if err := database.DB.Where("name = ?", name).Take(&Name).Error; err != nil {
-		return c.JSON(http.StatusNotFound, types.LinkNotFoundResponse)
+		return c.JSON(http.StatusNotFound, types.NameNotFoundResponse)
 	}
 	if err := database.DB.Delete(&model.Link{}, Name.LinkID).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)

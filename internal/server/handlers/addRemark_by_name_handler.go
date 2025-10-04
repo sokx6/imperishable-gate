@@ -26,8 +26,5 @@ func AddRemarkByNameHandler(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
 	}
 
-	return c.JSON(200, types.AddResponse{
-		Code:    0,
-		Message: "Added successfully",
-		Data:    nil})
+	return c.JSON(200, types.AddRemarkByNameSuccessResponse)
 }

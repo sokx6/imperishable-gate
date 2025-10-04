@@ -21,12 +21,12 @@ import (
 func AddNamesHandler(c echo.Context) error {
 	var req types.AddRequest
 	if err := c.Bind(&req); err != nil || req.Action != "addname" || req.Link == "" || req.Names == nil || len(req.Names) == 0 {
-		return c.JSON(400, types.InvalidRequestResponse)
+		return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
 	}
 
 	// 验证 URL 格式
 	if _, err := url.ParseRequestURI(req.Link); err != nil {
-		return c.JSON(400, types.InvalidURLResponse)
+		return c.JSON(http.StatusBadRequest, types.InvalidUrlResponse)
 	}
 
 	var link model.Link
@@ -34,6 +34,7 @@ func AddNamesHandler(c echo.Context) error {
 
 	if err := database.DB.Where("url = ?", req.Link).First(&link).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// 链接不存在，创建新链接并添加名称
 			nameList := CreateNameList(req.Names)
 			link.Names = nameList
 			if err := database.DB.Create(&link).Error; err != nil {
@@ -45,19 +46,21 @@ func AddNamesHandler(c echo.Context) error {
 		}
 	}
 
+	// 链接已存在，添加名称
 	nameList := CreateNameList(req.Names)
 	if len(nameList) == 0 {
-		return c.JSON(http.StatusOK, types.OKResponse)
+		return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
 	}
 
 	if err := database.DB.Model(&link).Association("Names").Append(nameList); err != nil {
-		return c.JSON(500, types.NameExistsResponse)
+		return c.JSON(http.StatusConflict, types.NameExistsResponse)
 	}
 
-	return c.JSON(200, types.OKResponse)
+	return c.JSON(http.StatusOK, types.AddNamesSuccessResponse)
 
 }
 
+// CreateNameList 创建名称列表，去除空名称
 func CreateNameList(linknames []string) []model.Name {
 	var nameList []model.Name
 	for _, n := range linknames {

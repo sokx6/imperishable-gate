@@ -27,13 +27,12 @@ func DeleteHandler(c echo.Context) error {
 	for _, rawLink := range links {
 		u, err := url.ParseRequestURI(rawLink)
 		if err != nil || (u.Scheme != "http" && u.Scheme != "https") {
-			return c.JSON(http.StatusBadRequest, types.InvalidURLResponse)
+			return c.JSON(http.StatusBadRequest, types.InvalidUrlResponse)
 		}
 	}
 
 	var deletedCount int64
 
-	// 使用事务安全地删除多条记录
 	err := database.DB.Transaction(func(tx *gorm.DB) error {
 		result := tx.Where("url IN ?", links).Delete(&model.Link{})
 		if result.Error != nil {
@@ -44,31 +43,13 @@ func DeleteHandler(c echo.Context) error {
 	})
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, types.DeleteResponse{
-			Code:    -1,
-			Message: "Database error during deletion: " + err.Error(),
-		})
+		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
 	}
 
 	// 返回响应
 	if deletedCount == 0 {
-		return c.JSON(http.StatusOK, types.DeleteResponse{
-			Code:    0,
-			Message: "No matching links were found for deletion",
-			Data: map[string]interface{}{
-				"attempted_count": len(links),
-				"urls":            links,
-			},
-		})
+		return c.JSON(http.StatusOK, types.LinkNotFoundResponse)
 	}
 
-	return c.JSON(http.StatusOK, types.DeleteResponse{
-		Code:    0,
-		Message: "Links deleted successfully",
-		Data: map[string]interface{}{
-			"deleted_count":   deletedCount,
-			"attempted_count": len(links),
-			"urls":            links,
-		},
-	})
+	return c.JSON(http.StatusOK, types.DeleteSuccessResponse)
 }
