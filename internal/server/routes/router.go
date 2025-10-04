@@ -13,6 +13,7 @@ func RegisterRoutes(e *echo.Echo) {
 
 	v1.GET("/names/:name", handlers.ListByNameHandler)
 	v1.GET("/links", handlers.ListHandler)
+	v1.GET("/tags/:tag", handlers.ListByTagHandler)
 
 	v1.POST("/ping", handlers.PingHandler)
 	v1.POST("/links", handlers.AddHandler)
