@@ -138,6 +138,14 @@ var PongResponse = struct {
 	Message: "pong",
 }
 
+var AddTagsByNameSuccessResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    0,
+	Message: "Tags added successfully",
+}
+
 type PingRequest struct {
 	Action  string `json:"action"`  // 应为 "ping"
 	Message string `json:"message"` // 客户端发送的消息
