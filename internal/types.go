@@ -18,6 +18,7 @@ type AddRequest struct {
 	Names  []string `json:"names"`  // 需要添加的名称列表
 	Remark string   `json:"remark"` // 备注，可选
 	Tags   []string `json:"tags"`   // 需要添加的标签列表
+	Name   string   `json:"name"`   // 链接名称
 }
 
 type AddResponse struct {
@@ -84,6 +85,10 @@ type Link struct {
 	Tags   []string `json:"tags"`
 	Names  []string `json:"names"`
 	Remark string   `json:"remark"`
+}
+
+type AddRemarkByNameRequest struct {
+	Remark string `json:"remark"` // 备注内容
 }
 
 var InvalidURLResponse = struct {
