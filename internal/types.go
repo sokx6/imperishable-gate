@@ -2,6 +2,142 @@ package types
 
 import "imperishable-gate/internal/model"
 
+var InvalidUrlResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Invalid URL format",
+}
+
+var InvalidRequestResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Invalid request",
+}
+
+var DatabaseErrorResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Database error",
+}
+
+var RemarkExistsResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Remark already exists",
+}
+
+var NameNotFoundResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Name not found",
+}
+
+var NameExistsResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Name already exists",
+}
+
+var LinkNotFoundResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Link not found",
+}
+
+var OKResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    0,
+	Message: "Success",
+}
+
+var InvalidUrlFormatResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Invalid URL format",
+}
+
+var LinkExistsResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Link already exists",
+}
+
+var AddLinkSuccessResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    0,
+	Message: "Added successfully",
+}
+
+var AddNamesSuccessResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    0,
+	Message: "Names added successfully",
+}
+
+var AddRemarkByLinkSuccessResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    0,
+	Message: "Remark added successfully",
+}
+
+var AddRemarkByNameSuccessResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    0,
+	Message: "Remark added successfully",
+}
+
+var AddTagsByLinkSuccessResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    0,
+	Message: "Tags added successfully",
+}
+
+var DeleteSuccessResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    0,
+	Message: "Links deleted successfully",
+}
+
+var PongResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    0,
+	Message: "pong",
+}
+
 type PingRequest struct {
 	Action  string `json:"action"`  // 应为 "ping"
 	Message string `json:"message"` // 客户端发送的消息
@@ -89,68 +225,4 @@ type Link struct {
 
 type AddRemarkByNameRequest struct {
 	Remark string `json:"remark"` // 备注内容
-}
-
-var InvalidURLResponse = struct {
-	Code    int
-	Message string
-}{
-	Code:    -1,
-	Message: "Invalid URL format",
-}
-
-var InvalidRequestResponse = struct {
-	Code    int
-	Message string
-}{
-	Code:    -1,
-	Message: "Invalid request",
-}
-
-var DatabaseErrorResponse = struct {
-	Code    int
-	Message string
-}{
-	Code:    -1,
-	Message: "Database error",
-}
-
-var RemarkExistsResponse = struct {
-	Code    int
-	Message string
-}{
-	Code:    -1,
-	Message: "Remark already exists",
-}
-
-var NameNotFoundResponse = struct {
-	Code    int
-	Message string
-}{
-	Code:    -1,
-	Message: "Name not found",
-}
-
-var NameExistsResponse = struct {
-	Code    int
-	Message string
-}{
-	Code:    -1,
-	Message: "Name already exists",
-}
-
-var LinkNotFoundResponse = struct {
-	Code    int
-	Message string
-}{
-	Code:    -1,
-	Message: "Link not found",
-}
-
-var OKResponse = struct {
-	Code    int
-	Message string
-}{
-	Code:    0,
-	Message: "Success",
 }
