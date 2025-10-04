@@ -17,7 +17,7 @@ var listCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		// 构造请求 URL
-		url := fmt.Sprintf("http://%s/api/v1/links/list", Config.Addr)
+		url := fmt.Sprintf("http://%s/api/v1/links", Config.Addr)
 		fmt.Printf("-- Requesting GET method to %s\n", url)
 
 		// 发起 GET 请求
