@@ -64,12 +64,12 @@ go build -o bin/gate ./cmd/gate
 
 - **添加链接**
   ```sh
-  ./bin/gate add -H localhost:8080/api/v1/links/add -l "https://example.com"
+  ./bin/gate add -H localhost:8080/api/v1/links -l "https://example.com"
   ```
 
 - **列出链接**
   ```sh
-  ./bin/gate list -H localhost:8080/api/v1/links/list
+  ./bin/gate list -H localhost:8080/api/v1/links
   ```
 
 - **删除链接**
@@ -84,12 +84,20 @@ go build -o bin/gate ./cmd/gate
 
 ## HTTP API
 
-| 方法 | 路径                       | 描述           |
-| ---- | -------------------------- | -------------- |
-| POST | `/api/v1/ping`             | 健康检查       |
-| POST | `/api/v1/links/add`        | 添加链接       |
-| DELETE | `/api/v1/links/delete`   | 删除链接（支持批量） |
-| GET  | `/api/v1/links/list`       | 获取全部链接   |
-
-
-© 2025 Imperishable Gate
+| 方法 | 路径 | 描述 |
+| ---- | ---- | ---- |
+| POST | `/api/v1/ping` | 健康检查 |
+| POST | `/api/v1/links` | 添加链接 |
+| GET | `/api/v1/links` | 获取全部链接 |
+| DELETE | `/api/v1/links` | 通过 URL 批量删除链接 |
+| DELETE | `/api/v1/links/name/:name` | 通过名称删除链接 |
+| POST | `/api/v1/remarks` | 通过 URL 添加或更新备注 |
+| POST | `/api/v1/name/:name/remark` | 通过名称添加或更新备注 |
+| POST | `/api/v1/names` | 为链接添加名称 |
+| PATCH | `/api/v1/links/names/remove` | 通过 URL 移除名称 |
+| GET | `/api/v1/names/:name` | 通过名称获取链接 |
+| POST | `/api/v1/tags` | 通过 URL 添加标签 |
+| POST | `/api/v1/name/:name/tags` | 通过名称添加标签 |
+| PATCH | `/api/v1/links/by-url/tags/remove` | 通过 URL 移除标签 |
+| PATCH | `/api/v1/links/by-name/tags/remove` | 通过名称移除标签 |
+| GET | `/api/v1/tags/:tag` | 通过标签获取链接 |
