@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -54,6 +55,10 @@ func AddTagsByLinkHandler(c echo.Context) error {
 }
 
 func CreateTagList(linktags []string) []model.Tag {
+	linktags = removeEmptyAndDuplicate(linktags)
+	if len(linktags) == 0 {
+		return nil
+	}
 	var tags []model.Tag
 	database.DB.Where("name IN ?", linktags).Find(&tags)
 	existing := make(map[string]bool)
@@ -69,6 +74,24 @@ func CreateTagList(linktags []string) []model.Tag {
 		}
 	}
 	result = append(result, tags...)
+
+	return result
+}
+
+func removeEmptyAndDuplicate(strs []string) []string {
+	seen := make(map[string]struct{}) // 使用 map 来去重
+	var result []string
+
+	for _, s := range strs {
+		trimmed := strings.TrimSpace(s) // 去除首尾空格后判断是否为空
+		if trimmed == "" {
+			continue // 跳过空字符串（包括全是空格的）
+		}
+		if _, exists := seen[trimmed]; !exists {
+			seen[trimmed] = struct{}{}
+			result = append(result, trimmed)
+		}
+	}
 
 	return result
 }
