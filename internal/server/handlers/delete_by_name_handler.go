@@ -11,6 +11,7 @@ import (
 	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
+	"imperishable-gate/internal/server/utils"
 )
 
 // DeleteHandler 处理通过查询参数删除链接的请求
@@ -25,12 +26,9 @@ func DeleteByNameHandler(c echo.Context) error {
 
 	// 可选：验证每个 link 是否为合法 URL
 
-	var Name model.Name
-
-	if err := database.DB.Where("name = ?", name).Take(&Name).Error; err != nil {
+	if id := utils.NameToLinkId(name); id == 0 {
 		return c.JSON(http.StatusNotFound, types.NameNotFoundResponse)
-	}
-	if err := database.DB.Delete(&model.Link{}, Name.LinkID).Error; err != nil {
+	} else if err := database.DB.Delete(&model.Link{}, id).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
 	}
 
