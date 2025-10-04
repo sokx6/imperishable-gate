@@ -1,17 +1,13 @@
 package handlers
 
 import (
-	"errors"
 	"net/http"
 	"net/url"
 
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 
 	types "imperishable-gate/internal"
-	"imperishable-gate/internal/model"
-	"imperishable-gate/internal/server/database"
-	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/server/service"
 )
 
 func AddTagsByLinkHandler(c echo.Context) error {
@@ -25,28 +21,7 @@ func AddTagsByLinkHandler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, types.InvalidUrlResponse)
 	}
 
-	var link model.Link
-	link.Url = req.Link
-
-	if err := database.DB.Where("url = ?", req.Link).First(&link).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			tagList := utils.CreateTagList(req.Tags)
-			link.Tags = tagList
-			if err := database.DB.Create(&link).Error; err != nil {
-				return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
-			}
-			return c.JSON(http.StatusOK, types.AddTagsByLinkSuccessResponse)
-		} else {
-			return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
-		}
-	}
-
-	tagList := utils.CreateTagList(req.Tags)
-	if len(tagList) == 0 {
-		return c.JSON(http.StatusOK, types.AddTagsByLinkSuccessResponse)
-	}
-
-	if err := database.DB.Model(&link).Association("Tags").Append(tagList); err != nil {
+	if err := service.AddTagsByLink(req.Link, req.Tags); err != nil {
 		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
 	}
 
