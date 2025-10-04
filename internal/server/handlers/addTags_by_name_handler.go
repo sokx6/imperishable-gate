@@ -6,9 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	types "imperishable-gate/internal"
-	"imperishable-gate/internal/model"
-	"imperishable-gate/internal/server/database"
-	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/server/service"
 )
 
 func AddTagsByNameHandler(c echo.Context) error {
@@ -17,15 +15,12 @@ func AddTagsByNameHandler(c echo.Context) error {
 	if err := c.Bind(&req); err != nil || req.Action != "addtagsbyname" || req.Tags == nil || len(req.Tags) == 0 {
 		return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
 	}
-
-	tagList := utils.CreateTagList(req.Tags)
-
-	var Name model.Name
-	if err := database.DB.Where("name = ?", name).Take(&Name).Error; err != nil {
-		return c.JSON(http.StatusNotFound, types.LinkNotFoundResponse)
-	}
-	if err := database.DB.Model(&model.Link{ID: Name.LinkID}).Update("Tags", tagList).Error; err != nil {
+	if err := service.AddTagsByName(name, req.Tags); err != nil {
+		if err == service.ErrNameNotFound {
+			return c.JSON(http.StatusNotFound, types.NameNotFoundResponse)
+		}
 		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
 	}
 	return c.JSON(http.StatusOK, types.AddTagsByNameSuccessResponse)
+
 }
