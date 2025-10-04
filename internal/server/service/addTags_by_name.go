@@ -9,11 +9,10 @@ import (
 func AddTagsByName(name string, tags []string) error {
 	tagList := utils.CreateTagList(tags)
 
-	var Name model.Name
-	if err := database.DB.Where("name = ?", name).Take(&Name).Error; err != nil {
+	var id uint
+	if id = utils.NameToLinkId(name); id == 0 {
 		return ErrNameNotFound
-	}
-	if err := database.DB.Model(&model.Link{ID: Name.LinkID}).Update("Tags", tagList).Error; err != nil {
+	} else if err := database.DB.Model(&model.Link{ID: id}).Update("Tags", tagList).Error; err != nil {
 		return ErrDatabase
 	}
 	return nil
