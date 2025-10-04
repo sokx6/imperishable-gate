@@ -27,5 +27,5 @@ func RegisterRoutes(e *echo.Echo) {
 	v1.PATCH("/links/by-name/tags/remove", handlers.DeleteTagsByNameHandler)
 
 	v1.DELETE("/links/name/:name", handlers.DeleteByNameHandler)
-	v1.DELETE("/links/delete", handlers.DeleteHandler)
+	v1.DELETE("/links", handlers.DeleteHandler)
 }
