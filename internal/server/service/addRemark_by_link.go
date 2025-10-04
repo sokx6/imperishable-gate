@@ -10,7 +10,7 @@ import (
 
 func AddRemarkByLink(url string, remark string) error {
 	var link model.Link
-	result := database.DB.Where("url = ?", link).First(&link)
+	result := database.DB.Where("url = ?", url).First(&link)
 	// 如果找不到对应的 Link，创建新的 Link 和关联的 Names
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		link = model.Link{
@@ -25,7 +25,7 @@ func AddRemarkByLink(url string, remark string) error {
 		return result.Error
 	}
 
-	if err := database.DB.Model(link).Update("Remark", remark).Error; err != nil {
+	if err := database.DB.Model(&link).Update("Remark", remark).Error; err != nil {
 		return err
 	}
 
