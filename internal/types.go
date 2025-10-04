@@ -146,6 +146,14 @@ var AddTagsByNameSuccessResponse = struct {
 	Message: "Tags added successfully",
 }
 
+var TagNotFoundResponse = struct {
+	Code    int
+	Message string
+}{
+	Code:    -1,
+	Message: "Tag not found",
+}
+
 type PingRequest struct {
 	Action  string `json:"action"`  // 应为 "ping"
 	Message string `json:"message"` // 客户端发送的消息
@@ -233,4 +241,10 @@ type Link struct {
 
 type AddRemarkByNameRequest struct {
 	Remark string `json:"remark"` // 备注内容
+}
+
+type DeleteTagsByNameRequest struct {
+	Action string   `json:"action"` // 应为 "deletetagsbyname"
+	Url    string   `json:"url"`    // 需要删除标签的链接名称
+	Tags   []string `json:"tags"`   // 需要删除的标签列表
 }
