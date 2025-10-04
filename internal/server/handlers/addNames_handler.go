@@ -6,12 +6,9 @@ import (
 	"net/url"
 
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 
 	types "imperishable-gate/internal"
-	"imperishable-gate/internal/model"
-	"imperishable-gate/internal/server/database"
-	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/server/service"
 )
 
 /* var (
@@ -29,31 +26,12 @@ func AddNamesHandler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, types.InvalidUrlResponse)
 	}
 
-	var link model.Link
-	link.Url = req.Link
-
-	if err := database.DB.Where("url = ?", req.Link).First(&link).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			// 链接不存在，创建新链接并添加名称
-			nameList := utils.CreateNameList(req.Names)
-			link.Names = nameList
-			if err := database.DB.Create(&link).Error; err != nil {
-				return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
-			}
-			return c.JSON(http.StatusOK, types.OKResponse)
-		} else {
-			return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
-		}
-	}
-
-	// 链接已存在，添加名称
-	nameList := utils.CreateNameList(req.Names)
-	if len(nameList) == 0 {
+	if err := service.AddNames(req.Link, req.Names); errors.Is(err, service.ErrNameAlreadyExists) {
+		return c.JSON(http.StatusBadRequest, types.NameExistsResponse)
+	} else if errors.Is(err, service.ErrInvalidRequest) {
 		return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
-	}
-
-	if err := database.DB.Model(&link).Association("Names").Append(nameList); err != nil {
-		return c.JSON(http.StatusConflict, types.NameExistsResponse)
+	} else if err != nil {
+		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
 	}
 
 	return c.JSON(http.StatusOK, types.AddNamesSuccessResponse)
