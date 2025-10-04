@@ -3,14 +3,14 @@ package service
 import (
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
+	"imperishable-gate/internal/server/utils"
 )
 
 func AddRemarkByName(name string, remark string) error {
-	var Name model.Name
-	if err := database.DB.Where("name = ?", name).Take(&Name).Error; err != nil {
+	var id uint
+	if id = utils.NameToLinkId(name); id == 0 {
 		return ErrNameNotFound
-	}
-	if err := database.DB.Model(&model.Link{ID: Name.LinkID}).Update("Remark", remark).Error; err != nil {
+	} else if err := database.DB.Model(&model.Link{ID: id}).Update("Remark", remark).Error; err != nil {
 		return ErrDatabase
 	}
 	return nil
