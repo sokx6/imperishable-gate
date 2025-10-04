@@ -20,7 +20,7 @@ import (
 
 func AddNamesHandler(c echo.Context) error {
 	var req types.AddRequest
-	if err := c.Bind(&req); err != nil || req.Action != "addname" || req.Link == "" || req.Names == nil {
+	if err := c.Bind(&req); err != nil || req.Action != "addname" || req.Link == "" || req.Names == nil || len(req.Names) == 0 {
 		return c.JSON(400, types.InvalidRequestResponse)
 	}
 
