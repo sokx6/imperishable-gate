@@ -5,6 +5,7 @@ import (
 	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
+	"imperishable-gate/internal/server/utils"
 	"net/http"
 
 	"errors"
@@ -43,25 +44,9 @@ func ListByNameHandler(c echo.Context) error {
 		}{
 			ID:     Link.ID,
 			Url:    Link.Url,
-			Tags:   ExtractTagNames(Link.Tags),
-			Names:  ExtractNames(Link.Names),
+			Tags:   utils.ExtractTagNames(Link.Tags),
+			Names:  utils.ExtractNames(Link.Names),
 			Remark: Link.Remark,
 		},
 	})
-}
-
-func ExtractTagNames(tags []model.Tag) []string {
-	names := make([]string, 0, len(tags)) // 预分配容量，提升性能
-	for _, tag := range tags {
-		names = append(names, tag.Name)
-	}
-	return names
-}
-
-func ExtractNames(Names []model.Name) []string {
-	names := make([]string, 0, len(Names)) // 预分配容量，提升性能
-	for _, name := range Names {
-		names = append(names, name.Name)
-	}
-	return names
 }

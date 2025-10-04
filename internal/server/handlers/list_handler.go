@@ -5,6 +5,7 @@ import (
 	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
+	"imperishable-gate/internal/server/utils"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -26,8 +27,8 @@ func ListHandler(c echo.Context) error {
 		linkList = append(linkList, types.Link{
 			ID:     link.ID,
 			Url:    link.Url,
-			Tags:   ExtractTagNames(link.Tags),
-			Names:  ExtractNames(link.Names),
+			Tags:   utils.ExtractTagNames(link.Tags),
+			Names:  utils.ExtractNames(link.Names),
 			Remark: link.Remark,
 		})
 

@@ -8,6 +8,7 @@ import (
 	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
+	"imperishable-gate/internal/server/utils"
 )
 
 func AddTagsByNameHandler(c echo.Context) error {
@@ -17,7 +18,7 @@ func AddTagsByNameHandler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
 	}
 
-	tagList := CreateTagList(req.Tags)
+	tagList := utils.CreateTagList(req.Tags)
 
 	var Name model.Name
 	if err := database.DB.Where("name = ?", name).Take(&Name).Error; err != nil {
