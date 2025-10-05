@@ -25,11 +25,14 @@ func ListHandler(c echo.Context) error {
 
 	for _, link := range links {
 		linkList = append(linkList, types.Link{
-			ID:     link.ID,
-			Url:    link.Url,
-			Tags:   utils.ExtractTagNames(link.Tags),
-			Names:  utils.ExtractNames(link.Names),
-			Remark: link.Remark,
+			ID:          link.ID,
+			Url:         link.Url,
+			Tags:        utils.ExtractTagNames(link.Tags),
+			Names:       utils.ExtractNames(link.Names),
+			Remark:      link.Remark,
+			Title:       link.Title,
+			Description: link.Description,
+			Keywords:    link.Keywords,
 		})
 
 	}

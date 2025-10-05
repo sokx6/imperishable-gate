@@ -36,17 +36,23 @@ func ListByNameHandler(c echo.Context) error {
 		Code:    0,
 		Message: "Success",
 		Data: struct {
-			ID     uint
-			Url    string
-			Tags   []string
-			Names  []string
-			Remark string
+			ID          uint
+			Url         string
+			Tags        []string
+			Names       []string
+			Remark      string
+			Title       string
+			Description string
+			Keywords    string
 		}{
-			ID:     Link.ID,
-			Url:    Link.Url,
-			Tags:   utils.ExtractTagNames(Link.Tags),
-			Names:  utils.ExtractNames(Link.Names),
-			Remark: Link.Remark,
+			ID:          Link.ID,
+			Url:         Link.Url,
+			Tags:        utils.ExtractTagNames(Link.Tags),
+			Names:       utils.ExtractNames(Link.Names),
+			Remark:      Link.Remark,
+			Title:       Link.Title,
+			Description: Link.Description,
+			Keywords:    Link.Keywords,
 		},
 	})
 }
