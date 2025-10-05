@@ -15,6 +15,8 @@ func RegisterRoutes(e *echo.Echo) {
 	v1.POST("/register", handlers.RegisterUserHandler)
 	v1.POST("/login", handlers.LoginHandler)
 	v1.POST("/ping", handlers.PingHandler)
+	v1.POST("/refresh", handlers.RefreshTokenHandler)
+	v1.POST("/logout", handlers.LogoutHandler)
 
 	// 创建需要认证的子分组（只加一次中间件）
 	protected := v1.Group("", middlewares.JwtAuthMiddleware)
