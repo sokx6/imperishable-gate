@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
@@ -13,13 +12,12 @@ import (
 
 func ListHandler(c echo.Context) error {
 	var links []model.Link
-	fmt.Println("1")
-	// 查询所有记录
-	if err := database.DB.Preload("Names").Preload("Tags").Find(&links).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, types.ListResponse{
-			Code:    -1,
-			Message: "Failed to retrieve links",
-		})
+	userId, ok := utils.GetUserID(c)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+	}
+	if err := database.DB.Preload("Names").Preload("Tags").Where("user_id = ?", userId).Find(&links).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
 	}
 	var linkList []types.Link
 
@@ -36,8 +34,6 @@ func ListHandler(c echo.Context) error {
 		})
 
 	}
-	fmt.Println(linkList)
-
 	// 返回成功响应
 	return c.JSON(http.StatusOK, types.ListResponse{
 		Code:    0,
