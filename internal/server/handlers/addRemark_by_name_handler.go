@@ -7,6 +7,7 @@ import (
 
 	types "imperishable-gate/internal"
 	"imperishable-gate/internal/server/service"
+	"imperishable-gate/internal/server/utils"
 )
 
 func AddRemarkByNameHandler(c echo.Context) error {
@@ -16,8 +17,11 @@ func AddRemarkByNameHandler(c echo.Context) error {
 	if err := c.Bind(&req); err != nil || name == "" || req.Remark == "" {
 		return c.JSON(400, types.InvalidRequestResponse)
 	}
-
-	if err := service.AddRemarkByName(name, req.Remark); err != nil {
+	userId, ok := utils.GetUserID(c)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+	}
+	if err := service.AddRemarkByName(name, userId, req.Remark); err != nil {
 		if err == service.ErrNameNotFound {
 			return c.JSON(http.StatusFound, types.NameNotFoundResponse)
 		}
