@@ -9,6 +9,7 @@ import (
 
 	types "imperishable-gate/internal"
 	"imperishable-gate/internal/server/service"
+	"imperishable-gate/internal/server/utils"
 )
 
 /* var (
@@ -25,8 +26,11 @@ func AddNamesHandler(c echo.Context) error {
 	if _, err := url.ParseRequestURI(req.Link); err != nil {
 		return c.JSON(http.StatusBadRequest, types.InvalidUrlResponse)
 	}
-
-	if err := service.AddNames(req.Link, req.Names); errors.Is(err, service.ErrNameAlreadyExists) {
+	userId, ok := utils.GetUserID(c)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+	}
+	if err := service.AddNames(req.Link, userId, req.Names); errors.Is(err, service.ErrNameAlreadyExists) {
 		return c.JSON(http.StatusBadRequest, types.NameExistsResponse)
 	} else if errors.Is(err, service.ErrInvalidRequest) {
 		return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
