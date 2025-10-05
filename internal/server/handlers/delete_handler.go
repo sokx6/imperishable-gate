@@ -12,6 +12,7 @@ import (
 	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
+	"imperishable-gate/internal/server/utils"
 )
 
 // DeleteHandler 处理通过查询参数删除链接的请求
@@ -30,11 +31,14 @@ func DeleteHandler(c echo.Context) error {
 			return c.JSON(http.StatusBadRequest, types.InvalidUrlResponse)
 		}
 	}
-
+	userId, ok := utils.GetUserID(c)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+	}
 	var deletedCount int64
 
 	err := database.DB.Transaction(func(tx *gorm.DB) error {
-		result := tx.Where("url IN ?", links).Delete(&model.Link{})
+		result := tx.Where("url IN ? AND user_id = ?", links, userId).Delete(&model.Link{})
 		if result.Error != nil {
 			return result.Error
 		}
