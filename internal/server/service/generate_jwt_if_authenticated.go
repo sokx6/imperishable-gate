@@ -7,13 +7,15 @@ import (
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
 	"time"
-
-	"github.com/golang-jwt/jwt/v5"
 )
 
 // 自定义声明
 
 const TokenExpiry = time.Hour * 24
+const (
+	AccessExpiry  = 15 * time.Minute
+	RefreshExpiry = 7 * 24 * time.Hour // 7天
+)
 
 var JWTSecret = []byte("locxlfjalkfjelifalngl")
 
@@ -26,19 +28,19 @@ func GenerateJWTIfAuthenticated(username, password string) types.LoginResult {
 		case errors.Is(err, ErrUsernameNotFound):
 			return types.LoginResult{
 				Success: false,
-				Token:   "",
+
 				Message: "用户未找到",
 			}
 		case errors.Is(err, ErrDatabase):
 			return types.LoginResult{
 				Success: false,
-				Token:   "",
+
 				Message: "数据库错误，请稍后重试",
 			}
 		default:
 			return types.LoginResult{
 				Success: false,
-				Token:   "",
+
 				Message: "认证服务内部错误",
 			}
 		}
@@ -47,7 +49,7 @@ func GenerateJWTIfAuthenticated(username, password string) types.LoginResult {
 	if !ok {
 		return types.LoginResult{
 			Success: false,
-			Token:   "",
+
 			Message: "用户名或密码不正确",
 		}
 	}
@@ -57,37 +59,25 @@ func GenerateJWTIfAuthenticated(username, password string) types.LoginResult {
 	if err := database.DB.Where("username = ?", username).First(&user).Error; err != nil {
 		return types.LoginResult{
 			Success: false,
-			Token:   "",
 			Message: "用户数据加载失败",
 		}
 	}
-
-	// 构建自定义声明
-	claims := types.CustomClaims{
-		UserID:   user.ID,
-		Username: user.Username,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(TokenExpiry)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			Issuer:    "imperishable-gate",
-			Subject:   "auth",
-		},
+	// 生成 Access Token
+	accessToken, err := GenerateAccessToken(user.ID, user.Username)
+	if err != nil {
+		return types.LoginResult{Success: false, Message: "访问令牌生成失败"}
 	}
 
-	// 创建 token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString(JWTSecret)
+	// 生成并存储 Refresh Token
+	refreshToken, err := GenerateRefreshToken(user.ID)
 	if err != nil {
-		return types.LoginResult{
-			Success: false,
-			Token:   "",
-			Message: "令牌生成失败",
-		}
+		return types.LoginResult{Success: false, Message: "刷新令牌生成失败"}
 	}
 
 	return types.LoginResult{
-		Success: true,
-		Token:   signedToken,
-		Message: "登录成功",
+		Success:      true,
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		Message:      "登录成功",
 	}
 }
