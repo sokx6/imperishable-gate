@@ -22,7 +22,7 @@ func DeleteTagsByLink(url string, userId uint, tags []string) error {
 	}
 
 	var tagsToDelete []model.Tag
-	if err := database.DB.Where("name IN ?", tags).Find(&tagsToDelete).Error; err != nil {
+	if err := database.DB.Where("name IN ? AND user_id = ?", tags, userId).Find(&tagsToDelete).Error; err != nil {
 		return ErrDatabase
 	}
 
