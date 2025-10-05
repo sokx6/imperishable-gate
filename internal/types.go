@@ -152,6 +152,11 @@ var InternalServerErrorResponse = Response{
 	Message: "Internal server error",
 }
 
+var UnknownErrorResponse = Response{
+	Code:    -1,
+	Message: "Unknown error",
+}
+
 type UserInfo struct {
 	UserID   uint
 	Username string
@@ -284,12 +289,21 @@ type CustomClaims struct {
 
 // LoginResult 登录结果结构体，用于返回详细信息
 type LoginResult struct {
-	Success bool   `json:"success"`
-	Token   string `json:"token,omitempty"`
-	Message string `json:"message"`
+	Success      bool   `json:"success"`
+	AccessToken  string `json:"access_token,omitempty"`
+	RefreshToken string `json:"refresh_token,omitempty"`
+	Message      string `json:"message"`
 }
 
 type LoginRequest struct {
 	Username string `json:"username"` // 用户名
 	Password string `json:"password"` // 密码
+}
+
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token" validate:"required"`
+}
+
+type LogoutRequest struct {
+	RefreshToken string `json:"refresh_token" validate:"required"`
 }
