@@ -9,6 +9,7 @@ import (
 	types "imperishable-gate/internal"
 
 	"imperishable-gate/internal/server/service"
+	"imperishable-gate/internal/server/utils"
 )
 
 func AddRemarkHandler(c echo.Context) error {
@@ -22,8 +23,12 @@ func AddRemarkHandler(c echo.Context) error {
 	if _, err := url.ParseRequestURI(req.Link); err != nil {
 		return c.JSON(http.StatusBadRequest, types.InvalidUrlResponse)
 	}
+	userId, ok := utils.GetUserID(c)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+	}
 
-	if err := service.AddRemarkByLink(req.Link, req.Remark); err != nil {
+	if err := service.AddRemarkByLink(req.Link, userId, req.Remark); err != nil {
 		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
 	}
 

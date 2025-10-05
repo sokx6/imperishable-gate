@@ -8,12 +8,13 @@ import (
 	"gorm.io/gorm"
 )
 
-func AddRemarkByLink(url string, remark string) error {
+func AddRemarkByLink(url string, userId uint, remark string) error {
 	var link model.Link
-	result := database.DB.Where("url = ?", url).First(&link)
+	result := database.DB.Where("url = ? AND user_id = ?", url, userId).First(&link)
 	// 如果找不到对应的 Link，创建新的 Link 和关联的 Names
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		link = model.Link{
+			UserID: userId,
 			Url:    url,
 			Remark: remark,
 		}
