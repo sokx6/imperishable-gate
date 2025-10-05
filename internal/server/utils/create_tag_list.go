@@ -5,13 +5,13 @@ import (
 	"imperishable-gate/internal/server/database"
 )
 
-func CreateTagList(linktags []string) []model.Tag {
+func CreateTagList(linktags []string, userId uint) []model.Tag {
 	linktags = removeEmptyAndDuplicate(linktags)
 	if len(linktags) == 0 {
 		return nil
 	}
 	var tags []model.Tag
-	database.DB.Where("name IN ?", linktags).Find(&tags)
+	database.DB.Where("name IN ? AND user_id = ?", linktags, userId).Find(&tags)
 	existing := make(map[string]bool)
 	for _, tag := range tags {
 		existing[tag.Name] = true
@@ -21,7 +21,7 @@ func CreateTagList(linktags []string) []model.Tag {
 	var result []model.Tag
 	for _, name := range linktags {
 		if !existing[name] {
-			result = append(result, model.Tag{Name: name})
+			result = append(result, model.Tag{Name: name, UserID: userId})
 		}
 	}
 	result = append(result, tags...)
