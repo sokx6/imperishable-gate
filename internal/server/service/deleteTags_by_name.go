@@ -6,8 +6,8 @@ import (
 	"imperishable-gate/internal/server/utils"
 )
 
-func DeleteTagsByName(name string, tags []string) error {
-	id := utils.NameToLinkId(name)
+func DeleteTagsByName(name string, userId uint, tags []string) error {
+	id := utils.NameToLinkId(name, userId)
 	if id == 0 {
 		return ErrNameNotFound
 	}
