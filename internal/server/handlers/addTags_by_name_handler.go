@@ -7,6 +7,7 @@ import (
 
 	types "imperishable-gate/internal"
 	"imperishable-gate/internal/server/service"
+	"imperishable-gate/internal/server/utils"
 )
 
 func AddTagsByNameHandler(c echo.Context) error {
@@ -15,7 +16,12 @@ func AddTagsByNameHandler(c echo.Context) error {
 	if err := c.Bind(&req); err != nil || req.Action != "addtagsbyname" || req.Tags == nil || len(req.Tags) == 0 {
 		return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
 	}
-	if err := service.AddTagsByName(name, req.Tags); err != nil {
+
+	userId, ok := utils.GetUserID(c)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+	}
+	if err := service.AddTagsByName(name, userId, req.Tags); err != nil {
 		if err == service.ErrNameNotFound {
 			return c.JSON(http.StatusNotFound, types.NameNotFoundResponse)
 		}
