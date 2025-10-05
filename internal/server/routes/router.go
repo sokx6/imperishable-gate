@@ -1,31 +1,40 @@
+// routes/routes.go
 package routes
 
 import (
 	"imperishable-gate/internal/server/handlers"
+	"imperishable-gate/internal/server/middlewares"
 
 	"github.com/labstack/echo/v4"
 )
 
-// RegisterRoutes 注册所有 API 路由
 func RegisterRoutes(e *echo.Echo) {
-	// v1 API 分组
 	v1 := e.Group("/api/v1")
 
-	v1.GET("/names/:name", handlers.ListByNameHandler)
-	v1.GET("/links", handlers.ListHandler)
-	v1.GET("/tags/:tag", handlers.ListByTagHandler)
-
+	// 公共路由：不需要认证
+	v1.POST("/register", handlers.RegisterUserHandler)
+	v1.POST("/login", handlers.LoginHandler)
 	v1.POST("/ping", handlers.PingHandler)
-	v1.POST("/links", handlers.AddHandler)
-	v1.POST("/names", handlers.AddNamesHandler)
-	v1.POST("/remarks", handlers.AddRemarkHandler)
-	v1.POST("/tags", handlers.AddTagsByLinkHandler)
-	v1.POST("/name/:name/remark", handlers.AddRemarkByNameHandler)
-	v1.POST("/name/:name/tags", handlers.AddTagsByNameHandler)
-	v1.PATCH("/links/names/remove", handlers.DeleteNamesByLinkHandler)
-	v1.PATCH("/links/by-url/tags/remove", handlers.DeleteTagsByLinkHandler)
-	v1.PATCH("/links/by-name/tags/remove", handlers.DeleteTagsByNameHandler)
 
-	v1.DELETE("/links/name/:name", handlers.DeleteByNameHandler)
-	v1.DELETE("/links", handlers.DeleteHandler)
+	// 创建需要认证的子分组（只加一次中间件）
+	protected := v1.Group("", middlewares.JwtAuthMiddleware)
+
+	// 下面这些路由都自动受保护，无需手动加中间件
+	protected.GET("/names/:name", handlers.ListByNameHandler)
+	protected.GET("/links", handlers.ListHandler)
+	protected.GET("/tags/:tag", handlers.ListByTagHandler)
+
+	protected.POST("/links", handlers.AddHandler)
+	protected.POST("/names", handlers.AddNamesHandler)
+	protected.POST("/remarks", handlers.AddRemarkHandler)
+	protected.POST("/tags", handlers.AddTagsByLinkHandler)
+	protected.POST("/name/:name/remark", handlers.AddRemarkByNameHandler)
+	protected.POST("/name/:name/tags", handlers.AddTagsByNameHandler)
+
+	protected.PATCH("/links/names/remove", handlers.DeleteNamesByLinkHandler)
+	protected.PATCH("/links/by-url/tags/remove", handlers.DeleteTagsByLinkHandler)
+	protected.PATCH("/links/by-name/tags/remove", handlers.DeleteTagsByNameHandler)
+
+	protected.DELETE("/links/name/:name", handlers.DeleteByNameHandler)
+	protected.DELETE("/links", handlers.DeleteHandler)
 }
