@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"imperishable-gate/internal/server"
 
+	"imperishable-gate/internal/server/service"
+
 	"github.com/spf13/cobra"
 )
 
@@ -22,6 +24,7 @@ var StartCmd = &cobra.Command{
 
 		// 创建新的服务器实例
 		srv := server.NewServer(address, Dsn)
+		go service.ScheduledMetabaseFetch()
 
 		// 启动服务器
 		if err := srv.Start(); err != nil {
