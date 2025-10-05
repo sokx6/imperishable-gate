@@ -6,9 +6,9 @@ import (
 	"imperishable-gate/internal/server/database"
 )
 
-func NameToLinkId(name string) uint {
+func NameToLinkId(name string, userId uint) uint {
 	var Name model.Name
-	if err := database.DB.Where("name = ?", name).Take(&Name).Error; err != nil {
+	if err := database.DB.Where("name = ? AND user_id = ?", name, userId).Take(&Name).Error; err != nil {
 		return 0
 	}
 	return Name.LinkID
