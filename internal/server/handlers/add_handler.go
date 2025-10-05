@@ -10,16 +10,18 @@ import (
 	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
+	"imperishable-gate/internal/server/utils"
 )
 
 var ErrLinkAlreadyExists = errors.New("link already exists")
 
 func AddHandler(c echo.Context) error {
 	var req types.AddRequest
+	// 检测请求是否合法
 	if err := c.Bind(&req); err != nil || req.Action != "add" || req.Link == "" {
 		return c.JSON(400, types.InvalidUrlResponse)
 	}
-
+	// 检测 URL 格式
 	if _, err := url.ParseRequestURI(req.Link); err != nil {
 		return c.JSON(400, types.InvalidUrlFormatResponse)
 	}
@@ -29,8 +31,12 @@ func AddHandler(c echo.Context) error {
 	if err := database.DB.Transaction(func(tx *gorm.DB) error {
 		result := tx.Where("url = ?", req.Link).First(&link)
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			title, desc, keywords := utils.CrawlMetadata(req.Link)
 			link = model.Link{
-				Url: req.Link,
+				Url:         req.Link,
+				Title:       title,
+				Description: desc,
+				Keywords:    keywords,
 			}
 			if err := tx.Create(&link).Error; err != nil {
 				return err
