@@ -8,9 +8,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func DeleteTagsByLink(url string, tags []string) error {
+func DeleteTagsByLink(url string, userId uint, tags []string) error {
 	var link model.Link
-	if err := database.DB.Preload("Tags").Take(&link, "url = ?", url).Error; err != nil {
+	if err := database.DB.Preload("Tags").Take(&link, "url = ? AND user_id = ?", url, userId).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return ErrLinkNotFound
 		}

@@ -7,6 +7,7 @@ import (
 
 	types "imperishable-gate/internal"
 	"imperishable-gate/internal/server/service"
+	"imperishable-gate/internal/server/utils"
 )
 
 func DeleteTagsByLinkHandler(c echo.Context) error {
@@ -16,7 +17,12 @@ func DeleteTagsByLinkHandler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
 	}
 
-	if err := service.DeleteTagsByLink(url, req.Tags); err != nil {
+	userId, ok := utils.GetUserID(c)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+	}
+
+	if err := service.DeleteTagsByLink(url, userId, req.Tags); err != nil {
 		if err == service.ErrLinkNotFound {
 			return c.JSON(http.StatusFound, types.LinkNotFoundResponse)
 		}
