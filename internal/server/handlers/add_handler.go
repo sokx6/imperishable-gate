@@ -2,14 +2,13 @@ package handlers
 
 import (
 	"errors"
+	"net/http"
 	"net/url"
 
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 
 	types "imperishable-gate/internal"
-	"imperishable-gate/internal/model"
-	"imperishable-gate/internal/server/database"
+	"imperishable-gate/internal/server/service"
 	"imperishable-gate/internal/server/utils"
 )
 
@@ -19,40 +18,26 @@ func AddHandler(c echo.Context) error {
 	var req types.AddRequest
 	// 检测请求是否合法
 	if err := c.Bind(&req); err != nil || req.Action != "add" || req.Link == "" {
-		return c.JSON(400, types.InvalidUrlResponse)
+		return c.JSON(http.StatusBadRequest, types.InvalidUrlResponse)
 	}
 	// 检测 URL 格式
 	if _, err := url.ParseRequestURI(req.Link); err != nil {
-		return c.JSON(400, types.InvalidUrlFormatResponse)
+		return c.JSON(http.StatusBadRequest, types.InvalidUrlFormatResponse)
 	}
 
-	var link model.Link
-
-	if err := database.DB.Transaction(func(tx *gorm.DB) error {
-		result := tx.Where("url = ?", req.Link).First(&link)
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			title, desc, keywords := utils.CrawlMetadata(req.Link)
-			link = model.Link{
-				Url:         req.Link,
-				Title:       title,
-				Description: desc,
-				Keywords:    keywords,
-			}
-			if err := tx.Create(&link).Error; err != nil {
-				return err
-			}
-			return nil
-		} else if result.Error != nil {
-			return result.Error
-		}
-
-		return ErrLinkAlreadyExists
-
-	}); errors.Is(err, ErrLinkAlreadyExists) {
-		return c.JSON(400, types.LinkExistsResponse)
-	} else if err != nil {
-		return c.JSON(500, types.DatabaseErrorResponse)
+	userId, ok := utils.GetUserID(c)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+	}
+	switch err := service.AddLink(req.Link, userId); {
+	case err == service.ErrDatabase:
+		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
+	case err == ErrLinkAlreadyExists:
+		return c.JSON(http.StatusConflict, types.LinkExistsResponse)
+	case err != nil:
+		return c.JSON(http.StatusInternalServerError, types.UnknownErrorResponse)
+	default:
+		return c.JSON(http.StatusOK, types.AddLinkSuccessResponse)
 	}
 
-	return c.JSON(200, types.AddLinkSuccessResponse)
 }
