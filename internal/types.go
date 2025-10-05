@@ -1,181 +1,160 @@
 package types
 
-import "imperishable-gate/internal/model"
+import (
+	"imperishable-gate/internal/model"
 
-var InvalidUrlResponse = struct {
-	Code    int
-	Message string
-}{
+	"github.com/golang-jwt/jwt/v5"
+)
+
+type Response struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data,omitempty"`
+}
+
+var InvalidUrlResponse = Response{
 	Code:    -1,
 	Message: "Invalid URL format",
 }
 
-var InvalidRequestResponse = struct {
-	Code    int
-	Message string
-}{
+var InvalidRequestResponse = Response{
 	Code:    -1,
 	Message: "Invalid request",
 }
 
-var DatabaseErrorResponse = struct {
-	Code    int
-	Message string
-}{
+var DatabaseErrorResponse = Response{
 	Code:    -1,
 	Message: "Database error",
 }
 
-var RemarkExistsResponse = struct {
-	Code    int
-	Message string
-}{
+var RemarkExistsResponse = Response{
 	Code:    -1,
 	Message: "Remark already exists",
 }
 
-var NameNotFoundResponse = struct {
-	Code    int
-	Message string
-}{
+var NameNotFoundResponse = Response{
 	Code:    -1,
 	Message: "Name not found",
 }
 
-var NameExistsResponse = struct {
-	Code    int
-	Message string
-}{
+var NameExistsResponse = Response{
 	Code:    -1,
 	Message: "Name already exists",
 }
 
-var LinkNotFoundResponse = struct {
-	Code    int
-	Message string
-}{
+var LinkNotFoundResponse = Response{
 	Code:    -1,
 	Message: "Link not found",
 }
 
-var OKResponse = struct {
-	Code    int
-	Message string
-}{
+var OKResponse = Response{
 	Code:    0,
 	Message: "Success",
 }
 
-var InvalidUrlFormatResponse = struct {
-	Code    int
-	Message string
-}{
+var InvalidUrlFormatResponse = Response{
 	Code:    -1,
 	Message: "Invalid URL format",
 }
 
-var LinkExistsResponse = struct {
-	Code    int
-	Message string
-}{
+var LinkExistsResponse = Response{
 	Code:    -1,
 	Message: "Link already exists",
 }
 
-var AddLinkSuccessResponse = struct {
-	Code    int
-	Message string
-}{
+var AddLinkSuccessResponse = Response{
 	Code:    0,
 	Message: "Added successfully",
 }
 
-var AddNamesSuccessResponse = struct {
-	Code    int
-	Message string
-}{
+var AddNamesSuccessResponse = Response{
 	Code:    0,
 	Message: "Names added successfully",
 }
 
-var AddRemarkByLinkSuccessResponse = struct {
-	Code    int
-	Message string
-}{
+var AddRemarkByLinkSuccessResponse = Response{
 	Code:    0,
 	Message: "Remark added successfully",
 }
 
-var AddRemarkByNameSuccessResponse = struct {
-	Code    int
-	Message string
-}{
+var AddRemarkByNameSuccessResponse = Response{
 	Code:    0,
 	Message: "Remark added successfully",
 }
 
-var AddTagsByLinkSuccessResponse = struct {
-	Code    int
-	Message string
-}{
+var AddTagsByLinkSuccessResponse = Response{
 	Code:    0,
 	Message: "Tags added successfully",
 }
 
-var DeleteSuccessResponse = struct {
-	Code    int
-	Message string
-}{
+var DeleteSuccessResponse = Response{
 	Code:    0,
 	Message: "Links deleted successfully",
 }
 
-var PongResponse = struct {
-	Code    int
-	Message string
-}{
+var PongResponse = Response{
 	Code:    0,
 	Message: "pong",
 }
 
-var AddTagsByNameSuccessResponse = struct {
-	Code    int
-	Message string
-}{
+var AddTagsByNameSuccessResponse = Response{
 	Code:    0,
 	Message: "Tags added successfully",
 }
 
-var TagNotFoundResponse = struct {
-	Code    int
-	Message string
-}{
+var TagNotFoundResponse = Response{
 	Code:    -1,
 	Message: "Tag not found",
 }
 
-var DeleteTagsByNameSuccessResponse = struct {
-	Code    int
-	Message string
-}{
+var DeleteTagsByNameSuccessResponse = Response{
 	Code:    0,
 	Message: "Tags deleted successfully",
 }
 
-var DeleteNamesByLinkSuccessResponse = struct {
-	Code    int
-	Message string
-}{
+var DeleteNamesByLinkSuccessResponse = Response{
 	Code:    0,
 	Message: "Names deleted successfully",
 }
 
-var DeleteTagsByLinkSuccessResponse = struct {
-	Code    int
-	Message string
-}{
+var DeleteTagsByLinkSuccessResponse = Response{
 	Code:    0,
 	Message: "Tags deleted successfully",
+}
+
+var UserNameAlreadyExistsResponse = Response{
+	Code:    -1,
+	Message: "Username already exists",
+}
+
+var EmailAlreadyExistsResponse = Response{
+	Code:    -1,
+	Message: "Email already registered",
+}
+
+var UserNotFoundResponse = Response{
+	Code:    -1,
+	Message: "User not found",
+}
+
+var AuthenticationFailedResponse = Response{
+	Code:    -1,
+	Message: "Authentication failed",
+}
+
+var RegisterSuccessResponse = Response{
+	Code:    0,
+	Message: "Registered successfully",
+}
+
+var InternalServerErrorResponse = Response{
+	Code:    -1,
+	Message: "Internal server error",
+}
+
+type UserInfo struct {
+	UserID   uint
+	Username string
 }
 
 type PingRequest struct {
@@ -247,20 +226,26 @@ type ListByNameResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Data    struct {
-		ID     uint
-		Url    string
-		Tags   []string
-		Names  []string
-		Remark string
+		ID          uint
+		Url         string
+		Tags        []string
+		Names       []string
+		Remark      string
+		Title       string
+		Description string
+		Keywords    string
 	} `json:"data"`
 }
 
 type Link struct {
-	ID     uint     `json:"id"`
-	Url    string   `json:"url"`
-	Tags   []string `json:"tags"`
-	Names  []string `json:"names"`
-	Remark string   `json:"remark"`
+	ID          uint     `json:"id"`
+	Url         string   `json:"url"`
+	Tags        []string `json:"tags"`
+	Names       []string `json:"names"`
+	Remark      string   `json:"remark"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Keywords    string   `json:"keywords"`
 }
 
 type AddRemarkByNameRequest struct {
@@ -283,4 +268,28 @@ type DeleteTagsByLinkRequest struct {
 	Action string   `json:"action"` // 应为 "deletetagsbylink"
 	Url    string   `json:"url"`    // 需要删除标签的链接
 	Tags   []string `json:"tags"`   // 需要删除的标签列表
+}
+
+type UserRegisterRequest struct {
+	Username string `json:"username"` // 用户名
+	Email    string `json:"email"`    // 邮箱
+	Password string `json:"password"` // 密码
+}
+
+type CustomClaims struct {
+	UserID   uint   `json:"user_id"`
+	Username string `json:"username"`
+	jwt.RegisteredClaims
+}
+
+// LoginResult 登录结果结构体，用于返回详细信息
+type LoginResult struct {
+	Success bool   `json:"success"`
+	Token   string `json:"token,omitempty"`
+	Message string `json:"message"`
+}
+
+type LoginRequest struct {
+	Username string `json:"username"` // 用户名
+	Password string `json:"password"` // 密码
 }
