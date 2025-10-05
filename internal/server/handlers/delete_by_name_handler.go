@@ -24,9 +24,12 @@ func DeleteByNameHandler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
 	}
 
-	// 可选：验证每个 link 是否为合法 URL
+	userId, ok := utils.GetUserID(c)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+	}
 
-	if id := utils.NameToLinkId(name); id == 0 {
+	if id := utils.NameToLinkId(name, userId); id == 0 {
 		return c.JSON(http.StatusNotFound, types.NameNotFoundResponse)
 	} else if err := database.DB.Delete(&model.Link{}, id).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
