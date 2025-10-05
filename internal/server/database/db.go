@@ -37,7 +37,8 @@ func InitDB(dsn string) error {
 		&model.Link{},
 		&model.Name{},
 		&model.LinkTag{},
-		&model.User{}); err != nil {
+		&model.User{},
+		&model.RefreshToken{}); err != nil {
 		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
