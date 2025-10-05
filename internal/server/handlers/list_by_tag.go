@@ -15,7 +15,11 @@ import (
 func ListByTagHandler(c echo.Context) error {
 	tagName := c.Param("tag")
 	var tag model.Tag
-	result := database.DB.Preload("Links.Tags").Preload("Links.Names").First(&tag, "name = ?", tagName)
+	userId, ok := utils.GetUserID(c)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+	}
+	result := database.DB.Preload("Links.Tags").Preload("Links.Names").First(&tag, "name = ? AND user_id = ?", tagName, userId)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, types.TagNotFoundResponse)
