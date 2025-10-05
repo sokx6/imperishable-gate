@@ -32,9 +32,5 @@ func LoginHandler(c echo.Context) error {
 
 	}
 
-	return c.JSON(http.StatusOK, types.Response{
-		Code:    0,
-		Message: "Login successful",
-		Data:    auth_result.Token,
-	})
+	return c.JSON(http.StatusOK, auth_result)
 }
