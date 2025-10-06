@@ -7,7 +7,7 @@ import (
 )
 
 func DeleteTagsByName(name string, userId uint, tags []string) error {
-	id := utils.NameToLinkId(name, userId)
+	id := utils.GetLinkIDByName(name, userId)
 	if id == 0 {
 		return ErrNameNotFound
 	}
