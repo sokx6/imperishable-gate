@@ -10,4 +10,6 @@ type Link struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Keywords    string `json:"keywords"`
+	Watching    bool   `gorm:"default:false" json:"watching"`
+	StatusCode  int    `gorm:"default:200" json:"status_code"`
 }
