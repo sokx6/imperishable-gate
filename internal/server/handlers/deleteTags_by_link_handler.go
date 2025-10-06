@@ -13,8 +13,7 @@ import (
 
 func DeleteTagsByLinkHandler(c echo.Context) error {
 	var req request.DeleteRequest
-	var url = c.QueryParam("url")
-	if err := c.Bind(&req); err != nil || url == "" || req.Tags == nil || len(req.Tags) == 0 {
+	if err := c.Bind(&req); err != nil || req.Url == "" || req.Tags == nil || len(req.Tags) == 0 {
 		return response.InvalidRequestResponse
 	}
 
@@ -23,7 +22,7 @@ func DeleteTagsByLinkHandler(c echo.Context) error {
 		return response.AuthenticationFailedResponse
 	}
 
-	if err := service.DeleteTagsByLink(url, userId, req.Tags); err != nil {
+	if err := service.DeleteTagsByLink(req.Url, userId, req.Tags); err != nil {
 		if err == service.ErrLinkNotFound {
 			return response.LinkNotFoundResponse
 		}
