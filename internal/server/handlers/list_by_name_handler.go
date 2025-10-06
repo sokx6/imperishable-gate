@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"fmt"
-	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
 	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/types/data"
+	"imperishable-gate/internal/types/response"
 	"net/http"
 
 	"errors"
@@ -16,11 +16,10 @@ import (
 
 func ListByNameHandler(c echo.Context) error {
 	var Name model.Name
-	fmt.Println("1")
 	// 查询所有记录
 	userId, ok := utils.GetUserID(c)
 	if !ok {
-		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+		return response.AuthenticationFailedResponse
 	}
 	if err :=
 		database.DB.
@@ -30,33 +29,25 @@ func ListByNameHandler(c echo.Context) error {
 			Where("name = ? AND user_id = ?", c.Param("name"), userId).
 			First(&Name).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return c.JSON(http.StatusNotFound, types.NameNotFoundResponse)
+			return response.NameNotFoundResponse
 		}
-		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
+		return response.DatabaseErrorResponse
 	}
 	Link := Name.Link
 
-	return c.JSON(http.StatusOK, types.ListByNameResponse{
-		Code:    0,
-		Message: "Success",
-		Data: struct {
-			ID          uint
-			Url         string
-			Tags        []string
-			Names       []string
-			Remark      string
-			Title       string
-			Description string
-			Keywords    string
-		}{
-			ID:          Link.ID,
-			Url:         Link.Url,
-			Tags:        utils.ExtractTagNames(Link.Tags),
-			Names:       utils.ExtractNames(Link.Names),
-			Remark:      Link.Remark,
-			Title:       Link.Title,
-			Description: Link.Description,
-			Keywords:    Link.Keywords,
-		},
+	responseLink := data.Link{
+		ID:          Link.ID,
+		Url:         Link.Url,
+		Tags:        utils.ExtractTagNames(Link.Tags),
+		Names:       utils.ExtractNames(Link.Names),
+		Remark:      Link.Remark,
+		Title:       Link.Title,
+		Description: Link.Description,
+		Keywords:    Link.Keywords,
+		StatusCode:  Link.StatusCode,
+	}
+	return c.JSON(http.StatusOK, response.ListByNameResponse{
+		Message: "Link retrieved successfully",
+		Data:    responseLink,
 	})
 }

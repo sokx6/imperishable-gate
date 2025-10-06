@@ -8,10 +8,10 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
 	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/types/response"
 )
 
 // DeleteHandler 处理通过查询参数删除链接的请求
@@ -21,20 +21,20 @@ func DeleteByNameHandler(c echo.Context) error {
 	name := c.Param("name") // 获取同名多个 query 值
 	if name == "" {
 		fmt.Println("Name is empty")
-		return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
+		return response.InvalidRequestResponse
 	}
 
 	userId, ok := utils.GetUserID(c)
 	if !ok {
-		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+		return response.AuthenticationFailedResponse
 	}
 
 	if id := utils.NameToLinkId(name, userId); id == 0 {
-		return c.JSON(http.StatusNotFound, types.NameNotFoundResponse)
+		return response.NameNotFoundResponse
 	} else if err := database.DB.Delete(&model.Link{}, id).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
+		return response.DatabaseErrorResponse
 	}
 
-	return c.JSON(http.StatusOK, types.OKResponse)
+	return c.JSON(http.StatusOK, response.DeleteSuccessResponse)
 
 }

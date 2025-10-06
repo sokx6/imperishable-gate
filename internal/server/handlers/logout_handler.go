@@ -3,22 +3,23 @@ package handlers
 import (
 	"net/http"
 
-	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
+	"imperishable-gate/internal/types/request"
+	"imperishable-gate/internal/types/response"
 
 	"github.com/labstack/echo/v4"
 )
 
 func LogoutHandler(c echo.Context) error {
-	var req types.LogoutRequest
+	var req request.LogoutRequest
 	if err := c.Bind(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "请提供 refresh_token")
+		return response.InvalidRequestResponse
 	}
 
 	var tokenRecord model.RefreshToken
 	if err := database.DB.Where("token = ?", req.RefreshToken).First(&tokenRecord).Error; err != nil {
-		return c.NoContent(http.StatusOK) // 无视错误，幂等退出
+		return response.InvalidRequestResponse
 	}
 
 	// 标记为已撤销

@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	types "imperishable-gate/internal"
-
 	"imperishable-gate/internal/server/service"
+	"imperishable-gate/internal/types/request"
+	"imperishable-gate/internal/types/response"
 
 	"net/http"
 
@@ -11,22 +11,22 @@ import (
 )
 
 func RegisterUserHandler(c echo.Context) error {
-	var req types.UserRegisterRequest
+	var req request.UserRegisterRequest
 	if err := c.Bind(&req); err != nil || req.Username == "" || req.Email == "" || req.Password == "" {
-		return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
+		return response.InvalidRequestResponse
 	}
 
 	// 调用服务层函数注册用户
 	err := service.RegisterUser(req.Username, req.Email, req.Password)
 	if err != nil {
 		if err == service.ErrNameAlreadyExists {
-			return c.JSON(http.StatusConflict, types.UserNameAlreadyExistsResponse)
+			return response.UserNameAlreadyExistsResponse
 		}
 		if err == service.ErrEmailAlreadyExists {
-			return c.JSON(http.StatusConflict, types.EmailAlreadyExistsResponse)
+			return response.EmailAlreadyExistsResponse
 		}
-		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
+		return response.DatabaseErrorResponse
 	}
 
-	return c.JSON(http.StatusOK, types.RegisterSuccessResponse)
+	return c.JSON(http.StatusOK, response.RegisterSuccessResponse)
 }

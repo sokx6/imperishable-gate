@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
 	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/types/data"
+	"imperishable-gate/internal/types/response"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -14,15 +15,15 @@ func ListHandler(c echo.Context) error {
 	var links []model.Link
 	userId, ok := utils.GetUserID(c)
 	if !ok {
-		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+		return response.AuthenticationFailedResponse
 	}
 	if err := database.DB.Preload("Names").Preload("Tags").Where("user_id = ?", userId).Find(&links).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
+		return response.DatabaseErrorResponse
 	}
-	var linkList []types.Link
+	var linkList []data.Link
 
 	for _, link := range links {
-		linkList = append(linkList, types.Link{
+		linkList = append(linkList, data.Link{
 			ID:          link.ID,
 			Url:         link.Url,
 			Tags:        utils.ExtractTagNames(link.Tags),
@@ -31,13 +32,13 @@ func ListHandler(c echo.Context) error {
 			Title:       link.Title,
 			Description: link.Description,
 			Keywords:    link.Keywords,
+			StatusCode:  link.StatusCode,
 		})
 
 	}
 	// 返回成功响应
-	return c.JSON(http.StatusOK, types.ListResponse{
-		Code:    0,
-		Message: "Success",
+	return c.JSON(http.StatusOK, response.ListResponse{
+		Message: "Links retrieved successfully",
 		Data:    linkList,
 	})
 }

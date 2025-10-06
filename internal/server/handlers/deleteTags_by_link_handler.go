@@ -5,31 +5,32 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	types "imperishable-gate/internal"
 	"imperishable-gate/internal/server/service"
 	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/types/request"
+	"imperishable-gate/internal/types/response"
 )
 
 func DeleteTagsByLinkHandler(c echo.Context) error {
-	var req types.DeleteTagsByLinkRequest
+	var req request.DeleteRequest
 	var url = c.QueryParam("url")
-	if err := c.Bind(&req); err != nil || req.Action != "deletetagsbylink" || url == "" || req.Tags == nil || len(req.Tags) == 0 {
-		return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
+	if err := c.Bind(&req); err != nil || url == "" || req.Tags == nil || len(req.Tags) == 0 {
+		return response.InvalidRequestResponse
 	}
 
 	userId, ok := utils.GetUserID(c)
 	if !ok {
-		return c.JSON(http.StatusUnauthorized, types.AuthenticationFailedResponse)
+		return response.AuthenticationFailedResponse
 	}
 
 	if err := service.DeleteTagsByLink(url, userId, req.Tags); err != nil {
 		if err == service.ErrLinkNotFound {
-			return c.JSON(http.StatusFound, types.LinkNotFoundResponse)
+			return response.LinkNotFoundResponse
 		}
 		if err == service.ErrInvalidRequest {
-			return c.JSON(http.StatusBadRequest, types.InvalidRequestResponse)
+			return response.InvalidRequestResponse
 		}
-		return c.JSON(http.StatusInternalServerError, types.DatabaseErrorResponse)
+		return response.DatabaseErrorResponse
 	}
-	return c.JSON(http.StatusOK, types.DeleteTagsByLinkSuccessResponse)
+	return c.JSON(http.StatusOK, response.DeleteTagsByLinkSuccessResponse)
 }

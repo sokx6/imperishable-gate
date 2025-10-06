@@ -3,9 +3,9 @@ package service
 
 import (
 	"errors"
-	types "imperishable-gate/internal"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
+	"imperishable-gate/internal/types/response"
 	"time"
 )
 
@@ -20,64 +20,64 @@ const (
 var JWTSecret = []byte("locxlfjalkfjelifalngl")
 
 // GenerateJWTIfAuthenticated 处理登录并签发JWT
-func GenerateJWTIfAuthenticated(username, password string) types.LoginResult {
+func GenerateJWTIfAuthenticated(username, password string) response.LoginResponse {
 	// 第一步：调用 AuthenticateUser 验证用户
 	ok, err := AuthenticateUser(username, password)
 	if err != nil {
 		switch {
 		case errors.Is(err, ErrUsernameNotFound):
-			return types.LoginResult{
+			return response.LoginResponse{
 				Success: false,
 
-				Message: "用户未找到",
+				Message: "User not found",
 			}
 		case errors.Is(err, ErrDatabase):
-			return types.LoginResult{
+			return response.LoginResponse{
 				Success: false,
 
-				Message: "数据库错误，请稍后重试",
+				Message: "Database error, please try again later",
 			}
 		default:
-			return types.LoginResult{
+			return response.LoginResponse{
 				Success: false,
 
-				Message: "认证服务内部错误",
+				Message: "Internal authentication service error",
 			}
 		}
 	}
 
 	if !ok {
-		return types.LoginResult{
+		return response.LoginResponse{
 			Success: false,
 
-			Message: "用户名或密码不正确",
+			Message: "Invalid username or password",
 		}
 	}
 	// 第二步：认证通过，开始签发 JWT
 	// 查询用户以获取 userID（AuthenticateUser 只返回 true/false）
 	var user model.User
 	if err := database.DB.Where("username = ?", username).First(&user).Error; err != nil {
-		return types.LoginResult{
+		return response.LoginResponse{
 			Success: false,
-			Message: "用户数据加载失败",
+			Message: "Failed to load user data",
 		}
 	}
 	// 生成 Access Token
 	accessToken, err := GenerateAccessToken(user.ID, user.Username)
 	if err != nil {
-		return types.LoginResult{Success: false, Message: "访问令牌生成失败"}
+		return response.LoginResponse{Success: false, Message: "Failed to generate access token"}
 	}
 
 	// 生成并存储 Refresh Token
 	refreshToken, err := GenerateRefreshToken(user.ID)
 	if err != nil {
-		return types.LoginResult{Success: false, Message: "刷新令牌生成失败"}
+		return response.LoginResponse{Success: false, Message: "Failed to generate refresh token"}
 	}
 
-	return types.LoginResult{
+	return response.LoginResponse{
 		Success:      true,
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		Message:      "登录成功",
+		Message:      "Login successful",
 	}
 }

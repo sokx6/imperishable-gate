@@ -1,14 +1,14 @@
 package service
 
 import (
-	types "imperishable-gate/internal"
+	"imperishable-gate/internal/types/data"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 func GenerateAccessToken(userID uint, username string) (string, error) {
-	claims := types.CustomClaims{
+	claims := data.CustomClaims{
 		UserID:   userID,
 		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
