@@ -13,12 +13,11 @@ import (
 	"imperishable-gate/internal/types/response"
 )
 
-// DeleteHandler 处理通过查询参数删除链接的请求
 func DeleteTagsByNameHandler(c echo.Context) error {
 
 	var req request.DeleteRequest
-	var url = c.QueryParam("url")
-	if err := c.Bind(&req); err != nil || url == "" || req.Tags == nil || len(req.Tags) == 0 {
+	var name = c.Param("name")
+	if err := c.Bind(&req); err != nil || name == "" || req.Tags == nil || len(req.Tags) == 0 {
 		return response.InvalidRequestResponse
 	}
 
@@ -27,7 +26,7 @@ func DeleteTagsByNameHandler(c echo.Context) error {
 		return response.AuthenticationFailedResponse
 	}
 
-	if err := service.DeleteTagsByLink(url, userId, req.Tags); err != nil {
+	if err := service.DeleteTagsByName(name, userId, req.Tags); err != nil {
 		if err == service.ErrLinkNotFound {
 			return response.LinkNotFoundResponse
 		}
