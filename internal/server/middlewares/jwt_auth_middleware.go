@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"imperishable-gate/internal/server/service"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -11,17 +12,17 @@ func JwtAuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 		authHeader := c.Request().Header.Get("Authorization")
 		if authHeader == "" {
-			return echo.NewHTTPError(401, "Missing Authorization header")
+			return echo.NewHTTPError(http.StatusUnauthorized, "Missing Authorization header")
 		}
 
 		if len(authHeader) < 7 || authHeader[:7] != "Bearer " {
-			return echo.NewHTTPError(401, "Invalid Authorization header format")
+			return echo.NewHTTPError(http.StatusUnauthorized, "Invalid Authorization header format")
 		}
 
 		tokenString := authHeader[7:]
 
 		if userInfo, err := service.ParseJWT(tokenString, string(service.JWTSecret)); err != nil {
-			return echo.NewHTTPError(401, "Invalid or expired token")
+			return echo.NewHTTPError(http.StatusUnauthorized, "Invalid or expired token")
 		} else {
 			c.Logger().Infof("Authenticated user: %s (ID: %d)", userInfo.Username, userInfo.UserID)
 			c.Set("userInfo", userInfo)
