@@ -1,8 +1,6 @@
 package response
 
 // 常见成功响应
-var PingResponse = Response{Message: "pong"}
-var OKResponse = Response{Message: "Success"}
 var PongResponse = Response{Message: "pong"}
 var RegisterSuccessResponse = Response{Message: "Registered successfully"}
 var AddLinkSuccessResponse = Response{Message: "Added successfully"}
@@ -15,3 +13,5 @@ var DeleteSuccessResponse = Response{Message: "Links deleted successfully"}
 var DeleteTagsByNameSuccessResponse = Response{Message: "Tags deleted successfully"}
 var DeleteNamesByLinkSuccessResponse = Response{Message: "Names deleted successfully"}
 var DeleteTagsByLinkSuccessResponse = Response{Message: "Tags deleted successfully"}
+var WatchSuccessResponse = Response{Message: "Link is now being watched"}
+var UnwatchSuccessResponse = Response{Message: "Link is no longer being watched"}
