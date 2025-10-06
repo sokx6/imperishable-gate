@@ -33,9 +33,11 @@ func RegisterRoutes(e *echo.Echo) {
 	protected.POST("/name/:name/remark", handlers.AddRemarkByNameHandler)
 	protected.POST("/name/:name/tags", handlers.AddTagsByNameHandler)
 
+	protected.PATCH("/links/watch", handlers.WatchByLinkHandler)
+	protected.PATCH("/:name/watch", handlers.WatchByNameHandler)
 	protected.PATCH("/links/names/remove", handlers.DeleteNamesByLinkHandler)
 	protected.PATCH("/links/by-url/tags/remove", handlers.DeleteTagsByLinkHandler)
-	protected.PATCH("/links/by-name/tags/remove", handlers.DeleteTagsByNameHandler)
+	protected.PATCH("/:name/tags/remove", handlers.DeleteTagsByNameHandler)
 
 	protected.DELETE("/links/name/:name", handlers.DeleteByNameHandler)
 	protected.DELETE("/links", handlers.DeleteHandler)
