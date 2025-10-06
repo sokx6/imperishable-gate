@@ -9,7 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	types "imperishable-gate/internal"
+	"imperishable-gate/internal/types/request"
+	"imperishable-gate/internal/types/response"
 )
 
 var addCmd = &cobra.Command{
@@ -19,9 +20,8 @@ var addCmd = &cobra.Command{
 		link, _ := cmd.Flags().GetString("link")
 
 		// 构造请求体
-		reqBody := types.AddRequest{
-			Action: "add",
-			Link:   link,
+		reqBody := request.AddRequest{
+			Link: link,
 		}
 
 		// 将请求体编码为 JSON
@@ -31,12 +31,16 @@ var addCmd = &cobra.Command{
 		}
 
 		// 构造请求 URL
-		url := fmt.Sprintf("http://%s/api/v1/links/add", Config.Addr)
+		url := fmt.Sprintf("http://%s/api/v1/links", addr)
 		fmt.Printf("-- Requesting POST method to %s with payload\n", url)
 		fmt.Printf("%s\n", body)
 
+		request, _ := http.NewRequest("POST", url, strings.NewReader(string(body)))
+		request.Header.Set("Authorization", "Bearer "+accessToken)
+		request.Header.Set("Content-Type", "application/json")
+
 		// 发起 POST 请求
-		resp, err := http.Post(url, "application/json", strings.NewReader(string(body)))
+		resp, err := http.DefaultClient.Do(request)
 		if err != nil {
 			return fmt.Errorf("request failed: %w", err)
 		}
@@ -52,7 +56,7 @@ var addCmd = &cobra.Command{
 
 		// 讲respBody响应体解析为JSON
 		// 并存储到result中
-		var result types.PingResponse
+		var result response.Response
 		if err := json.Unmarshal(respBody, &result); err != nil {
 			return fmt.Errorf("invalid JSON response: %w", err)
 		}

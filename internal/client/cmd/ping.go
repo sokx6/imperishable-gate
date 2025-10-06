@@ -9,7 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	types "imperishable-gate/internal"
+	"imperishable-gate/internal/types/request"
+	"imperishable-gate/internal/types/response"
 )
 
 var pingCmd = &cobra.Command{
@@ -19,7 +20,7 @@ var pingCmd = &cobra.Command{
 		msg, _ := cmd.Flags().GetString("message")
 
 		// 构造请求体
-		reqBody := types.PingRequest{
+		reqBody := request.PingRequest{
 			Action:  "ping",
 			Message: msg,
 		}
@@ -31,7 +32,7 @@ var pingCmd = &cobra.Command{
 		}
 
 		// 构造请求 URL
-		url := fmt.Sprintf("http://%s/api/v1/ping", Config.Addr)
+		url := fmt.Sprintf("http://%s/api/v1/ping", addr)
 		fmt.Printf("-- Requesting POST method to %s with payload\n", url)
 		fmt.Printf("%s\n", body)
 
@@ -52,7 +53,7 @@ var pingCmd = &cobra.Command{
 
 		// 讲respBody响应体解析为JSON
 		// 并存储到result中
-		var result types.PingResponse
+		var result response.Response
 		if err := json.Unmarshal(respBody, &result); err != nil {
 			return fmt.Errorf("invalid JSON response: %w", err)
 		}

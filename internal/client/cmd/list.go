@@ -6,9 +6,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/spf13/cobra"
+	"imperishable-gate/internal/types/response"
 
-	types "imperishable-gate/internal"
+	"github.com/spf13/cobra"
 )
 
 var listCmd = &cobra.Command{
@@ -17,11 +17,14 @@ var listCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		// 构造请求 URL
-		url := fmt.Sprintf("http://%s/api/v1/links", Config.Addr)
+		url := fmt.Sprintf("http://%s/api/v1/links", addr)
 		fmt.Printf("-- Requesting GET method to %s\n", url)
 
+		request, _ := http.NewRequest("GET", url, nil)
+		request.Header.Set("Authorization", "Bearer "+accessToken)
+
 		// 发起 GET 请求
-		resp, err := http.Get(url)
+		resp, err := http.DefaultClient.Do(request)
 		if err != nil {
 			return fmt.Errorf("request failed: %w", err)
 		}
@@ -37,7 +40,7 @@ var listCmd = &cobra.Command{
 
 		// 讲respBody响应体解析为JSON
 		// 并存储到result中
-		var result types.ListResponse
+		var result response.ListResponse
 		if err := json.Unmarshal(respBody, &result); err != nil {
 			return fmt.Errorf("invalid JSON response: %w", err)
 		}

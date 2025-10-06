@@ -11,7 +11,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	types "imperishable-gate/internal"
+	"imperishable-gate/internal/types/response"
 )
 
 var deleteCmd = &cobra.Command{
@@ -25,7 +25,7 @@ var deleteCmd = &cobra.Command{
 		}
 
 		// 构建请求 URL 并添加多个 link 查询参数
-		apiURL := fmt.Sprintf("http://%s/api/v1/links/delete", Config.Addr)
+		apiURL := fmt.Sprintf("http://%s/api/v1/links", addr)
 		u, err := url.Parse(apiURL)
 		if err != nil {
 			return fmt.Errorf("invalid base URL: %w", err)
@@ -61,22 +61,17 @@ var deleteCmd = &cobra.Command{
 		}
 
 		// 解析 JSON 响应
-		var result types.DeleteResponse
+		var result response.Response
 		if err := json.Unmarshal(respBody, &result); err != nil {
 			return fmt.Errorf("invalid JSON response: %w", err)
 		}
 
 		// 输出结果
-		fmt.Printf("Response Code: %d\n", result.Code)
+
 		fmt.Printf("Message: %s\n", result.Message)
 		if result.Data != nil {
 			dataBytes, _ := json.MarshalIndent(result.Data, "", "  ")
 			fmt.Printf("Data:\n%s\n", dataBytes)
-		}
-
-		// 根据返回 code 决定是否报错（可选）
-		if result.Code != 0 {
-			return fmt.Errorf("deletion failed with code %d", result.Code)
 		}
 
 		return nil
