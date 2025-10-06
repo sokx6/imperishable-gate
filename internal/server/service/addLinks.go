@@ -14,13 +14,14 @@ func AddLink(url string, userId uint) error {
 
 	result := database.DB.Where("url = ? AND user_id = ?", url, userId).First(&link)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		title, desc, keywords := utils.CrawlMetadata(url)
+		title, desc, keywords, statusCode := utils.CrawlMetadata(url)
 		link = model.Link{
 			UserID:      userId,
 			Url:         url,
 			Title:       title,
 			Description: desc,
 			Keywords:    keywords,
+			StatusCode:  statusCode,
 		}
 		if err := database.DB.Create(&link).Error; err != nil {
 			return ErrDatabase
