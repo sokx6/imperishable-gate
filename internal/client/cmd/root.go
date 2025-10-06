@@ -18,6 +18,9 @@ var rootCmd = &cobra.Command{
 	Short: "gate is a CLI link management tool",
 	Long:  "gate is a CLI link management tool . . .",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		if cmd.Use == "login" || cmd.Name() == "login" {
+			return nil
+		}
 		addr, _ = cmd.Flags().GetString("addr")
 		if addr == "" {
 			if err := godotenv.Load(); err == nil {
