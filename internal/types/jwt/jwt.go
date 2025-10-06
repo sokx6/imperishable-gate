@@ -14,3 +14,9 @@ type LoginResult struct {
 	RefreshToken string `json:"refresh_token,omitempty"`
 	Message      string `json:"message"`
 }
+
+type Tokens struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	ExpiresAt    int64  `json:"expires_at"` // Unix 时间戳
+}

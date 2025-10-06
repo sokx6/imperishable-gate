@@ -1,8 +1,8 @@
 package response
 
-type LoginResponse struct {
+type LoginResult struct {
 	Success      bool   `json:"success"`
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	Message      string `json:"message,omitempty"`
+	AccessToken  string `json:"access_token,omitempty"`
+	RefreshToken string `json:"refresh_token,omitempty"`
+	Message      string `json:"message"`
 }
