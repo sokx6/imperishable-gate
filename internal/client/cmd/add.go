@@ -1,69 +1,56 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"strings"
+
+	"imperishable-gate/internal/client/service/add"
 
 	"github.com/spf13/cobra"
-
-	"imperishable-gate/internal/types/request"
-	"imperishable-gate/internal/types/response"
 )
 
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a new link to the server database",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Println("Executing add command...")
+		// 获取命令行参数
 		link, _ := cmd.Flags().GetString("link")
-
-		// 构造请求体
-		reqBody := request.AddRequest{
-			Link: link,
+		tags, _ := cmd.Flags().GetStringArray("tag")
+		name, _ := cmd.Flags().GetString("name")
+		remark, _ := cmd.Flags().GetString("remark")
+		if link == "" {
+			if name == "" {
+				fmt.Println("Either link or name must be provided.")
+				return fmt.Errorf("either link or name must be provided")
+			}
+			if len(tags) > 0 {
+				fmt.Println("Adding tags to link with name:", name)
+				return add.AddTagsByName(name, tags, addr, accessToken)
+			}
+			if remark != "" {
+				fmt.Println("Adding remark to link with name:", name)
+				return add.AddRemarkByName(name, remark, addr, accessToken)
+			}
+			fmt.Println("No tags or remark to add for the given name.")
+			return fmt.Errorf("no tags or remark to add for the given name")
 		}
 
-		// 将请求体编码为 JSON
-		body, err := json.Marshal(reqBody)
-		if err != nil {
-			return fmt.Errorf("failed to marshal JSON: %w", err)
+		if name == "" {
+			if len(tags) > 0 {
+				fmt.Println("Adding tags to link:", link)
+				return add.AddTagsByLink(link, tags, addr, accessToken)
+			}
+			if remark != "" {
+				fmt.Println("Adding remark to link:", link)
+				return add.AddRemarkByLink(link, remark, addr, accessToken)
+			}
+			fmt.Println("No tags or remark to add for the given link.")
+			return fmt.Errorf("no tags or remark to add for the given link")
 		}
 
-		// 构造请求 URL
-		url := fmt.Sprintf("http://%s/api/v1/links", addr)
-		fmt.Printf("-- Requesting POST method to %s with payload\n", url)
-		fmt.Printf("%s\n", body)
-
-		request, _ := http.NewRequest("POST", url, strings.NewReader(string(body)))
-		request.Header.Set("Authorization", "Bearer "+accessToken)
-		request.Header.Set("Content-Type", "application/json")
-
-		// 发起 POST 请求
-		resp, err := http.DefaultClient.Do(request)
-		if err != nil {
-			return fmt.Errorf("request failed: %w", err)
-		}
-
-		// 确保响应体最终被关闭
-		defer resp.Body.Close()
-
-		// 读取响应体
-		respBody, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return fmt.Errorf("failed to read response: %w", err)
-		}
-
-		// 讲respBody响应体解析为JSON
-		// 并存储到result中
-		var result response.Response
-		if err := json.Unmarshal(respBody, &result); err != nil {
-			return fmt.Errorf("invalid JSON response: %w", err)
-		}
-
-		fmt.Printf("-- Receiving response\n%s\n", respBody)
-
-		return nil
+		fmt.Println("Adding link:", link)
+		fmt.Println("server:", addr)
+		return add.AddLink(link, addr, accessToken)
 	},
 }
 
@@ -71,5 +58,8 @@ var addCmd = &cobra.Command{
 func init() {
 	// 为 add 命令添加参数link，用来指定要添加的链接
 	addCmd.Flags().StringP("link", "l", "", "link to add")
+	addCmd.Flags().StringArrayP("tag", "t", []string{}, "tags for the link")
+	addCmd.Flags().StringP("name", "n", "", "name for the link")
+	addCmd.Flags().StringP("remark", "r", "", "remark for the link")
 	rootCmd.AddCommand(addCmd)
 }
