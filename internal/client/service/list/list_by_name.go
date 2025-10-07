@@ -8,7 +8,7 @@ import (
 	"imperishable-gate/internal/types/response"
 )
 
-func ListByName(addr string, accessToken string, name string, page int, pageSize int) (response.Response, error) {
+func ListByName(addr string, accessToken string, name string) (response.Response, error) {
 	// 构建请求路径
 	path := fmt.Sprintf("/api/v1/names/%s", name)
 

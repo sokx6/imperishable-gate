@@ -23,7 +23,7 @@ func HandleListByTag(tag string, page int, pageSize int, addr string, accessToke
 func HandleListByName(name string, page int, pageSize int, addr string, accessToken string) error {
 	fmt.Printf("Listing link with name: %s\n", name)
 
-	result, err := ListByName(addr, accessToken, name, page, pageSize)
+	result, err := ListByName(addr, accessToken, name)
 	if err != nil {
 		return fmt.Errorf("failed to list link by name: %w", err)
 	}
