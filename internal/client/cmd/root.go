@@ -41,7 +41,7 @@ var rootCmd = &cobra.Command{
 			if err := godotenv.Load(); err == nil {
 				addr = os.Getenv("SERVER_ADDR")
 			} else {
-				// 如果 .env 文件不存在，尝试直接从环境变量获取
+				// 如果不能加载地址，使用默认地址
 				fmt.Println("Warning: SERVER_ADDR not set and .env file not found, using default 127.0.0.1:8080")
 				addr = "127.0.0.1:8080"
 			}
