@@ -56,8 +56,8 @@ func DeleteLinks(links []string, addr string, accessToken string) error {
 	// 输出结果
 
 	fmt.Printf("Message: %s\n", result.Message)
-	if result.Data != nil {
-		dataBytes, _ := json.MarshalIndent(result.Data, "", "  ")
+	if result.Links != nil {
+		dataBytes, _ := json.MarshalIndent(result.Links, "", "  ")
 		fmt.Printf("Data:\n%s\n", dataBytes)
 	}
 
