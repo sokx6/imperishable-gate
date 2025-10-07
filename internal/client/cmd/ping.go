@@ -3,12 +3,10 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"strings"
 
 	"github.com/spf13/cobra"
 
+	"imperishable-gate/internal/client/utils"
 	"imperishable-gate/internal/types/request"
 	"imperishable-gate/internal/types/response"
 )
@@ -19,45 +17,39 @@ var pingCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		msg, _ := cmd.Flags().GetString("message")
 
+		// 获取服务器地址
+		serverAddr, _ := cmd.Flags().GetString("addr")
+		if serverAddr == "" {
+			serverAddr = "127.0.0.1:8080" // 默认地址
+		}
+
+		// 创建 API 客户端
+		client := utils.NewAPIClient(serverAddr, "")
+
 		// 构造请求体
 		reqBody := request.PingRequest{
 			Action:  "ping",
 			Message: msg,
 		}
 
-		// 将请求体编码为 JSON
+		// 将请求体编码为 JSON (用于日志输出)
 		body, err := json.Marshal(reqBody)
 		if err != nil {
 			return fmt.Errorf("failed to marshal JSON: %w", err)
 		}
 
-		// 构造请求 URL
-		url := fmt.Sprintf("%s/api/v1/ping", addr)
-		fmt.Printf("-- Requesting POST method to %s with payload\n", url)
+		fmt.Printf("-- Requesting POST method to %s/api/v1/ping with payload\n", serverAddr)
 		fmt.Printf("%s\n", body)
 
-		// 发起 POST 请求
-		resp, err := http.Post(url, "application/json", strings.NewReader(string(body)))
+		// 使用 APIClient 发送请求
+		var result response.Response
+		err = client.DoRequest("POST", "/api/v1/ping", reqBody, &result)
 		if err != nil {
 			return fmt.Errorf("request failed: %w", err)
 		}
 
-		// 确保响应体最终被关闭
-		defer resp.Body.Close()
-
-		// 读取响应体
-		respBody, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return fmt.Errorf("failed to read response: %w", err)
-		}
-
-		// 讲respBody响应体解析为JSON
-		// 并存储到result中
-		var result response.Response
-		if err := json.Unmarshal(respBody, &result); err != nil {
-			return fmt.Errorf("invalid JSON response: %w", err)
-		}
-
+		// 输出响应
+		respBody, _ := json.Marshal(result)
 		fmt.Printf("-- Receiving response\n%s\n", respBody)
 
 		return nil
@@ -66,7 +58,7 @@ var pingCmd = &cobra.Command{
 
 // 初始化命令行参数
 func init() {
-	// 为 ping 命令添加参数message，用来指定要发送的消息
+	// 为 ping 命令添加参数message,用来指定要发送的消息
 	pingCmd.Flags().StringP("message", "m", "default message", "Message to send")
 	rootCmd.AddCommand(pingCmd)
 }
