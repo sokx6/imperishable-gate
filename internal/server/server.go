@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 
 	"imperishable-gate/internal/server/database"
 	"imperishable-gate/internal/server/routes"
@@ -26,6 +27,7 @@ func NewServer(addr, dsn string) *Server {
 
 	// 创建新的echo实例
 	e := echo.New()
+	e.Use(middleware.Logger())
 
 	// 初始化数据库
 	if err := database.InitDB(dsn); err != nil {
