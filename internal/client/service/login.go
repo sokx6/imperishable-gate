@@ -1,73 +1,31 @@
 package service
 
 import (
-	"bytes"
-	"encoding/json"
+	"fmt"
+	"imperishable-gate/internal/client/utils"
 	"imperishable-gate/internal/types/request"
 	"imperishable-gate/internal/types/response"
-	"net/http"
 )
 
 func Login(addr, username, password string) (accessToken, refreshToken string, err error) {
-	err = nil
-	accessToken, refreshToken = "", ""
+	// 创建 API 客户端
+	client := utils.NewAPIClient(addr, "")
+
 	// 构建登录请求体
 	reqBody := request.LoginRequest{
 		Username: username,
 		Password: password,
 	}
 
-	// 将请求体编码为 JSON
-	reqBytes, err := json.Marshal(reqBody)
-	if err != nil {
-		return
-	}
-
-	// 构建 HTTP 请求
-	var resp *http.Response
-	resp, err = http.Post(addr+"/api/v1/login", "application/json", bytes.NewReader(reqBytes))
-	if err != nil {
-		return
-	}
-	// 确保响应体在函数退出时关闭
-	defer resp.Body.Close()
-
-	// 处理非 200 OK 的响应
-	if resp.StatusCode != http.StatusOK {
-		switch resp.StatusCode {
-		case http.StatusBadRequest:
-			// 处理错误请求
-			err = ErrInvalidRequest
-			return
-		case http.StatusUnauthorized:
-			// 处理认证失败
-			err = ErrAuthenticationFailed
-			return
-		case http.StatusNotFound:
-			// 处理用户不存在
-			err = ErrUserNotFound
-			return
-		case http.StatusInternalServerError:
-			// 处理服务器内部错误
-			err = ErrInternalServer
-			return
-		default:
-			// 处理其他未知错误
-			err = ErrUnknown
-			return
-		}
-
-	}
-
-	// 解析响应体
+	// 使用 APIClient 发送请求
 	var loginResp response.LoginResponse
-	err = json.NewDecoder(resp.Body).Decode(&loginResp)
+	err = client.DoRequest("POST", "/api/v1/login", reqBody, &loginResp)
 	if err != nil {
-		// 解析失败
-		return "", "", err
+		return "", "", fmt.Errorf("failed to connect to server: %w", err)
 	}
+
 	// 返回访问令牌和刷新令牌
 	accessToken = loginResp.AccessToken
 	refreshToken = loginResp.RefreshToken
-	return
+	return accessToken, refreshToken, nil
 }
