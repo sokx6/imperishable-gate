@@ -11,7 +11,7 @@ import (
 
 func DeleteLinks(links []string, addr string, accessToken string) error {
 	// 构建请求 URL 并添加多个 link 查询参数
-	apiURL := fmt.Sprintf("http://%s/api/v1/links", addr)
+	apiURL := fmt.Sprintf("%s/api/v1/links", addr)
 	u, err := url.Parse(apiURL)
 	if err != nil {
 		return fmt.Errorf("invalid base URL: %w", err)

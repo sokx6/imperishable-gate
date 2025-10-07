@@ -13,9 +13,9 @@ func DeleteTagsByName(name string, tags []string, addr string, accessToken strin
 	reqBody := request.DeleteRequest{
 		Tags: tags,
 	}
-	path := "/" + name + "/tags/remove"
+	path := "/api/v1/" + name + "/tags/remove"
 	var resp response.Response
-	if err := client.DoRequest(http.MethodDelete, path, reqBody, &resp); err != nil {
+	if err := client.DoRequest(http.MethodPatch, path, reqBody, &resp); err != nil {
 		return err
 	}
 	return nil

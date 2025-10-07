@@ -11,7 +11,7 @@ func DeleteByName(name string, addr string, accessToken string) error {
 	client := utils.NewAPIClient(addr, accessToken)
 
 	respBody := response.Response{}
-	path := path.Join("/api/v1/name", name)
+	path := path.Join("/api/v1/links/name", name)
 	if err := client.DoRequest(http.MethodDelete, path, nil, &respBody); err != nil {
 		return err
 	}
