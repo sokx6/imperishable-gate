@@ -29,7 +29,6 @@ var addCmd = &cobra.Command{
 
 		// 参数验证：至少需要 link 或 name
 		if link == "" && len(names) == 0 {
-			fmt.Println("Error: Either --link or --name must be provided.")
 			return fmt.Errorf("either --link or --name must be provided")
 		}
 
