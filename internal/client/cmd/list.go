@@ -45,6 +45,6 @@ func init() {
 	listCmd.Flags().StringP("tag", "t", "", "Filter links by tag")
 	listCmd.Flags().StringP("name", "n", "", "Filter link by name")
 	listCmd.Flags().IntP("page", "p", 1, "Page number for pagination")
-	listCmd.Flags().IntP("page-size", "s", 20, "Number of items per page")
+	listCmd.Flags().IntP("page-size", "pS", 20, "Number of items per page")
 	rootCmd.AddCommand(listCmd)
 }
