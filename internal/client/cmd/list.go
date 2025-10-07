@@ -1,64 +1,50 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
-	"imperishable-gate/internal/types/response"
+	"imperishable-gate/internal/client/service/list"
 
 	"github.com/spf13/cobra"
 )
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List all the links stored in the server",
+	Short: "List links from the server database",
+	Long: `List command supports multiple operations:
+  - List all links: (no parameters)
+  - List links by tag: --tag <tag>
+  - List link by name: --name <name>
+  - List with pagination: --page <page> --page-size <size>`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Println("Executing list command...")
 
-		// 构造请求 URL
-		url := fmt.Sprintf("http://%s/api/v1/links", addr)
-		fmt.Printf("-- Requesting GET method to %s\n", url)
+		// 获取命令行参数
+		tag, _ := cmd.Flags().GetString("tag")
+		name, _ := cmd.Flags().GetString("name")
+		page, _ := cmd.Flags().GetInt("page")
+		pageSize, _ := cmd.Flags().GetInt("page-size")
 
-		request, _ := http.NewRequest("GET", url, nil)
-		request.Header.Set("Authorization", "Bearer "+accessToken)
-
-		// 发起 GET 请求
-		resp, err := http.DefaultClient.Do(request)
-		if err != nil {
-			return fmt.Errorf("request failed: %w", err)
+		// 场景1: 通过标签查询
+		if tag != "" {
+			return list.HandleListByTag(tag, page, pageSize, addr, accessToken)
 		}
 
-		// 确保响应体最终被关闭
-		defer resp.Body.Close()
-
-		// 读取响应体
-		respBody, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return fmt.Errorf("failed to read response: %w", err)
+		// 场景2: 通过名称查询
+		if name != "" {
+			return list.HandleListByName(name, page, pageSize, addr, accessToken)
 		}
 
-		// 讲respBody响应体解析为JSON
-		// 并存储到result中
-		var result response.ListResponse
-		if err := json.Unmarshal(respBody, &result); err != nil {
-			return fmt.Errorf("invalid JSON response: %w", err)
-		}
-
-		fmt.Println("-- Receiving response")
-
-		for _, link := range result.Data {
-			fmt.Printf("ID: %d\nURL: %s\nTags: %v\nNames: %v\nRemark: %s\n\n",
-				link.ID, link.Url, link.Tags, link.Names, link.Remark)
-		}
-
-		return nil
+		// 场景3: 列出所有链接（默认）
+		return list.HandleListAllLinks(page, pageSize, addr, accessToken)
 	},
 }
 
 // 初始化命令行参数
 func init() {
-	// 为 list 命令添加参数host，用来指定服务器地址
-	listCmd.Flags().StringP("host", "H", "127.0.0.1:8080", "Server host:port to send list")
+	listCmd.Flags().StringP("tag", "t", "", "Filter links by tag")
+	listCmd.Flags().StringP("name", "n", "", "Filter link by name")
+	listCmd.Flags().IntP("page", "p", 1, "Page number for pagination")
+	listCmd.Flags().IntP("page-size", "s", 20, "Number of items per page")
 	rootCmd.AddCommand(listCmd)
 }
