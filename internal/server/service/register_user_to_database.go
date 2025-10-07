@@ -1,9 +1,8 @@
 package service
 
 import (
-	"imperishable-gate/internal/model" // 替换为你的实际模块路径
+	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
-
 	"imperishable-gate/internal/server/utils"
 )
 
