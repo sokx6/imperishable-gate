@@ -27,19 +27,16 @@ var watchCmd = &cobra.Command{
 
 		// 参数验证：必须提供 link 或 name
 		if link == "" && name == "" {
-			fmt.Println("Error: Either --link or --name must be provided.")
 			return fmt.Errorf("either --link or --name must be provided")
 		}
 
 		// 参数验证：不能同时提供 link 和 name
 		if link != "" && name != "" {
-			fmt.Println("Error: Cannot specify both --link and --name.")
 			return fmt.Errorf("cannot specify both --link and --name")
 		}
 
 		// 参数验证：必须提供 watch 或 unwatch，且只能二选一
 		if isWatch == isUnwatch {
-			fmt.Println("Error: Must specify either --watch or --unwatch (but not both).")
 			return fmt.Errorf("must specify either --watch or --unwatch")
 		}
 
@@ -53,7 +50,7 @@ var watchCmd = &cobra.Command{
 			return watch.HandleWatchByName(name, isWatch, addr, accessToken)
 		}
 
-		return fmt.Errorf("invalid parameter combination")
+		return nil
 	},
 }
 
