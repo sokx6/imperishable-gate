@@ -20,12 +20,10 @@ func EnsureValidTokenWithPrompt(addr, accessToken string) (string, error) {
 		case errors.Is(err, utils.ErrNoRefreshToken):
 			fmt.Println("Authentication expired: no refresh token found.")
 			fmt.Println("Please run 'login' to sign in again.")
+			return "", err
 		default:
-			fmt.Printf("Failed to obtain valid token: %v\n", err)
 			return "", fmt.Errorf("failed to get valid token: %w", err)
 		}
-
-		return "", err
 	}
 
 	return token, nil
