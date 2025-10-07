@@ -8,15 +8,19 @@ import (
 )
 
 func AddTagsByLink(link string, tags []string, addr string, accessToken string) error {
+	// 创建 API 客户端
 	client := utils.NewAPIClient(addr, accessToken)
 
+	// 构建请求体
 	reqBody := request.AddRequest{
 		Link: link,
 		Tags: tags,
 	}
 
+	// 发送请求并处理响应
 	var respBody response.Response
 	if err := client.DoRequest(http.MethodPost, "/api/v1/tags", reqBody, &respBody); err != nil {
+		// 处理请求错误
 		return err
 	}
 
