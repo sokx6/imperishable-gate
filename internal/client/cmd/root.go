@@ -34,6 +34,10 @@ var rootCmd = &cobra.Command{
 		if cmd.Use == "version" || cmd.Name() == "version" {
 			return nil
 		}
+		if cmd.Use == "ping" || cmd.Name() == "ping" {
+			return nil
+		}
+		// 对于其他命令，预先验证 token
 		// 获取服务器地址
 		addr, _ = cmd.Flags().GetString("addr")
 		if addr == "" {
