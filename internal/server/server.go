@@ -10,8 +10,6 @@ import (
 	"imperishable-gate/internal/server/routes"
 )
 
-const defaultDSN = "host=localhost user=postgres dbname=gate_db port=5432 sslmode=disable TimeZone=Asia/Shanghai"
-
 // Server 封装 Echo 实例和地址
 type Server struct {
 	Echo *echo.Echo
@@ -20,11 +18,12 @@ type Server struct {
 
 // NewServer 创建新的服务器实例
 func NewServer(addr, dsn string) *Server {
-	// 若dsn未设置，则使用默认dsn
-	if dsn == "" {
-		dsn = defaultDSN
+	if addr == "" {
+		addr = "localhost:4514"
 	}
-
+	if dsn == "" {
+		dsn = "host=localhost user=postgres dbname=gate_db port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	}
 	// 创建新的echo实例
 	e := echo.New()
 	e.Use(middleware.Logger())
