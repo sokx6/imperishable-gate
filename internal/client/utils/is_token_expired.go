@@ -7,29 +7,22 @@ import (
 )
 
 func IsTokenExpired(accessToken string) (bool, error) {
-	// JWT 令牌的声明
 	var claims jwt.RegisteredClaims
 
 	if accessToken == "" {
-		// 处理无效令牌
 		return true, nil
 	}
 
-	// 解析但不验证签名
-	token, _, err := jwt.NewParser().ParseUnverified(accessToken, &claims)
+	_, _, err := jwt.NewParser().ParseUnverified(accessToken, &claims)
 	if err != nil {
-		// 处理解析错误
-		return true, err
-	}
-	// 检查令牌是否有效
-	if !token.Valid {
-		return true, nil
+		return true, err // 解析失败视为过期 + 返回错误原因
 	}
 
-	// 如果即将在30秒内过期，也视为“需要刷新”
+	// 检查 exp 字段
 	if claims.ExpiresAt != nil {
+		// 如果将在 30 秒内过期，认为需要刷新（即“已过期”）
 		return claims.ExpiresAt.Before(time.Now().Add(30 * time.Second)), nil
 	}
 
-	return true, nil // 没有 exp 按过期处理更安全
+	return true, nil // 无 exp 字段，默认视为过期（最安全行为）
 }
