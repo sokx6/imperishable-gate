@@ -13,11 +13,26 @@ import (
 
 func ListHandler(c echo.Context) error {
 	var links []model.Link
+	page, err := utils.GetContentInt(c, "page")
+	if err != nil {
+		return response.InvalidRequestResponse
+	}
+	pageSize, err := utils.GetContentInt(c, "page_size")
+	if err != nil {
+		return response.InvalidRequestResponse
+	}
+	// 查询记录
 	userId, ok := utils.GetUserID(c)
 	if !ok {
 		return response.AuthenticationFailedResponse
 	}
-	if err := database.DB.Preload("Names").Preload("Tags").Where("user_id = ?", userId).Find(&links).Error; err != nil {
+	if err := database.DB.
+		Preload("Names").
+		Preload("Tags").
+		Where("user_id = ?", userId).
+		Limit(pageSize).
+		Offset((page - 1) * pageSize).
+		Find(&links).Error; err != nil {
 		return response.DatabaseErrorResponse
 	}
 	var linkList []data.Link
