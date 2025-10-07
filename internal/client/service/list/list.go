@@ -15,7 +15,7 @@ func HandleListByTag(tag string, page int, pageSize int, addr string, accessToke
 		return fmt.Errorf("failed to list links by tag: %w", err)
 	}
 
-	printLinksList(result.Data)
+	printLinksList(result.Links)
 	return nil
 }
 
@@ -28,13 +28,9 @@ func HandleListByName(name string, page int, pageSize int, addr string, accessTo
 		return fmt.Errorf("failed to list link by name: %w", err)
 	}
 
-	// ListByNameResponse 返回的是单个链接
-	if result.Data.ID != 0 {
-		fmt.Printf("ID: %d\nURL: %s\nTags: %v\nNames: %v\nRemark: %s\n\n",
-			result.Data.ID, result.Data.Url, result.Data.Tags, result.Data.Names, result.Data.Remark)
-	} else {
-		fmt.Println("No link found with the specified name.")
-	}
+	// Response 返回的是单个链接
+
+	printLinksList(result.Links)
 
 	return nil
 }
@@ -48,7 +44,7 @@ func HandleListAllLinks(page int, pageSize int, addr string, accessToken string)
 		return fmt.Errorf("failed to list links: %w", err)
 	}
 
-	printLinksList(result.Data)
+	printLinksList(result.Links)
 	return nil
 }
 
