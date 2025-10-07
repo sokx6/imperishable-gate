@@ -33,7 +33,7 @@ func Register(addr, username, email, password string) error {
 	// 处理响应状态码
 	if resp.StatusCode != http.StatusOK {
 		var errResp response.Response
-		if err := json.NewDecoder(resp.Body).Decode(&errResp); err == nil {
+		if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
 			return fmt.Errorf("registration failed: %s", errResp.Message)
 		}
 
