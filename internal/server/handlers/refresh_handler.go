@@ -11,20 +11,26 @@ import (
 	"imperishable-gate/internal/types/response"
 
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 func RefreshTokenHandler(c echo.Context) error {
 	var req request.RefreshRequest
+	// 解析请求体
 	if err := c.Bind(&req); err != nil {
+		// 处理请求体解析错误
 		return response.InvalidRequestResponse
 	}
 
 	var tokenRecord model.RefreshToken
+	// 查找并验证刷新令牌
 	if err := database.DB.
 		Where("token = ? AND expires_at > ? AND revoked = false", req.RefreshToken, time.Now()).
 		First(&tokenRecord).Error; err != nil {
-
-		return response.AuthenticationFailedResponse
+		if err == gorm.ErrRecordNotFound {
+			return response.AuthenticationFailedResponse
+		}
+		return response.DatabaseErrorResponse
 	}
 
 	// 验证通过，生成新的 Access Token
@@ -37,9 +43,6 @@ func RefreshTokenHandler(c echo.Context) error {
 	if err != nil {
 		return response.InternalServerErrorResponse
 	}
-
-	tokenRecord.ExpiresAt = time.Now().Add(service.RefreshExpiry)
-	database.DB.Save(&tokenRecord)
 
 	return c.JSON(http.StatusOK, response.RefreshResponse{
 		AccessToken: newAccessToken,
