@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"imperishable-gate/internal/client/service/register"
@@ -21,7 +19,7 @@ var registerCmd = &cobra.Command{
 
 		// 使用模块化的注册处理函数
 		if err := register.HandleRegister(serverAddr); err != nil {
-			return fmt.Errorf("registration failed: %w", err)
+			return err
 		}
 
 		return nil
