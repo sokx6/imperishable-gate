@@ -1,85 +1,59 @@
-// cmd/delete.go 或内联在现有文件中
-
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"net/url"
+
+	"imperishable-gate/internal/client/service/delete"
 
 	"github.com/spf13/cobra"
-
-	"imperishable-gate/internal/types/response"
 )
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete links from the server database using query parameters",
+	Short: "Delete links, names, or tags from the server database",
+	Long: `Delete command supports multiple operations:
+  - Delete links: --link <url1> [--link <url2> ...]
+  - Delete a link by name: --name <name>
+  - Delete names from a link: --link <url> --name <name1> [--name <name2> ...]
+  - Delete tags from a link: --link <url> --tag <tag1> [--tag <tag2> ...]
+  - Delete tags by name: --name <name> --tag <tag1> [--tag <tag2> ...]`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		links, _ := cmd.Flags().GetStringSlice("links")
+		fmt.Println("Executing delete command...")
 
-		if len(links) == 0 {
-			return fmt.Errorf("no links provided for deletion. Use -l or --links to specify one or more URLs")
+		// 获取命令行参数
+		links, _ := cmd.Flags().GetStringSlice("link")
+		names, _ := cmd.Flags().GetStringSlice("name")
+		tags, _ := cmd.Flags().GetStringSlice("tag")
+
+		// 参数验证：至少需要 link 或 name
+		if len(links) == 0 && len(names) == 0 {
+			fmt.Println("Error: Either --link or --name must be provided.")
+			return fmt.Errorf("either --link or --name must be provided")
 		}
 
-		// 构建请求 URL 并添加多个 link 查询参数
-		apiURL := fmt.Sprintf("http://%s/api/v1/links", addr)
-		u, err := url.Parse(apiURL)
-		if err != nil {
-			return fmt.Errorf("invalid base URL: %w", err)
+		// 场景1: 只提供了 name (没有 link)
+		if len(links) == 0 && len(names) > 0 {
+			return delete.HandleDeleteByName(names, tags, addr, accessToken)
 		}
 
-		q := u.Query()
-		for _, link := range links {
-			q.Add("link", link) // 每个 link 作为单独参数
-		}
-		u.RawQuery = q.Encode() // 设置编码后的查询字符串
-
-		requestURL := u.String()
-		fmt.Printf("-- Sending DELETE request to: %s\n", requestURL)
-
-		// 创建 DELETE 请求，NO BODY
-		req, err := http.NewRequest(http.MethodDelete, requestURL, nil)
-		if err != nil {
-			return fmt.Errorf("failed to create request: %w", err)
+		// 场景2: 只提供了 link (没有 name)
+		if len(links) > 0 && len(names) == 0 {
+			return delete.HandleDeleteByLink(links, tags, addr, accessToken)
 		}
 
-		// 发起请求
-		client := &http.Client{}
-		resp, err := client.Do(req)
-		if err != nil {
-			return fmt.Errorf("request failed: %w", err)
-		}
-		defer resp.Body.Close()
-
-		// 读取响应体
-		respBody, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return fmt.Errorf("failed to read response: %w", err)
+		// 场景3: 同时提供了 link 和 name - 删除链接的名称
+		if len(links) > 0 && len(names) > 0 {
+			return delete.HandleDeleteNamesFromLink(links, names, addr, accessToken)
 		}
 
-		// 解析 JSON 响应
-		var result response.Response
-		if err := json.Unmarshal(respBody, &result); err != nil {
-			return fmt.Errorf("invalid JSON response: %w", err)
-		}
-
-		// 输出结果
-
-		fmt.Printf("Message: %s\n", result.Message)
-		if result.Data != nil {
-			dataBytes, _ := json.MarshalIndent(result.Data, "", "  ")
-			fmt.Printf("Data:\n%s\n", dataBytes)
-		}
-
-		return nil
+		return fmt.Errorf("invalid parameter combination")
 	},
 }
 
 // 初始化命令行参数
 func init() {
-	deleteCmd.Flags().StringSliceP("links", "l", []string{}, "Links to delete (repeat -l or use comma-separated values)")
+	deleteCmd.Flags().StringSliceP("link", "l", []string{}, "Link(s) to delete or modify (can specify multiple)")
+	deleteCmd.Flags().StringSliceP("name", "n", []string{}, "Name(s) to delete (can specify multiple)")
+	deleteCmd.Flags().StringSliceP("tag", "t", []string{}, "Tag(s) to delete from a link or name (can specify multiple)")
 	rootCmd.AddCommand(deleteCmd)
 }
