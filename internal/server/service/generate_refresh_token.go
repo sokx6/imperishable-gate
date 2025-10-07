@@ -8,6 +8,9 @@ import (
 	"time"
 )
 
+const RefreshExpiry = 7 * 24 * time.Hour // 7天
+
+// GenerateRefreshToken 生成并存储刷新令牌
 func GenerateRefreshToken(userID uint, userName string) (string, error) {
 	// 生成随机字符串
 	bytes := make([]byte, 32)
