@@ -13,15 +13,14 @@ import (
 
 func DeleteNamesByLinkHandler(c echo.Context) error {
 	var req request.DeleteRequest
-	url := c.QueryParam("url")
-	if err := c.Bind(&req); err != nil || url == "" || req.Names == nil || len(req.Names) == 0 {
+	if err := c.Bind(&req); err != nil || req.Url == "" || req.Names == nil || len(req.Names) == 0 {
 		return response.InvalidRequestResponse
 	}
 	userId, ok := utils.GetUserID(c)
 	if !ok {
 		return response.AuthenticationFailedResponse
 	}
-	if err := service.DeleteNamesByLink(url, userId, req.Names); err != nil {
+	if err := service.DeleteNamesByLink(req.Url, userId, req.Names); err != nil {
 		if err == service.ErrLinkNotFound {
 			return response.LinkNotFoundResponse
 		}

@@ -11,12 +11,15 @@ import (
 )
 
 func WatchByNameHandler(c echo.Context) error {
-	var req request.WatchRequest
-	if err := c.Bind(&req); err != nil || req.Url == "" {
+	var req request.WatchByNameRequest
+	if err := c.Bind(&req); err != nil || req.Name == "" {
 		return response.InvalidRequestResponse
 	}
-	userId := c.Get("userId").(uint)
-	linkUrl := utils.GetLinkUrlByName(req.Url, userId)
+	userId, ok := utils.GetUserID(c)
+	if !ok {
+		return response.AuthenticationFailedResponse
+	}
+	linkUrl := utils.GetLinkUrlByName(req.Name, userId)
 	if err := service.Watch(linkUrl, userId, req.Watch); err != nil {
 		if err == service.ErrLinkNotFound {
 			return response.LinkNotFoundResponse

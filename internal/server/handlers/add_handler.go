@@ -13,8 +13,6 @@ import (
 	"imperishable-gate/internal/types/response"
 )
 
-var ErrLinkAlreadyExists = errors.New("link already exists")
-
 func AddHandler(c echo.Context) error {
 	var req request.AddRequest
 	// 检测请求是否合法
@@ -30,15 +28,16 @@ func AddHandler(c echo.Context) error {
 	if !ok {
 		return response.AuthenticationFailedResponse
 	}
-	switch err := service.AddLink(req.Link, userId); {
-	case err == service.ErrDatabase:
+
+	// 使用 errors.Is 进行错误判断
+	err := service.AddLink(req.Link, userId)
+	if errors.Is(err, service.ErrDatabase) {
 		return response.DatabaseErrorResponse
-	case err == ErrLinkAlreadyExists:
+	} else if errors.Is(err, service.ErrLinkAlreadyExists) {
 		return response.LinkExistsResponse
-	case err != nil:
+	} else if err != nil {
 		return response.UnknownErrorResponse
-	default:
-		return c.JSON(http.StatusOK, response.AddLinkSuccessResponse)
 	}
 
+	return c.JSON(http.StatusOK, response.AddLinkSuccessResponse)
 }

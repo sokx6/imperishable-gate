@@ -17,7 +17,7 @@ func DeleteTagsByNameHandler(c echo.Context) error {
 
 	var req request.DeleteRequest
 	var name = c.Param("name")
-	if err := c.Bind(&req); err != nil || name == "" || req.Tags == nil || len(req.Tags) == 0 {
+	if err := c.Bind(&req); err != nil || req.Tags == nil || len(req.Tags) == 0 {
 		return response.InvalidRequestResponse
 	}
 
