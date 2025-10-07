@@ -32,7 +32,7 @@ var pingCmd = &cobra.Command{
 		}
 
 		// 构造请求 URL
-		url := fmt.Sprintf("http://%s/api/v1/ping", addr)
+		url := fmt.Sprintf("%s/api/v1/ping", addr)
 		fmt.Printf("-- Requesting POST method to %s with payload\n", url)
 		fmt.Printf("%s\n", body)
 
