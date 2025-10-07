@@ -52,8 +52,8 @@ func ListHandler(c echo.Context) error {
 
 	}
 	// 返回成功响应
-	return c.JSON(http.StatusOK, response.ListResponse{
+	return c.JSON(http.StatusOK, response.Response{
 		Message: "Links retrieved successfully",
-		Data:    linkList,
+		Links:   linkList,
 	})
 }

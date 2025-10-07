@@ -63,8 +63,8 @@ func ListByTagHandler(c echo.Context) error {
 			StatusCode:  link.StatusCode,
 		})
 	}
-	return c.JSON(http.StatusOK, response.ListResponse{
+	return c.JSON(http.StatusOK, response.Response{
 		Message: "Links retrieved successfully",
-		Data:    linkList,
+		Links:   linkList,
 	})
 }

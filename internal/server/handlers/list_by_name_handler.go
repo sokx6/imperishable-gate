@@ -46,8 +46,8 @@ func ListByNameHandler(c echo.Context) error {
 		Keywords:    Link.Keywords,
 		StatusCode:  Link.StatusCode,
 	}
-	return c.JSON(http.StatusOK, response.ListByNameResponse{
+	return c.JSON(http.StatusOK, response.Response{
 		Message: "Link retrieved successfully",
-		Data:    responseLink,
+		Links:   []data.Link{responseLink},
 	})
 }
