@@ -2,11 +2,13 @@
 package service
 
 import (
-	"imperishable-gate/internal/model"
-	"imperishable-gate/internal/server/database"
+	"errors"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+
+	"imperishable-gate/internal/model"
+	"imperishable-gate/internal/server/database"
 )
 
 func AuthenticateUser(username, password string) error {
@@ -14,7 +16,7 @@ func AuthenticateUser(username, password string) error {
 
 	// 查询数据库中是否存在该用户名的用户
 	if err := database.DB.Where("username = ?", username).First(&user).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return ErrUsernameNotFound
 		}
 		return ErrDatabase // 数据库错误

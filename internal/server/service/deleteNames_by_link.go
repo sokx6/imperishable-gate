@@ -1,17 +1,19 @@
 package service
 
 import (
+	"errors"
+
+	"gorm.io/gorm"
+
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
 	"imperishable-gate/internal/server/utils"
-
-	"gorm.io/gorm"
 )
 
 func DeleteNamesByLink(url string, userId uint, names []string) error {
 	var link model.Link
 	if err := database.DB.Preload("Names").Take(&link, "url = ? AND user_id = ?", url, userId).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return ErrLinkNotFound
 		}
 		return ErrDatabase
