@@ -9,7 +9,6 @@ func HandleDeleteByName(names []string, tags []string, addr string, accessToken 
 	// 如果提供了 tags，则删除指定名称的标签
 	if len(tags) > 0 {
 		if len(names) > 1 {
-			fmt.Println("Error: Only one name can be specified when deleting tags by name.")
 			return fmt.Errorf("only one name can be specified for this operation")
 		}
 
@@ -42,7 +41,6 @@ func HandleDeleteByLink(links []string, tags []string, addr string, accessToken 
 	// 如果提供了 tags，则删除指定链接的标签
 	if len(tags) > 0 {
 		if len(links) > 1 {
-			fmt.Println("Error: Only one link can be specified when deleting tags.")
 			return fmt.Errorf("only one link can be specified when deleting tags")
 		}
 
@@ -60,7 +58,6 @@ func HandleDeleteByLink(links []string, tags []string, addr string, accessToken 
 // HandleDeleteNamesFromLink 处理删除链接的名称
 func HandleDeleteNamesFromLink(links []string, names []string, addr string, accessToken string) error {
 	if len(links) > 1 {
-		fmt.Println("Error: Only one link can be specified when deleting names from a link.")
 		return fmt.Errorf("only one link can be specified when deleting names")
 	}
 

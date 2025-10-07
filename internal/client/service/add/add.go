@@ -7,7 +7,6 @@ import (
 // HandleAddByName 处理只通过 name 操作的场景
 func HandleAddByName(names []string, tags []string, remark string, addr string, accessToken string) error {
 	if len(names) > 1 {
-		fmt.Println("Error: Only one name can be specified when adding tags or remark by name.")
 		return fmt.Errorf("only one name can be specified for this operation")
 	}
 
@@ -24,7 +23,6 @@ func HandleAddByName(names []string, tags []string, remark string, addr string, 
 		return AddRemarkByName(name, remark, addr, accessToken)
 	}
 
-	fmt.Println("Error: When only name is provided, you must specify --tag or --remark.")
 	return fmt.Errorf("when only name is provided, you must specify --tag or --remark")
 }
 
