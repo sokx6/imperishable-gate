@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"fmt"
+	"errors"
 	"imperishable-gate/internal/server/service"
 	"imperishable-gate/internal/types/request"
 	"imperishable-gate/internal/types/response"
@@ -18,24 +18,21 @@ func LoginHandler(c echo.Context) error {
 		return response.InvalidRequestResponse
 	}
 	// 调用服务层进行认证
-	login_result := service.GenerateJWTIfAuthenticated(req.Username, req.Password)
-	if !login_result.Success {
-		switch login_result.Message {
+	loginResp, err := service.GenerateJWTIfAuthenticated(req.Username, req.Password)
+	if err != nil {
+		switch {
 		// 处理不同的失败原因，返回相应的HTTP状态码
-		case "User not found":
+		case errors.Is(err, service.ErrUsernameNotFound):
 			return response.UserNotFoundResponse
-		case "Invalid username or password":
+		case errors.Is(err, service.ErrInvalidPassword):
 			return response.AuthenticationFailedResponse
-		case "Database error, please try again later":
+		case errors.Is(err, service.ErrDatabase):
 			return response.DatabaseErrorResponse
-		case "Internal authentication service error":
-			fmt.Println("Internal authentication service error")
-			return response.InternalServerErrorResponse
 		default:
 			return response.InternalServerErrorResponse
 		}
 
 	}
 
-	return c.JSON(http.StatusOK, login_result)
+	return c.JSON(http.StatusOK, loginResp)
 }
