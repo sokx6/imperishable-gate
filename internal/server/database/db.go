@@ -6,7 +6,6 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 var DB *gorm.DB
@@ -22,7 +21,7 @@ func InitDB(dsn string) error {
 	// gorm.Config 可以用来配置 GORM 的行为，这里使用默认配置
 	// 连接成功后，db 就是一个可以用来操作数据库的对象
 	// 如果连接失败，err 会包含错误信息
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return fmt.Errorf("failed to connect database: %w", err)
 	}
