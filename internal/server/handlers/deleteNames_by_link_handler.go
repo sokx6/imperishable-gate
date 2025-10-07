@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -21,10 +22,10 @@ func DeleteNamesByLinkHandler(c echo.Context) error {
 		return response.AuthenticationFailedResponse
 	}
 	if err := service.DeleteNamesByLink(req.Url, userId, req.Names); err != nil {
-		if err == service.ErrLinkNotFound {
+		if errors.Is(err, service.ErrLinkNotFound) {
 			return response.LinkNotFoundResponse
 		}
-		if err == service.ErrInvalidRequest {
+		if errors.Is(err, service.ErrInvalidRequest) {
 			return response.InvalidRequestResponse
 		}
 		return response.DatabaseErrorResponse

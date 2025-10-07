@@ -3,6 +3,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -27,10 +28,10 @@ func DeleteTagsByNameHandler(c echo.Context) error {
 	}
 
 	if err := service.DeleteTagsByName(name, userId, req.Tags); err != nil {
-		if err == service.ErrLinkNotFound {
+		if errors.Is(err, service.ErrLinkNotFound) {
 			return response.LinkNotFoundResponse
 		}
-		if err == service.ErrInvalidRequest {
+		if errors.Is(err, service.ErrInvalidRequest) {
 			return response.InvalidRequestResponse
 		}
 		return response.DatabaseErrorResponse

@@ -1,13 +1,15 @@
 package handlers
 
 import (
+	"errors"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+
 	"imperishable-gate/internal/server/service"
 	"imperishable-gate/internal/server/utils"
 	"imperishable-gate/internal/types/request"
 	"imperishable-gate/internal/types/response"
-	"net/http"
-
-	"github.com/labstack/echo/v4"
 )
 
 func WatchByNameHandler(c echo.Context) error {
@@ -21,7 +23,7 @@ func WatchByNameHandler(c echo.Context) error {
 	}
 	linkUrl := utils.GetLinkUrlByName(req.Name, userId)
 	if err := service.Watch(linkUrl, userId, req.Watch); err != nil {
-		if err == service.ErrLinkNotFound {
+		if errors.Is(err, service.ErrLinkNotFound) {
 			return response.LinkNotFoundResponse
 		}
 		return response.DatabaseErrorResponse

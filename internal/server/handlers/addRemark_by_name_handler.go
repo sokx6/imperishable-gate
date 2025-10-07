@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -23,7 +24,7 @@ func AddRemarkByNameHandler(c echo.Context) error {
 		return response.AuthenticationFailedResponse
 	}
 	if err := service.AddRemarkByName(name, userId, req.Remark); err != nil {
-		if err == service.ErrNameNotFound {
+		if errors.Is(err, service.ErrNameNotFound) {
 			return response.NameNotFoundResponse
 		}
 		return response.DatabaseErrorResponse
