@@ -43,13 +43,11 @@ var loginCmd = &cobra.Command{
 		}
 		// 存储 refresh token 到系统密钥链
 		utils.SaveRefreshToken(refreshToken)
-		refreshToken, err = utils.LoadRefreshToken()
+		_, err = utils.LoadRefreshToken()
 		if err != nil {
 			return fmt.Errorf("failed to save refresh token: %w", err)
 		}
 		fmt.Println("Refresh token saved to system keyring.")
-		fmt.Println("Access Token:", accessToken)
-		fmt.Println("Refresh Token:", refreshToken)
 		fmt.Println("Login successful!")
 		return nil
 	},
@@ -57,6 +55,5 @@ var loginCmd = &cobra.Command{
 
 // 初始化命令行参数
 func init() {
-	loginCmd.Flags().StringP("addr", "a", addr, "Server address (host:port)")
 	rootCmd.AddCommand(loginCmd)
 }
