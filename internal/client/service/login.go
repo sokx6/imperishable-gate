@@ -9,6 +9,8 @@ import (
 )
 
 func Login(addr, username, password string) (accessToken, refreshToken string, err error) {
+	err = nil
+	accessToken, refreshToken = "", ""
 	// 构建登录请求体
 	reqBody := request.LoginRequest{
 		Username: username,
@@ -18,14 +20,14 @@ func Login(addr, username, password string) (accessToken, refreshToken string, e
 	// 将请求体编码为 JSON
 	reqBytes, err := json.Marshal(reqBody)
 	if err != nil {
-		return "", "", err
+		return
 	}
 
 	// 构建 HTTP 请求
 	var resp *http.Response
 	resp, err = http.Post(addr+"/api/v1/login", "application/json", bytes.NewReader(reqBytes))
 	if err != nil {
-		return "", "", err
+		return
 	}
 	// 确保响应体在函数退出时关闭
 	defer resp.Body.Close()
@@ -36,24 +38,29 @@ func Login(addr, username, password string) (accessToken, refreshToken string, e
 		case http.StatusBadRequest:
 			// 处理错误请求
 			err = ErrInvalidRequest
+			return
 		case http.StatusUnauthorized:
 			// 处理认证失败
 			err = ErrAuthenticationFailed
+			return
 		case http.StatusNotFound:
 			// 处理用户不存在
 			err = ErrUserNotFound
+			return
 		case http.StatusInternalServerError:
 			// 处理服务器内部错误
 			err = ErrInternalServer
+			return
 		default:
 			// 处理其他未知错误
 			err = ErrUnknown
+			return
 		}
 
 	}
 
 	// 解析响应体
-	var loginResp response.LoginResult
+	var loginResp response.LoginResponse
 	err = json.NewDecoder(resp.Body).Decode(&loginResp)
 	if err != nil {
 		// 解析失败
