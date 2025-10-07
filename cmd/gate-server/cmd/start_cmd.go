@@ -3,10 +3,9 @@ package cmd
 import (
 	"fmt"
 	"imperishable-gate/internal/server"
+	"os"
 
 	"imperishable-gate/internal/server/service"
-
-	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
@@ -19,14 +18,21 @@ var StartCmd = &cobra.Command{
 	Long:  `Starts the web server that listens for client requests.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// 定义服务器地址
-		Host := cmd.Flag("host").Value.String()
-		Port := cmd.Flag("port").Value.String()
-		Dsn := cmd.Flag("dsn").Value.String()
-		address := Host + ":" + Port
-		fmt.Printf("Starting Imperishable Gate server on %s...\n", address)
+		dsn, _ := cmd.Flags().GetString("dsn")
+		addr, _ := cmd.Flags().GetString("addr")
+		if err := godotenv.Load(); err != nil {
+			fmt.Println("No .env file found, now using default values.")
+		}
+		if addr == "" {
+			addr = os.Getenv("SERVER_ADDR")
+		}
+		if dsn == "" {
+			dsn = os.Getenv("DSN")
+		}
+		fmt.Printf("Starting Imperishable Gate server on %s...\n", addr)
 
 		// 创建新的服务器实例
-		srv := server.NewServer(address, Dsn)
+		srv := server.NewServer(addr, dsn)
 		go service.ScheduledNotWatchingMetabaseFetch()
 		go service.ScheduledWatchingMetabaseFetch()
 
@@ -44,10 +50,7 @@ func init() {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("No .env file found, now using default values.")
 	}
-	Host := os.Getenv("SERVER_HOST")
-	Port := os.Getenv("SERVER_PORT")
-	Dsn := os.Getenv("DATABASE_URL")
-	StartCmd.Flags().StringVarP(&Port, "port", "p", "1270", "Port to listen on (default: 1270)")
-	StartCmd.Flags().StringVarP(&Dsn, "dsn", "d", "", "Data source name for the database")
-	StartCmd.Flags().StringVarP(&Host, "host", "H", "localhost", "Host to listen on (default: localhost)")
+	StartCmd.Flags().StringP("addr", "a", "", "Address to listen on (default: localhost:4514)")
+	StartCmd.Flags().StringP("dsn", "d", "", "Data source name for the database")
+
 }
