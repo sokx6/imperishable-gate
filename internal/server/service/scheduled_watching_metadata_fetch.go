@@ -1,11 +1,14 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
 	"imperishable-gate/internal/server/utils"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 func ScheduledWatchingMetabaseFetch() {
@@ -23,9 +26,21 @@ func ScheduledWatchingMetabaseFetch() {
 			fmt.Println(link)
 			fmt.Println("Fetching metadata for URL:", link.Url)
 			var user model.User
-			if err := database.DB.Find(&user, link.UserID); err != nil {
+			if err := database.DB.First(&user, link.UserID).Error; err != nil { // ✅ 用 First + .Error
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					fmt.Printf("User %d not found for link %s, skipping\n", link.UserID, link.Url)
+				} else {
+					fmt.Println("Error fetching user:", err)
+				}
+				continue
 			}
-			title, desc, keywords, statusCode := utils.CrawlMetadata(link.Url)
+
+			// ✅ 额外检查邮箱
+			if user.Email == "" {
+				fmt.Printf("User %d has no email, skipping notification\n", user.ID)
+				continue
+			}
+			title, desc, keywords, statusCode, _ := utils.CrawlMetadata(link.Url)
 			if err := utils.CheckAndNotifyIfSiteChanged(
 				link.Title,
 				link.Description,

@@ -19,9 +19,10 @@ func ScheduledNotWatchingMetabaseFetch() {
 			fmt.Println("Error fetching links:", err)
 			continue
 		}
-		for _, link := range links {
+		for i := range links {
+			link := &links[i]
 			fmt.Println("Fetching metadata for URL:", link.Url)
-			title, desc, keywords, statusCode := utils.CrawlMetadata(link.Url)
+			title, desc, keywords, statusCode, _ := utils.CrawlMetadata(link.Url)
 			link.Title = title
 			link.Description = desc
 			link.Keywords = keywords
