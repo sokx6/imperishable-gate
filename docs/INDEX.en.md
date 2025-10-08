@@ -168,7 +168,7 @@ This project is deeply inspired by the Touhou Project series:
 
 ### 🌸 *"After seven days of intense development, your mysterious wonderful software has finally released version 1.0"* 🌸
 
-**[⬆ Back to Home](../README.en.md)** | **[GitHub Repository](https://github.com/sokx6/imperishable-gate)**
+**[⬆ Back to Home](../README.en.md)** | **[GitHub Repository](https://github.com/locxl/imperishable-gate)**
 
 *Made with ❤️ and 🌸 | Inspired by Touhou Project © 上海アリス幻樂団*
 

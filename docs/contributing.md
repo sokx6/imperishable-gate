@@ -46,7 +46,7 @@ git clone https://github.com/your-username/imperishable-gate.git
 cd imperishable-gate
 
 # 添加上游仓库
-git remote add upstream https://github.com/sokx6/imperishable-gate.git
+git remote add upstream https://github.com/locxl/imperishable-gate.git
 ```
 
 #### 2. 创建分支
