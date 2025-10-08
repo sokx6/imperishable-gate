@@ -3,21 +3,26 @@ package links
 import (
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
+	"imperishable-gate/internal/server/utils"
 	"imperishable-gate/internal/types/data"
 	"strings"
 )
 
+// ListLinksByKeyword 根据关键词搜索用户的链接
+// 支持在URL、备注、标题、描述、关键词、标签名和别名中进行模糊搜索，并返回分页结果
 func ListLinksByKeyword(userID uint, keyword string, page int, pageSize int) ([]data.Link, error) {
 	var links []model.Link
 
-	// 防止空 keyword 导致全表扫描
+	// 1. 校验关键词，防止空值导致全表扫描
 	if strings.TrimSpace(keyword) == "" {
 		return []data.Link{}, nil
 	}
 
+	// 2. 构建模糊搜索模式
 	searchPattern := "%" + keyword + "%"
 
-	// 查询符合条件的数据并分页
+	// 3. 多表联查并分页查询
+	// 联接link_tags、tags和names表，在多个字段中搜索关键词
 	err := database.DB.Model(&model.Link{}).
 		Joins("LEFT JOIN link_tags ON link_tags.link_id = links.id").
 		Joins("LEFT JOIN tags ON tags.id = link_tags.tag_id AND tags.user_id = ?", userID).
@@ -41,12 +46,13 @@ func ListLinksByKeyword(userID uint, keyword string, page int, pageSize int) ([]
 		return nil, err
 	}
 
-	// 转换为 data.Link 切片
+	// 4. 转换数据模型为响应格式
 	var linkList []data.Link
 	for _, link := range links {
 		linkList = append(linkList, data.Link{
-			ID:          link.ID,
 			Url:         link.Url,
+			Tags:        utils.ExtractTagNames(link.Tags),
+			Names:       utils.ExtractNames(link.Names),
 			Title:       link.Title,
 			Description: link.Description,
 			Keywords:    link.Keywords,
