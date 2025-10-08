@@ -17,14 +17,8 @@ var pingCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		msg, _ := cmd.Flags().GetString("message")
 
-		// 获取服务器地址
-		serverAddr, _ := cmd.Flags().GetString("addr")
-		if serverAddr == "" {
-			serverAddr = "127.0.0.1:8080" // 默认地址
-		}
-
 		// 创建 API 客户端
-		client := utils.NewAPIClient(serverAddr, "")
+		client := utils.NewAPIClient(addr, "")
 
 		// 构造请求体
 		reqBody := request.PingRequest{
@@ -38,7 +32,7 @@ var pingCmd = &cobra.Command{
 			return fmt.Errorf("failed to marshal JSON: %w", err)
 		}
 
-		fmt.Printf("-- Requesting POST method to %s/api/v1/ping with payload\n", serverAddr)
+		fmt.Printf("-- Requesting POST method to %s/api/v1/ping with payload\n", addr)
 		fmt.Printf("%s\n", body)
 
 		// 使用 APIClient 发送请求
