@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/utils/logger"
+	"os"
+	"strings"
 
+	"github.com/glebarez/sqlite"
+	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -17,14 +21,35 @@ func InitDB(dsn string) error {
 
 	logger.Info("Initializing database connection...")
 
+	// 获取数据库类型，默认为 sqlite
+	dbType := strings.ToLower(os.Getenv("DB_TYPE"))
+	if dbType == "" {
+		dbType = "sqlite"
+	}
+
+	// 根据数据库类型选择对应的驱动
+	var dialector gorm.Dialector
+	switch dbType {
+	case "mysql":
+		dialector = mysql.Open(dsn)
+		logger.Info("Using MySQL database")
+	case "postgres", "postgresql":
+		dialector = postgres.Open(dsn)
+		logger.Info("Using PostgreSQL database")
+	case "sqlite":
+		// 使用纯 Go 实现的 SQLite 驱动（无需 CGO）
+		dialector = sqlite.Open(dsn)
+		logger.Info("Using SQLite database (pure Go driver)")
+	default:
+		return fmt.Errorf("unsupported database type: %s (supported: mysql, postgres, sqlite)", dbType)
+	}
+
 	// 连接数据库
-	// dsn是指定的数据库连接字符串
-	// 例如 "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
-	// gorm.Open 返回一个 *gorm.DB 实例和一个 error
-	// gorm.Config 可以用来配置 GORM 的行为，这里使用默认配置
-	// 连接成功后，db 就是一个可以用来操作数据库的对象
-	// 如果连接失败，err 会包含错误信息
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	// dsn 是指定的数据库连接字符串
+	// SQLite: 例如 "gate.db" 或 "/path/to/gate.db" 或 "file:gate.db?cache=shared&mode=rwc"
+	// MySQL: 例如 "user:password@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
+	// PostgreSQL: 例如 "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
+	db, err := gorm.Open(dialector, &gorm.Config{})
 	if err != nil {
 		logger.Error("Failed to connect to database: %v", err)
 		return fmt.Errorf("failed to connect database: %w", err)
