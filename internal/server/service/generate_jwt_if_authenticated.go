@@ -30,13 +30,19 @@ func GenerateJWTIfAuthenticated(username, password string) (response.LoginRespon
 		return response.LoginResponse{}, err
 	}
 
-	// 第二步：认证通过，开始签发 JWT
-	// 查询用户以获取 userID（AuthenticateUser 只返回 true/false）
+	// 第二步：认证通过，检查邮箱是否已验证
+	// 查询用户以获取 userID 和验证状态
 	var user model.User
 	if err := database.DB.Where("username = ?", username).First(&user).Error; err != nil {
 		return response.LoginResponse{}, err
 	}
-	// 生成 Access Token
+
+	// 检查邮箱是否已验证
+	if !user.EmailVerified {
+		return response.LoginResponse{}, ErrEmailNotVerified
+	}
+
+	// 第三步：生成 Access Token
 	accessToken, err := GenerateAccessToken(user.ID, user.Username)
 	if err != nil {
 		return response.LoginResponse{}, err
