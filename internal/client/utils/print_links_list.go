@@ -15,8 +15,7 @@ func PrintLinksList(links []data.Link) {
 
 	fmt.Printf("Found %d link(s):\n\n", len(links))
 	for i, link := range links {
-		fmt.Printf("[%d] ID: %d\n", i+1, link.ID)
-		fmt.Printf("    URL: %s\n", link.Url)
+		fmt.Printf("[%d] URL: %s\n", i+1, link.Url)
 
 		if len(link.Tags) > 0 {
 			fmt.Printf("    Tags: %v\n", link.Tags)
