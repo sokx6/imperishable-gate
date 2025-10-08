@@ -1,8 +1,9 @@
 package email
 
 import (
-	emailService "imperishable-gate/internal/server/service/email"
 	"imperishable-gate/internal/server/service/common"
+	emailService "imperishable-gate/internal/server/service/email"
+
 	"imperishable-gate/internal/types/request"
 	"imperishable-gate/internal/types/response"
 	"net/http"
