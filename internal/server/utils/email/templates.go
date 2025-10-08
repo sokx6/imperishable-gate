@@ -97,7 +97,7 @@ func GetVerificationEmailTemplate(code string) string {
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔐 Imperishable Gate</h1>
+            <h1>Imperishable Gate</h1>
             <p>链接管理系统</p>
         </div>
         <div class="content">
@@ -108,11 +108,11 @@ func GetVerificationEmailTemplate(code string) string {
             <div class="code-box">%s</div>
             
             <div class="info-box">
-                <p><strong>⏰ 有效期：</strong>15分钟</p>
-                <p><strong>💡 提示：</strong>如果您在客户端中，请直接输入此验证码</p>
+                <p><strong>有效期：</strong>15分钟</p>
+                <p><strong>提示：</strong>如果您在客户端中，请直接输入此验证码</p>
             </div>
             
-            <p class="warning">⚠️ 如果这不是您的操作，请忽略此邮件。为了您的账户安全，请勿将验证码告诉他人。</p>
+            <p class="warning">如果这不是您的操作，请忽略此邮件。为了您的账户安全，请勿将验证码告诉他人。</p>
         </div>
         <div class="footer">
             <p>© 2025 Imperishable Gate. All rights reserved.</p>
@@ -135,46 +135,46 @@ func GetWebsiteChangeEmailTemplate(
 <html>
 <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; max-width: 700px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 12px; background-color: #f9f9fb;">
 	<div style="text-align: center; margin-bottom: 20px;">
-		<h2 style="color: #4a90e2;">🚀 网站监控小助手</h2>
-		<p style="color: #666; font-size: 14px;">第一时间为您推送重要变化 💬</p>
+		<h2 style="color: #4a90e2;">网站监控小助手</h2>
+		<p style="color: #666; font-size: 14px;">第一时间为您推送重要变化</p>
 		<hr style="border: 1px dashed #ccc;" />
 	</div>
 
-	<h3 style="color: #2c3e50;">📌 页面已更新</h3>
-	<p><strong>📍 网址:</strong> <a href="%s" style="color: #4a90e2; text-decoration: none;">访问此页</a></p>
+	<h3 style="color: #2c3e50;">页面已更新</h3>
+	<p><strong>网址:</strong> <a href="%s" style="color: #4a90e2; text-decoration: none;">访问此页</a></p>
 
 	<table width="100%%" style="background-color: #f1f8ff; padding: 15px; border-radius: 8px; border: 1px solid #d0ebff; margin: 10px 0;">
 		<tr>
-			<td style="padding: 8px;"><strong>📌 项目</strong></td>
+			<td style="padding: 8px;"><strong>项目</strong></td>
 			<td style="padding: 8px;"><strong>旧内容</strong></td>
-			<td style="padding: 8px;"><strong>新内容 🎉</strong></td>
+			<td style="padding: 8px;"><strong>新内容</strong></td>
 		</tr>
 		<tr>
-			<td style="padding: 8px;">📄 标题</td>
+			<td style="padding: 8px;">标题</td>
 			<td style="padding: 8px; color: #999;"><i>%s</i></td>
 			<td style="padding: 8px; color: #27ae60; font-weight: bold;">%s</td>
 		</tr>
 		<tr>
-			<td style="padding: 8px;">📝 描述</td>
+			<td style="padding: 8px;">描述</td>
 			<td style="padding: 8px; color: #999; white-space: pre-wrap;"><i>%s</i></td>
 			<td style="padding: 8px; color: #27ae60; white-space: pre-wrap;">%s</td>
 		</tr>
 		<tr>
-			<td style="padding: 8px;">🔖 关键词</td>
+			<td style="padding: 8px;">关键词</td>
 			<td style="padding: 8px; color: #999;"><i>%s</i></td>
 			<td style="padding: 8px; color: #27ae60;">%s</td>
 		</tr>
 		<tr>
-			<td style="padding: 8px;">🔧 状态码</td>
+			<td style="padding: 8px;">状态码</td>
 			<td style="padding: 8px; color: %s;"><b>%d</b></td>
 			<td style="padding: 8px; color: %s;"><b>%d</b></td>
 		</tr>
 	</table>
 
 	<div style="margin-top: 20px; text-align: center; font-size: 14px; color: #777;">
-		<p>🔔 这是自动通知，请勿回复本邮件。<br/>
-		如有疑问，欢迎联系支持团队 ❤️</p>
-		<small>Powered by Your Site Monitor ✨</small>
+		<p>这是自动通知，请勿回复本邮件。<br/>
+		如有疑问，欢迎联系支持团队</p>
+		<small>Powered by Your Site Monitor</small>
 	</div>
 </body>
 </html>

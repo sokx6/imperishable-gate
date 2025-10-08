@@ -2,7 +2,7 @@ package email
 
 import (
 	"fmt"
-	"log"
+	"imperishable-gate/internal/server/utils/logger"
 	"mime"
 	"net/smtp"
 )
@@ -32,13 +32,13 @@ func SendEmail(to, subject, htmlBody string) error {
 	auth := smtp.PlainAuth("", config.From, config.Password, config.SMTPHost)
 
 	// 发送邮件
-	log.Printf("Sending email to: %s", to)
+	logger.Info("Sending email to: %s, subject: %s", to, subject)
 	err = smtp.SendMail(config.GetSMTPAddress(), auth, config.From, []string{to}, []byte(message))
 	if err != nil {
-		log.Printf("Failed to send email: %v", err)
+		logger.Error("Failed to send email to %s: %v", to, err)
 		return err
 	}
-	log.Printf("Email sent successfully to: %s", to)
+	logger.Success("Email sent successfully to: %s", to)
 	return nil
 }
 
@@ -56,12 +56,12 @@ func SendWebsiteChangeNotification(
 	userEmail, changedUrl string,
 	oldStatusCode, newStatusCode int) error {
 
-	// 🔔 邮件主题：带 emoji 和动态提示
+	// 邮件主题：动态提示
 	var subject string
 	if oldStatusCode != newStatusCode {
-		subject = "⚠️ 网站状态变更提醒: " + newTitle
+		subject = "网站状态变更提醒: " + newTitle
 	} else {
-		subject = "🎉 您关注的页面有更新啦: " + newTitle
+		subject = "您关注的页面有更新啦: " + newTitle
 	}
 
 	htmlBody := GetWebsiteChangeEmailTemplate(
@@ -71,6 +71,6 @@ func SendWebsiteChangeNotification(
 		oldStatusCode, newStatusCode,
 	)
 
-	log.Printf("准备发送邮件，收件人：%s", userEmail)
+	logger.Info("Preparing to send website change notification to: %s", userEmail)
 	return SendEmail(userEmail, subject, htmlBody)
 }

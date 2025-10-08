@@ -2,7 +2,7 @@ package email
 
 import (
 	"fmt"
-	"log"
+	"imperishable-gate/internal/server/utils/logger"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -21,7 +21,7 @@ func LoadConfig() (*Config, error) {
 	// 加载环境变量
 	err := godotenv.Load()
 	if err != nil {
-		log.Printf("Warning: failed to load .env file: %v", err)
+		logger.Warning("Failed to load .env file: %v", err)
 	}
 
 	// 读取配置
