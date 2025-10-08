@@ -5,7 +5,7 @@ import (
 	"imperishable-gate/internal/server"
 	"os"
 
-	"imperishable-gate/internal/server/service"
+	"imperishable-gate/internal/server/service/scheduled"
 
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
@@ -33,8 +33,8 @@ var StartCmd = &cobra.Command{
 
 		// 创建新的服务器实例
 		srv := server.NewServer(addr, dsn)
-		go service.ScheduledNotWatchingMetabaseFetch()
-		go service.ScheduledWatchingMetabaseFetch()
+		go scheduled.ScheduledNotWatchingMetabaseFetch()
+		go scheduled.ScheduledWatchingMetabaseFetch()
 
 		// 启动服务器
 		if err := srv.Start(); err != nil {
