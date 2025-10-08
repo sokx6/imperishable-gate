@@ -9,6 +9,9 @@ import (
 )
 
 func DeleteLinks(links []string, addr string, accessToken string) error {
+	// 规范化所有 URL（如果缺少协议则自动添加 https://）
+	links = utils.NormalizeURLs(links)
+
 	// 创建 API 客户端
 	client := utils.NewAPIClient(addr, accessToken)
 

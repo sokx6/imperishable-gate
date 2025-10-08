@@ -8,6 +8,9 @@ import (
 )
 
 func DeleteNamesByLink(link string, names []string, addr string, accessToken string) error {
+	// 规范化 URL（如果缺少协议则自动添加 https://）
+	link = utils.NormalizeURL(link)
+
 	client := utils.NewAPIClient(addr, accessToken)
 	reqBody := request.DeleteRequest{
 		Url:   link,
