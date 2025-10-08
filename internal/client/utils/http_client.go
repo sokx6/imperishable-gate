@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 
 	"imperishable-gate/internal/types/response"
 )
@@ -22,9 +21,7 @@ type APIClient struct {
 // NewAPIClient 创建并返回一个新的 APIClient 实例
 func NewAPIClient(baseURL, accessToken string) *APIClient {
 	// 确保 BaseURL 以 http:// 或 https:// 开头
-	if !strings.HasPrefix(baseURL, "http://") && !strings.HasPrefix(baseURL, "https://") {
-		baseURL = "http://" + baseURL
-	}
+	baseURL = NormalizeURL(baseURL)
 	// 返回一个新的 APIClient 实例
 	return &APIClient{
 		BaseURL:     baseURL,
