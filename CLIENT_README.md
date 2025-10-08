@@ -7,6 +7,8 @@
 - [命令列表](#命令列表)
   - [register - 注册用户](#register---注册用户)
   - [login - 登录](#login---登录)
+  - [logout - 登出](#logout---登出)
+  - [whoami - 查看当前用户](#whoami---查看当前用户)
   - [ping - 测试连接](#ping---测试连接)
   - [add - 添加链接](#add---添加链接)
   - [list - 列出链接](#list---列出链接)
@@ -44,18 +46,18 @@ go build -o gate
 
 1. **命令行参数** （最高优先级）
    ```bash
-   gate <command> -a localhost:8080
+   gate <command> -a localhost:4514
    ```
 
 2. **环境变量**（通过 `.env` 文件）
    在项目根目录创建 `.env` 文件：
    ```bash
-   SERVER_ADDR=localhost:8080
+   SERVER_ADDR=localhost:4514
    ```
 
 3. **默认值** （最低优先级）
    ```
-   127.0.0.1:8080
+   localhost:4514
    ```
 
 ---
@@ -66,7 +68,7 @@ go build -o gate
 
 | 参数 | 简写 | 说明 | 示例 |
 |------|------|------|------|
-| `--addr` | `-a` | 服务器地址 | `-a localhost:8080` |
+| `--addr` | `-a` | 服务器地址 | `-a localhost:4514` |
 | `--help` | `-h` | 显示帮助信息 | `gate add -h` |
 | `--version` | | 显示版本信息 | `gate --version` |
 
@@ -89,7 +91,7 @@ gate register [--addr <服务器地址>]
 gate register
 
 # 指定服务器地址注册
-gate register -a localhost:8080
+gate register -a localhost:4514
 ```
 
 **交互流程：**
@@ -117,7 +119,7 @@ gate login [--addr <服务器地址>]
 gate login
 
 # 指定服务器地址登录
-gate login -a localhost:8080
+gate login -a localhost:4514
 ```
 
 **交互流程：**
@@ -132,6 +134,95 @@ Login successful!
 - 登录成功后，刷新令牌会存储在系统密钥链中
 - 后续命令会自动使用存储的令牌进行身份验证
 - 如果访问令牌过期，会自动刷新
+
+---
+
+### logout - 登出
+
+登出并清除本地存储的令牌。
+
+**语法：**
+```bash
+gate logout [--addr <服务器地址>]
+```
+
+**示例：**
+```bash
+# 登出
+gate logout
+
+# 指定服务器地址登出
+gate logout -a localhost:4514
+```
+
+**输出示例：**
+```
+Logged out successfully
+Tokens cleared from system keyring.
+Logout successful!
+```
+
+**说明：**
+- 向服务器发送登出请求，使刷新令牌失效
+- 清除本地系统密钥链中存储的令牌
+- 即使服务器请求失败，也会清除本地令牌
+- 即使没有找到存储的令牌，命令也会成功完成
+
+---
+
+### whoami - 查看当前用户
+
+显示当前认证用户的信息。
+
+**语法：**
+```bash
+gate whoami [--verbose] [--addr <服务器地址>]
+```
+
+**参数：**
+| 参数 | 简写 | 说明 |
+|------|------|------|
+| `--verbose` | `-v` | 显示详细的JSON响应 |
+
+**示例：**
+```bash
+# 查看当前用户信息
+gate whoami
+
+# 显示详细信息
+gate whoami -v
+
+# 指定服务器地址
+gate whoami -a localhost:4514
+```
+
+**输出示例：**
+```
+Authenticated as:
+  User ID:  1
+  Username: myuser
+```
+
+**详细输出示例（使用 -v 参数）：**
+```
+Authenticated as:
+  User ID:  1
+  Username: myuser
+
+Detailed response:
+{
+  "message": "Success",
+  "user_info": {
+    "user_id": 1,
+    "username": "myuser"
+  }
+}
+```
+
+**说明：**
+- 需要先登录才能使用此命令
+- 用于确认当前认证状态和用户身份
+- 可以用来调试认证问题
 
 ---
 
@@ -158,7 +249,7 @@ gate ping
 gate ping -m "Hello Server"
 
 # 指定服务器地址
-gate ping -a localhost:8080 -m "test"
+gate ping -a localhost:4514 -m "test"
 ```
 
 ---
@@ -488,9 +579,9 @@ gate delete -l https://github.com -l https://google.com
 ### 1. 如何配置服务器地址？
 
 有三种方式（按优先级）：
-1. 命令行参数：`gate <command> -a localhost:8080`
-2. 环境变量：在 `.env` 文件中设置 `SERVER_ADDR=localhost:8080`
-3. 默认值：`127.0.0.1:8080`
+1. 命令行参数：`gate <command> -a localhost:4514`
+2. 环境变量：在 `.env` 文件中设置 `SERVER_ADDR=localhost:4514`
+3. 默认值：`localhost:4514`
 
 ### 2. 登录信息存储在哪里？
 

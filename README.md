@@ -208,7 +208,7 @@ sudo pacman -S gnome-keyring libsecret
 
 | 环境变量 | 说明 | 示例值 | 必需 |
 |---------|------|--------|------|
-| `SERVER_ADDR` | 服务器监听地址 | `localhost:8080` 或 `:8080` | ✅ |
+| `SERVER_ADDR` | 服务器监听地址 | `localhost:4514` 或 `:4514` | ✅ |
 
 #### 🔐 JWT 安全配置
 
@@ -326,12 +326,12 @@ cd cmd/gate-server
 ../../bin/gate-server start
 
 # 或使用命令行参数启动
-./bin/gate-server start --addr ":8080" --dsn "host=localhost user=postgres password=postgres dbname=gate_db port=5432 sslmode=disable"
+./bin/gate-server start --addr ":4514" --dsn "host=localhost user=postgres password=postgres dbname=gate_db port=5432 sslmode=disable"
 ```
 
 服务端成功启动后，会显示：
 ```
-Starting Imperishable Gate server on :8080...
+Starting Imperishable Gate server on :4514...
 ```
 
 ### 7. 使用客户端
