@@ -17,13 +17,19 @@ func RegisterRoutes(e *echo.Echo) {
 	v1.POST("/ping", handlers.PingHandler)
 	v1.POST("/refresh", handlers.RefreshTokenHandler)
 	v1.POST("/logout", handlers.LogoutHandler)
-
+	v1.POST("/verify-email", handlers.VerifyEmailAndRegisterHandler)         // 新增：验证邮箱
+	v1.POST("/resend-verification", handlers.ResendVerificationEmailHandler) // 新增：重发验证码
+	v1.PATCH("/email/password", handlers.VerifyEmailAndResetPasswordHandler)
+	v1.PATCH("/username/password", handlers.VerifyEmailByUsernameAndResetPasswordHandler)
+	v1.PATCH("/email/password/request", handlers.SendResetPasswordEmailByEmailHandler)
+	v1.PATCH("/username/password/request", handlers.SendResetPasswordEmailByUsernameHandler)
 	// 创建需要认证的子分组（只加一次中间件）
 	protected := v1.Group("", middlewares.JwtAuthMiddleware)
 
 	// 下面这些路由都自动受保护，无需手动加中间件
 	protected.GET("/names/:name", handlers.ListByNameHandler)
 	protected.GET("/links", handlers.ListHandler)
+	protected.GET("/links/search", handlers.SearchByKeywordHandler)
 	protected.GET("/tags/:tag", handlers.ListByTagHandler)
 
 	protected.POST("/links", handlers.AddHandler)
