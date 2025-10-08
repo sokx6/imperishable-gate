@@ -22,7 +22,6 @@ func RegisterRoutes(e *echo.Echo) {
 	v1.POST("/login", auth.LoginHandler)
 	v1.POST("/ping", common.PingHandler)
 	v1.POST("/refresh", auth.RefreshTokenHandler)
-	v1.POST("/logout", auth.LogoutHandler)
 	v1.POST("/verify-email", email.VerifyEmailAndRegisterHandler)
 	v1.POST("/resend-verification", email.ResendVerificationEmailHandler)
 	v1.PATCH("/email/password", email.VerifyEmailAndResetPasswordHandler)
@@ -32,6 +31,8 @@ func RegisterRoutes(e *echo.Echo) {
 
 	protected := v1.Group("", middlewares.JwtAuthMiddleware)
 
+	protected.POST("/logout", auth.LogoutHandler)
+	protected.GET("/whoami", auth.WhoamiHandler)
 	protected.GET("/names/:name", links.ListByNameHandler)
 	protected.GET("/links", links.ListHandler)
 	protected.GET("/links/search", links.SearchByKeywordHandler)
