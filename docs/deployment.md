@@ -1,14 +1,21 @@
-# 简易部署指南
+# 简易部署指南 | 在幻想乡部署你的服务
 
-本文档提供简单的服务器部署方法，适合学习和小型项目使用。
+**[📖 简体中文](deployment.md) | [📘 English](deployment.en.md)**
+
+> 🚀 *"是时候让白玉楼的链接管理系统服务整个幻想乡了！"*
+
+本文档提供简单的服务器部署方法，适合学习和小型项目使用。如果你要搭建"巨大数据中心"为整个幻想乡提供服务，这份指南会帮助你！
 
 ## 系统要求
 
-- **Go**: 1.25.1+
-- **PostgreSQL**: 12.0+
-- **操作系统**: Linux / macOS
+- **Go**: 1.25.1 或更高版本
+- **数据库**（三选一）:
+  - **SQLite**: 3.x+（推荐用于单机部署）
+  - **MySQL**: 5.7+ / 8.0+
+  - **PostgreSQL**: 12.0+
+- **操作系统**: Linux / macOS（推荐 Linux 服务器）
 
-## 基础部署步骤
+## 🌸 Stage 1-2 | 基础部署步骤
 
 ### 1. 服务器准备
 
@@ -17,11 +24,16 @@
 sudo apt update && sudo apt upgrade -y
 
 # 安装必要工具
-sudo apt install git postgresql -y
+sudo apt install git -y
+
+# 安装数据库（可选，默认使用 SQLite）
+# PostgreSQL: sudo apt install postgresql -y
+# MySQL: sudo apt install mysql-server -y
 ```
 
-### 2. 创建数据库
+### 2. 创建数据库（使用 PostgreSQL 或 MySQL 时）
 
+**PostgreSQL**:
 ```bash
 # 切换到 postgres 用户
 sudo -u postgres psql

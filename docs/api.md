@@ -1,24 +1,31 @@
-# Imperishable Gate API 文档
+# Imperishable Gate API 文档 | RESTful API 完整参考
+
+**[📖 简体中文](api.md) | [📘 English](api.en.md)**
+
+> 🔌 *"通往白玉楼链接管理系统的API之门"*
 
 ## 基础信息
 
 - **基础 URL**: `/api/v1`
-- **认证方式**: JWT Bearer Token (除公共路由外)
+- **认证方式**: JWT Bearer Token（Stage 6 实现，除公共路由外）
 - **Content-Type**: `application/json`
+- **架构风格**: RESTful API（Stage 1-2 设计）
 
-## 目录
+## 📚 目录
 
-- [认证相关 API](#认证相关-api)
-- [链接管理 API](#链接管理-api)
-- [名称管理 API](#名称管理-api)
-- [标签管理 API](#标签管理-api)
-- [备注管理 API](#备注管理-api)
-- [邮箱验证 API](#邮箱验证-api)
-- [公共 API](#公共-api)
+- [Stage 6 | 认证相关 API](#stage-6--认证相关-api)
+- [Stage 2-3 | 链接管理 API](#stage-2-3--链接管理-api)
+- [Stage 3 | 名称（别名）管理 API](#stage-3--名称别名管理-api)
+- [Stage 3 | 标签管理 API](#stage-3--标签管理-api)
+- [Stage 3 | 备注管理 API](#stage-3--备注管理-api)
+- [Stage 6 | 邮箱验证 API](#stage-6--邮箱验证-api)
+- [Stage 1 | 公共 API](#stage-1--公共-api)
 
 ---
 
-## 认证相关 API
+## Stage 6 | 认证相关 API
+
+> 🔐 *"冥界大小姐的亡骸 - 完整的用户认证系统"*
 
 ### 1. 用户注册
 
@@ -33,7 +40,7 @@
 {
   "username": "string",  // 必填，3-32字符
   "email": "string",     // 必填，有效的邮箱地址
-  "password": "string"   // 必填，最少6字符
+  "password": "string"   // 必填，最少6字符（会使用bcrypt加密，不会明文存储！）
 }
 ```
 

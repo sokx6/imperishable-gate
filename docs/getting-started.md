@@ -1,6 +1,10 @@
-# 快速开始
+# 快速开始 | Stage 1: 白銀之春
 
-本指南将帮助您快速搭建和运行 Imperishable Gate。
+**[📖 简体中文](getting-started.md) | [📘 English](getting-started.en.md)**
+
+> 🌸 *"首先来做一些准备工作吧！"* 🌸
+
+本指南将帮助您快速搭建和运行 **Imperishable Gate（不朽之门）**。从零开始，完成 **Stage 1「白銀之春」** 的基础框架搭建，让您的白玉楼庭师身份正式开始管理链接！
 
 ## 前置要求
 

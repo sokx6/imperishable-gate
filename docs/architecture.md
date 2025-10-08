@@ -1,10 +1,29 @@
-# 架构设计
+# 架构设计 | Stage 1-6 系统演进
 
-## 系统架构
+**[📖 简体中文](architecture.md) | [📘 English](architecture.en.md)**
 
-Imperishable Gate 采用**前后端分离架构**：
-- **后端服务**：基于 Go + Echo + PostgreSQL + GORM 构建的高性能 RESTful API 服务
-- **CLI 客户端**：基于 Cobra 框架的强大命令行工具，支持跨平台使用
+> 🏯 *"从简单的客户端-服务端框架，到完整的用户认证系统..."*
+
+## 项目背景与设计理念
+
+**Imperishable Gate（不朽之门）** 采用**前后端分离架构**，整个系统的设计灵感来源于东方妖妖梦（Perfect Cherry Blossom）的 Stage 结构，从 **Stage 1「白銀之春」** 到 **Stage 6「冥界大小姐的亡骸」** 逐步演进。
+
+### 🌸 架构演进路线图
+
+- **Stage 1**: 白銀之春 - 基础客户端/服务端通信框架（Ping）
+- **Stage 2**: 迷途之家の黒猫 - 数据库集成，支持 SQLite/MySQL/PostgreSQL
+- **Stage 3**: 人偶裁判の夜 - 标签、别名、备注系统
+- **Stage 4**: 雪上の櫻花結界 - 元数据抓取、智能监控
+- **Stage 5**: 白玉樓階梯の幻闊 - 搜索、快速打开功能
+- **Stage 6**: 冥界大小姐の亡骸 - 完整用户系统、JWT 认证
+
+## 系统架构总览
+
+### 核心组件
+
+- **后端服务（gate-server）**：基于 Go + Echo + GORM 的高性能 RESTful API 服务
+- **CLI 客户端（gate）**：基于 Cobra 框架的命令行工具，跨平台支持
+- **数据库层**：支持 SQLite（默认）/ MySQL / PostgreSQL 三种数据库
 
 ## 架构图
 

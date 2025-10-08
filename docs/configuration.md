@@ -1,18 +1,24 @@
-# 环境要求与配置
+# 环境要求与配置 | Stage 1-6 配置指南
+
+**[📖 简体中文](configuration.md) | [📘 English](configuration.en.md)**
+
+> ⚙️ *"上一世的运维经验，这一世终于能派上用场了！"*
+
+本文档介绍 **Imperishable Gate** 从 Stage 1 到 Stage 6 的完整配置方法。
 
 ## 环境要求
 
 ### 基础要求
 - **Go**: 1.25.1 或更高版本
-- **数据库**（三选一）:
-  - **SQLite**: 3.x+（默认，无需额外安装）
+- **数据库**（三选一，Stage 2 实现）:
+  - **SQLite**: 3.x+（默认，无需额外安装）✨ 推荐新手使用
   - **MySQL**: 5.7+ / 8.0+
   - **PostgreSQL**: 12.0+
 - **操作系统**: Linux / macOS / Windows
 
-### Linux 系统 Keyring 要求
+### Stage 6 | Linux 系统 Keyring 要求
 
-客户端使用系统 keyring 安全存储令牌。在 Linux 系统上，需要安装相应的 keyring 服务：
+客户端使用系统 keyring 安全存储令牌（Stage 6「冥界大小姐の亡骸」实现）。在 Linux 系统上，需要安装相应的 keyring 服务：
 
 #### Ubuntu/Debian
 ```sh
