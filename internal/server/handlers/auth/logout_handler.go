@@ -33,5 +33,8 @@ func LogoutHandler(c echo.Context) error {
 
 	tokenRecord.Revoked = true
 	database.DB.Save(&tokenRecord)
-	return c.NoContent(http.StatusOK)
+
+	return c.JSON(http.StatusOK, response.Response{
+		Message: "Logged out successfully",
+	})
 }
