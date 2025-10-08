@@ -10,4 +10,5 @@ type Link struct {
 	Description string   `json:"description"`
 	Keywords    string   `json:"keywords"`
 	StatusCode  int      `json:"status_code"`
+	Watching    bool     `json:"watching"`
 }
