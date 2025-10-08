@@ -12,4 +12,6 @@ type Link struct {
 	Keywords    string `json:"keywords"`
 	Watching    bool   `gorm:"default:false" json:"watching"`
 	StatusCode  int    `gorm:"default:200" json:"status_code"`
+	CreatedAt   int64  `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt   int64  `gorm:"autoUpdateTime" json:"updated_at"`
 }
