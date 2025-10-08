@@ -44,6 +44,10 @@ var logoutCmd = &cobra.Command{
 
 		// 清理本地存储的tokens
 		utils.ClearTokens()
+
+		// 清除内存中的 access token
+		accessToken = ""
+
 		fmt.Println("Tokens cleared from system keyring.")
 		fmt.Println("Logout successful!")
 
