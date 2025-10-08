@@ -4,62 +4,42 @@ import (
 	"fmt"
 	"os"
 
-	"imperishable-gate/internal/client/service"
+	"imperishable-gate/internal/client/core"
 
-	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
 
 var accessToken string = ""
 var addr string
+var inInteractiveMode bool = false
 
 var rootCmd = &cobra.Command{
 	Use:   "gate",
 	Short: "gate is a CLI link management tool",
 	Long:  "gate is a CLI link management tool . . .",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		// 对于 login, register, logout, help, version 命令，不需要预先验证 token
-		if cmd.Use == "login" || cmd.Name() == "login" {
-			return nil
-		}
-		if cmd.Use == "register" || cmd.Name() == "register" {
-			return nil
-		}
-		if cmd.Use == "logout" || cmd.Name() == "logout" {
-			return nil
-		}
-		if cmd.Use == "help" || cmd.Name() == "help" {
-			return nil
-		}
-		if cmd.Use == "version" || cmd.Name() == "version" {
-			return nil
-		}
-		if cmd.Use == "ping" || cmd.Name() == "ping" {
-			return nil
-		}
-		// 对于其他命令，预先验证 token
 		// 获取服务器地址
-		addr, _ = cmd.Flags().GetString("addr")
-		if addr == "" {
-			// 尝试从环境变量或 .env 文件中加载地址
-			if err := godotenv.Load(); err == nil {
-				addr = os.Getenv("SERVER_ADDR")
-			} else {
-				// 如果不能加载地址，使用默认地址
-				fmt.Println("Warning: SERVER_ADDR not set and .env file not found, using default 127.0.0.1:8080")
-				addr = "127.0.0.1:8080"
-			}
-		}
-		// 获取并验证访问令牌
-		var err error
-		accessToken, err = service.EnsureValidTokenWithPrompt(addr, accessToken)
-		if err != nil {
-			return err
-		}
-		return nil
+		addr = core.LoadServerAddr(cmd)
+
+		// 对于其他命令，预先验证 token
+		return core.EnsureAuthentication(cmd, addr, &accessToken)
 	},
 	// Run 执行根命令
 	Run: func(cmd *cobra.Command, args []string) {
+		// 如果已经在交互模式中，什么都不做（避免干扰子命令）
+		if inInteractiveMode {
+			return
+		}
+
+		// 如果没有提供任何参数，进入交互模式
+		if len(args) == 0 && !cmd.Flags().Changed("help") && !cmd.Flags().Changed("version") {
+			handler := &core.InteractiveModeHandler{
+				RootCmd:           cmd,
+				InInteractiveMode: &inInteractiveMode,
+			}
+			handler.Run()
+			return
+		}
 		fmt.Println("Welcome to gate CLI tool. Use -h for help.")
 	},
 	Version: "1.0.0",
@@ -70,9 +50,16 @@ func init() {
 	rootCmd.PersistentFlags().StringP("addr", "a", "", "Server address (host:port)")
 }
 
+// Execute 执行根命令
 func Execute() {
+	// 为所有命令设置静默模式，我们自己处理错误和用法的显示顺序
+	silencer := &core.CommandSilencer{
+		InInteractiveMode: &inInteractiveMode,
+	}
+	silencer.Apply(rootCmd)
+
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		// 不打印错误，因为已经在命令执行时处理了
 		os.Exit(1)
 	}
 }
