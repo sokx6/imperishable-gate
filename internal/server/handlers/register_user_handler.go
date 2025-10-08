@@ -16,17 +16,25 @@ func RegisterUserHandler(c echo.Context) error {
 		return response.InvalidRequestResponse
 	}
 
-	// 调用服务层函数注册用户
-	err := service.RegisterUser(req.Username, req.Email, req.Password)
+	// 使用事务确保用户创建和邮件发送的原子性
+	err := service.RegisterUserWithVerification(req.Username, req.Email, req.Password)
 	if err != nil {
+		// 用户名已存在
 		if errors.Is(err, service.ErrNameAlreadyExists) {
 			return response.UserNameAlreadyExistsResponse
 		}
+		// 邮箱已存在
 		if errors.Is(err, service.ErrEmailAlreadyExists) {
 			return response.EmailAlreadyExistsResponse
 		}
-		return response.DatabaseErrorResponse
+		// 数据库错误
+		if errors.Is(err, service.ErrDatabase) {
+			return response.DatabaseErrorResponse
+		}
+		// 邮件发送失败时，返回特殊错误提示用户使用重发功能
+		return response.SendVerificationEmailFailedResponse
 	}
 
-	return c.JSON(http.StatusOK, response.RegisterSuccessResponse)
+	// 注册成功（包括邮件已发送）
+	return c.JSON(http.StatusOK, response.RegistrationSuccessResponse)
 }
