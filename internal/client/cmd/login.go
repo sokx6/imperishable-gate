@@ -14,6 +14,7 @@ import (
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Login to the server and store the refresh token securely",
+	Long:  "Login to the server with your username and password, and securely store the refresh token in the system keyring",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		addr, _ = cmd.Flags().GetString("addr")
