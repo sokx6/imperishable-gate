@@ -26,7 +26,7 @@ func ScheduledWatchingMetabaseFetch() {
 			fmt.Println(link)
 			fmt.Println("Fetching metadata for URL:", link.Url)
 			var user model.User
-			if err := database.DB.First(&user, link.UserID).Error; err != nil { // ✅ 用 First + .Error
+			if err := database.DB.First(&user, link.UserID).Error; err != nil {
 				if errors.Is(err, gorm.ErrRecordNotFound) {
 					fmt.Printf("User %d not found for link %s, skipping\n", link.UserID, link.Url)
 				} else {
@@ -35,7 +35,7 @@ func ScheduledWatchingMetabaseFetch() {
 				continue
 			}
 
-			// ✅ 额外检查邮箱
+			// 额外检查邮箱
 			if user.Email == "" {
 				fmt.Printf("User %d has no email, skipping notification\n", user.ID)
 				continue
