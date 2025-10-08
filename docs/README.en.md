@@ -107,4 +107,4 @@ See: [Client Configuration](configuration.en.md#client-configuration)
 
 ---
 
-Have questions? Check the [FAQ](#-frequently-asked-questions) or ask on [GitHub Issues](https://github.com/sokx6/imperishable-gate/issues).
+Have questions? Check the [FAQ](#-frequently-asked-questions) or ask on [GitHub Issues](https://github.com/locxl/imperishable-gate/issues).

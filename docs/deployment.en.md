@@ -49,7 +49,7 @@ GRANT ALL PRIVILEGES ON DATABASE gate_db TO gateuser;
 
 ```bash
 # Clone project
-git clone https://github.com/sokx6/imperishable-gate.git
+git clone https://github.com/locxl/imperishable-gate.git
 cd imperishable-gate
 
 # Install dependencies

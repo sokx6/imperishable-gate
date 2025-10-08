@@ -112,7 +112,7 @@ This project adopts a **client-server separation architecture**, inspired by the
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/sokx6/imperishable-gate.git
+git clone https://github.com/locxl/imperishable-gate.git
 cd imperishable-gate
 
 # 2. Install dependencies
@@ -315,9 +315,9 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## 📞 Contact
 
-- **GitHub Issues**: [Submit an issue](https://github.com/sokx6/imperishable-gate/issues)
-- **GitHub Discussions**: [Join discussions](https://github.com/sokx6/imperishable-gate/discussions)
-- **Creator**: QQ 3550216663
+- **GitHub Issues**: [Submit an issue](https://github.com/locxl/imperishable-gate/issues)
+- **GitHub Discussions**: [Join discussions](https://github.com/locxl/imperishable-gate/discussions)
+- **Creator**: QQ 2841929072
 
 ---
 
@@ -327,7 +327,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 **[⬆ Back to Top](#imperishable-gate--不朽之门)**
 
-Made with ❤️ and 🌸 by [sokx6](https://github.com/sokx6)
+Made with ❤️ and 🌸 by [locxl](https://github.com/locxl)
 
 *Inspired by Touhou Project © 上海アリス幻樂団 (Team Shanghai Alice)*
 

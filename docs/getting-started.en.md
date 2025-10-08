@@ -27,7 +27,7 @@ If you don't need to modify the source code, it's recommended to download the pr
 
 #### 1. Download Executables
 
-Visit the [GitHub Releases](https://github.com/sokx6/imperishable-gate/releases) page and download the files for your operating system:
+Visit the [GitHub Releases](https://github.com/locxl/imperishable-gate/releases) page and download the files for your operating system:
 
 **Client (gate)**:
 - **Linux AMD64**: `gate-linux-amd64`
@@ -137,7 +137,7 @@ If you need to modify the source code or develop, you can build from source.
 ##### 1. Clone the Project
 
 ```sh
-git clone https://github.com/sokx6/imperishable-gate.git
+git clone https://github.com/locxl/imperishable-gate.git
 cd imperishable-gate
 ```
 

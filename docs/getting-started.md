@@ -27,7 +27,7 @@
 
 #### 1. 下载可执行文件
 
-访问 [GitHub Releases](https://github.com/sokx6/imperishable-gate/releases) 页面，根据您的操作系统下载对应的文件：
+访问 [GitHub Releases](https://github.com/locxl/imperishable-gate/releases) 页面，根据您的操作系统下载对应的文件：
 
 **客户端 (gate)**：
 - **Linux AMD64**: `gate-linux-amd64`
@@ -137,7 +137,7 @@ gate add https://example.com
 ##### 1. 获取项目
 
 ```sh
-git clone https://github.com/sokx6/imperishable-gate.git
+git clone https://github.com/locxl/imperishable-gate.git
 cd imperishable-gate
 ```
 
