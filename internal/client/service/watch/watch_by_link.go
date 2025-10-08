@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
+	"imperishable-gate/internal/client/utils"
 	"imperishable-gate/internal/types/request"
 	"imperishable-gate/internal/types/response"
 )
 
 // WatchByLink 通过链接 URL 设置监控状态
 func WatchByLink(link string, watch bool, addr, token string) error {
+	// 规范化 URL（如果缺少协议则自动添加 https://）
+	link = utils.NormalizeURL(link)
+
 	client := CreateAPIClient(addr, token)
 
 	// 构建请求体
