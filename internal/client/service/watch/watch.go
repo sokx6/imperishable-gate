@@ -26,7 +26,7 @@ func printSuccessMessage(watch bool, identifier string) {
 	if watch {
 		action = "watching"
 	}
-	fmt.Printf("✓ Successfully set %s for: %s\n", action, identifier)
+	fmt.Printf("Successfully set %s for: %s\n", action, identifier)
 }
 
 // 处理通用错误
