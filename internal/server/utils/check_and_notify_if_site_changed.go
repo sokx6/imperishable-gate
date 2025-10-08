@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"imperishable-gate/internal/server/utils/email"
 )
 
 func CheckAndNotifyIfSiteChanged(
@@ -21,7 +22,7 @@ func CheckAndNotifyIfSiteChanged(
 		oldKeywords != newKeywords ||
 		oldStatusCode != newStatusCode {
 		fmt.Println("Site changed, sending email...")
-		if err := sendEmail(
+		if err := email.SendWebsiteChangeNotification(
 			oldTitle,
 			oldDesc,
 			oldKeywords,
@@ -32,7 +33,7 @@ func CheckAndNotifyIfSiteChanged(
 			changedUrl,
 			oldStatusCode,
 			newStatusCode); err != nil {
-			fmt.Println("sendEmail 返回错误:", err)
+			fmt.Println("Failed to send notification email:", err)
 			return err
 		}
 	}
