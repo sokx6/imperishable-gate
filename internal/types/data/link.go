@@ -1,7 +1,7 @@
 package data
 
 type Link struct {
-	ID          uint     `json:"id"`
+	ID          uint     `json:"-"` // 不在 JSON 响应中显示 ID
 	Url         string   `json:"url"`
 	Tags        []string `json:"tags"`
 	Names       []string `json:"names"`
