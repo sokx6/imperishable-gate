@@ -25,7 +25,7 @@ func NewServer(addr, dsn string) *Server {
 		addr = "localhost:4514"
 	}
 	if dsn == "" {
-		dsn = "host=localhost user=postgres dbname=gate_db port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+		dsn = "gate.db"
 	}
 	// 创建新的echo实例
 	e := echo.New()
