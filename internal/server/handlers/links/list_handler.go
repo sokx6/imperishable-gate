@@ -39,7 +39,6 @@ func ListHandler(c echo.Context) error {
 
 	for _, link := range links {
 		linkList = append(linkList, data.Link{
-			ID:          link.ID,
 			Url:         link.Url,
 			Tags:        utils.ExtractTagNames(link.Tags),
 			Names:       utils.ExtractNames(link.Names),
@@ -48,8 +47,8 @@ func ListHandler(c echo.Context) error {
 			Description: link.Description,
 			Keywords:    link.Keywords,
 			StatusCode:  link.StatusCode,
+			Watching:    link.Watching,
 		})
-
 	}
 	// 返回成功响应
 	return c.JSON(http.StatusOK, response.Response{

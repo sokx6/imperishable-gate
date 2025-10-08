@@ -23,36 +23,40 @@ func ListByTagHandler(c echo.Context) error {
 	if err != nil {
 		return response.InvalidRequestResponse
 	}
-	var tag model.Tag
 	userId, ok := utils.GetUserID(c)
 	if !ok {
 		return response.AuthenticationFailedResponse
 	}
-	result := database.DB.
-		Preload("Links.Tags").
-		Preload("Links.Names").
-		First(&tag, "name = ? AND user_id = ?", tagName, userId)
+
+	// 首先验证 tag 是否存在
+	var tag model.Tag
+	result := database.DB.First(&tag, "name = ? AND user_id = ?", tagName, userId)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return response.TagNotFoundResponse
 		}
 		return response.DatabaseErrorResponse
 	}
-	total := int64(len(tag.Links))
-	start := (page - 1) * pageSize
-	end := start + pageSize
 
-	if start > int(total) {
-		start = int(total)
+	// 使用 JOIN 查询并在 SQL 层面分页
+	var links []model.Link
+	err = database.DB.Model(&model.Link{}).
+		Joins("INNER JOIN link_tags ON link_tags.link_id = links.id").
+		Where("link_tags.tag_id = ? AND links.user_id = ?", tag.ID, userId).
+		Order("links.created_at DESC").
+		Offset((page - 1) * pageSize).
+		Limit(pageSize).
+		Preload("Tags").
+		Preload("Names").
+		Find(&links).Error
+	if err != nil {
+		return response.DatabaseErrorResponse
 	}
-	if end > int(total) {
-		end = int(total)
-	}
-	linkList := make([]data.Link, 0)
-	for i := start; i < end; i++ {
-		link := tag.Links[i]
+
+	// 转换为响应格式
+	linkList := make([]data.Link, 0, len(links))
+	for _, link := range links {
 		linkList = append(linkList, data.Link{
-			ID:          link.ID,
 			Url:         link.Url,
 			Tags:        utils.ExtractTagNames(link.Tags),
 			Names:       utils.ExtractNames(link.Names),
@@ -61,8 +65,10 @@ func ListByTagHandler(c echo.Context) error {
 			Description: link.Description,
 			Keywords:    link.Keywords,
 			StatusCode:  link.StatusCode,
+			Watching:    link.Watching,
 		})
 	}
+
 	return c.JSON(http.StatusOK, response.Response{
 		Message: "Links retrieved successfully",
 		Links:   linkList,

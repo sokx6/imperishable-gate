@@ -36,7 +36,6 @@ func ListByNameHandler(c echo.Context) error {
 	Link := Name.Link
 
 	responseLink := data.Link{
-		ID:          Link.ID,
 		Url:         Link.Url,
 		Tags:        utils.ExtractTagNames(Link.Tags),
 		Names:       utils.ExtractNames(Link.Names),
@@ -45,6 +44,7 @@ func ListByNameHandler(c echo.Context) error {
 		Description: Link.Description,
 		Keywords:    Link.Keywords,
 		StatusCode:  Link.StatusCode,
+		Watching:    Link.Watching,
 	}
 	return c.JSON(http.StatusOK, response.Response{
 		Message: "Link retrieved successfully",
