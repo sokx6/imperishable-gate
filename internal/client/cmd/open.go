@@ -11,7 +11,6 @@ var openCmd = &cobra.Command{
 	Use:   "open",
 	Short: "Open links by name or tag",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		addr, _ = cmd.Flags().GetString("addr")
 		name, _ := cmd.Flags().GetString("name")
 		tag, _ := cmd.Flags().GetString("tag")
 		page, _ := cmd.Flags().GetInt("page")
