@@ -19,22 +19,135 @@
 
 详细的环境要求请参考 [配置文档](configuration.md)。
 
-## 安装步骤
+## 安装方式
 
-### 1. 获取项目
+### 方式一：使用预编译版本（推荐）⭐
+
+如果您不需要修改源码，推荐直接下载预编译的可执行文件，无需安装 Go 环境。
+
+#### 1. 下载可执行文件
+
+访问 [GitHub Releases](https://github.com/sokx6/imperishable-gate/releases) 页面，根据您的操作系统下载对应的文件：
+
+**客户端 (gate)**：
+- **Linux AMD64**: `gate-linux-amd64`
+- **Linux ARM64**: `gate-linux-arm64` (适用于树莓派等 ARM 设备)
+- **Windows AMD64**: `gate-windows-amd64.exe`
+- **macOS Intel**: `gate-darwin-amd64`
+- **macOS Apple Silicon**: `gate-darwin-arm64` (M1/M2/M3 芯片)
+
+**服务端 (gate-server)**：
+- **Linux AMD64**: `gate-server-linux-amd64`
+- **Linux ARM64**: `gate-server-linux-arm64`
+- **Windows AMD64**: `gate-server-windows-amd64.exe`
+- **macOS Intel**: `gate-server-darwin-amd64`
+- **macOS Apple Silicon**: `gate-server-darwin-arm64`
+
+#### 2. 配置到系统环境变量
+
+为了在任何目录都能直接使用命令，需要将可执行文件配置到系统 PATH 中。
+
+##### Linux / macOS
+
+```bash
+# 1. 创建存放目录
+mkdir -p ~/.local/bin
+
+# 2. 移动下载的文件到该目录（以 Linux AMD64 为例）
+mv ~/Downloads/gate-linux-amd64 ~/.local/bin/gate
+mv ~/Downloads/gate-server-linux-amd64 ~/.local/bin/gate-server
+
+# 3. 添加执行权限
+chmod +x ~/.local/bin/gate
+chmod +x ~/.local/bin/gate-server
+
+# 4. 添加到 PATH（根据您使用的 Shell 选择）
+# Bash 用户：
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
+# Zsh 用户：
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+
+# Fish 用户：
+fish_add_path ~/.local/bin
+
+# 5. 验证安装
+gate --version
+gate-server --version
+```
+
+##### Windows
+
+**方法 1：使用用户环境变量（推荐）**
+
+```powershell
+# 1. 创建存放目录
+mkdir "$env:USERPROFILE\bin"
+
+# 2. 移动下载的文件到该目录
+move "$env:USERPROFILE\Downloads\gate-windows-amd64.exe" "$env:USERPROFILE\bin\gate.exe"
+move "$env:USERPROFILE\Downloads\gate-server-windows-amd64.exe" "$env:USERPROFILE\bin\gate-server.exe"
+
+# 3. 添加到 PATH（PowerShell）
+$oldPath = [Environment]::GetEnvironmentVariable("Path", "User")
+$newPath = "$oldPath;$env:USERPROFILE\bin"
+[Environment]::SetEnvironmentVariable("Path", $newPath, "User")
+
+# 4. 重启 PowerShell/CMD，然后验证
+gate --version
+gate-server --version
+```
+
+**方法 2：使用图形界面**
+
+1. 创建文件夹 `C:\Program Files\Gate`（或任意位置）
+2. 将下载的 `.exe` 文件重命名并移动到该文件夹：
+   - `gate-windows-amd64.exe` → `gate.exe`
+   - `gate-server-windows-amd64.exe` → `gate-server.exe`
+3. 右键点击 "此电脑" → "属性" → "高级系统设置" → "环境变量"
+4. 在 "用户变量" 中找到 `Path`，点击 "编辑"
+5. 点击 "新建"，添加路径 `C:\Program Files\Gate`
+6. 点击 "确定" 保存
+7. 重启命令提示符或 PowerShell，验证：`gate --version`
+
+#### 3. 开始使用
+
+现在您可以在任何目录直接使用命令了：
+
+```bash
+# 启动服务端
+gate-server start
+
+# 使用客户端
+gate register
+gate login
+gate add https://example.com
+```
+
+跳过"方式二"，直接前往 [配置数据库](#3-配置数据库可选) 和 [配置环境变量](#4-配置环境变量) 完成服务端配置。
+
+---
+
+### 方式二：从源码编译
+
+如果您需要修改源码或进行开发，可以从源码编译。
+
+##### 1. 获取项目
 
 ```sh
 git clone https://github.com/sokx6/imperishable-gate.git
 cd imperishable-gate
 ```
 
-### 2. 安装依赖
+#### 2. 安装依赖
 
 ```sh
 go mod download
 ```
 
-### 3. 配置数据库（可选）
+#### 3. 配置数据库（可选）
 
 **默认配置（SQLite）**：无需任何配置，直接跳到步骤 4。
 
@@ -60,7 +173,7 @@ psql -U postgres -c "CREATE DATABASE gate_db;"
 # DSN=host=localhost user=postgres password=postgres dbname=gate_db port=5432 sslmode=disable TimeZone=Asia/Shanghai
 ```
 
-### 4. 配置环境变量
+#### 4. 配置环境变量
 
 ```sh
 # 复制配置模板（可选，默认使用 SQLite）
@@ -98,7 +211,7 @@ SERVER_ADDR=:4514
 JWT_SECRET=your-super-secret-key-here
 ```
 
-### 5. 构建二进制文件
+#### 5. 构建二进制文件
 
 ```sh
 # 构建服务端
@@ -108,7 +221,7 @@ go build -o bin/gate-server ./cmd/gate-server
 go build -o bin/gate ./cmd/gate
 ```
 
-### 6. 启动服务端
+#### 6. 启动服务端
 
 ```sh
 # 使用默认配置启动（SQLite）

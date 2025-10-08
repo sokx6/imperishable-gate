@@ -19,22 +19,135 @@ Before you begin, ensure your system meets the following requirements:
 
 For detailed environment requirements, please refer to the [Configuration Documentation](configuration.en.md).
 
-## Installation Steps
+## Installation Methods
 
-### 1. Clone the Project
+### Method 1: Using Pre-compiled Binaries (Recommended) ⭐
+
+If you don't need to modify the source code, it's recommended to download the pre-compiled executables directly, without installing the Go environment.
+
+#### 1. Download Executables
+
+Visit the [GitHub Releases](https://github.com/sokx6/imperishable-gate/releases) page and download the files for your operating system:
+
+**Client (gate)**:
+- **Linux AMD64**: `gate-linux-amd64`
+- **Linux ARM64**: `gate-linux-arm64` (for Raspberry Pi and other ARM devices)
+- **Windows AMD64**: `gate-windows-amd64.exe`
+- **macOS Intel**: `gate-darwin-amd64`
+- **macOS Apple Silicon**: `gate-darwin-arm64` (M1/M2/M3 chips)
+
+**Server (gate-server)**:
+- **Linux AMD64**: `gate-server-linux-amd64`
+- **Linux ARM64**: `gate-server-linux-arm64`
+- **Windows AMD64**: `gate-server-windows-amd64.exe`
+- **macOS Intel**: `gate-server-darwin-amd64`
+- **macOS Apple Silicon**: `gate-server-darwin-arm64`
+
+#### 2. Add to System PATH
+
+To use the commands from any directory, add the executables to your system PATH.
+
+##### Linux / macOS
+
+```bash
+# 1. Create a directory for binaries
+mkdir -p ~/.local/bin
+
+# 2. Move downloaded files to that directory (using Linux AMD64 as example)
+mv ~/Downloads/gate-linux-amd64 ~/.local/bin/gate
+mv ~/Downloads/gate-server-linux-amd64 ~/.local/bin/gate-server
+
+# 3. Add execute permissions
+chmod +x ~/.local/bin/gate
+chmod +x ~/.local/bin/gate-server
+
+# 4. Add to PATH (choose based on your shell)
+# Bash users:
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
+# Zsh users:
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+
+# Fish users:
+fish_add_path ~/.local/bin
+
+# 5. Verify installation
+gate --version
+gate-server --version
+```
+
+##### Windows
+
+**Method 1: Using User Environment Variables (Recommended)**
+
+```powershell
+# 1. Create a directory for binaries
+mkdir "$env:USERPROFILE\bin"
+
+# 2. Move downloaded files to that directory
+move "$env:USERPROFILE\Downloads\gate-windows-amd64.exe" "$env:USERPROFILE\bin\gate.exe"
+move "$env:USERPROFILE\Downloads\gate-server-windows-amd64.exe" "$env:USERPROFILE\bin\gate-server.exe"
+
+# 3. Add to PATH (PowerShell)
+$oldPath = [Environment]::GetEnvironmentVariable("Path", "User")
+$newPath = "$oldPath;$env:USERPROFILE\bin"
+[Environment]::SetEnvironmentVariable("Path", $newPath, "User")
+
+# 4. Restart PowerShell/CMD, then verify
+gate --version
+gate-server --version
+```
+
+**Method 2: Using GUI**
+
+1. Create folder `C:\Program Files\Gate` (or any location)
+2. Rename and move downloaded `.exe` files to that folder:
+   - `gate-windows-amd64.exe` → `gate.exe`
+   - `gate-server-windows-amd64.exe` → `gate-server.exe`
+3. Right-click "This PC" → "Properties" → "Advanced system settings" → "Environment Variables"
+4. In "User variables", find `Path`, click "Edit"
+5. Click "New", add path `C:\Program Files\Gate`
+6. Click "OK" to save
+7. Restart Command Prompt or PowerShell, verify: `gate --version`
+
+#### 3. Start Using
+
+Now you can use the commands from any directory:
+
+```bash
+# Start server
+gate-server start
+
+# Use client
+gate register
+gate login
+gate add https://example.com
+```
+
+Skip "Method 2" and proceed to [Configure Database](#3-configure-database-optional) and [Configure Environment Variables](#4-configure-environment-variables) to complete server configuration.
+
+---
+
+### Method 2: Build from Source
+
+If you need to modify the source code or develop, you can build from source.
+
+##### 1. Clone the Project
 
 ```sh
 git clone https://github.com/sokx6/imperishable-gate.git
 cd imperishable-gate
 ```
 
-### 2. Install Dependencies
+#### 2. Install Dependencies
 
 ```sh
 go mod download
 ```
 
-### 3. Configure Database (Optional)
+#### 3. Configure Database (Optional)
 
 **Default Configuration (SQLite)**: No configuration needed, skip to step 4.
 
@@ -60,7 +173,7 @@ psql -U postgres -c "CREATE DATABASE gate_db;"
 # DSN=host=localhost user=postgres password=postgres dbname=gate_db port=5432 sslmode=disable TimeZone=Asia/Shanghai
 ```
 
-### 4. Configure Environment Variables
+#### 4. Configure Environment Variables
 
 ```sh
 # Copy configuration template (optional, uses SQLite by default)
@@ -98,7 +211,7 @@ SERVER_ADDR=:4514
 JWT_SECRET=your-super-secret-key-here
 ```
 
-### 5. Build Binaries
+#### 5. Build Binaries
 
 ```sh
 # Build server
@@ -108,7 +221,7 @@ go build -o bin/gate-server ./cmd/gate-server
 go build -o bin/gate ./cmd/gate
 ```
 
-### 6. Start the Server
+#### 6. Start the Server
 
 ```sh
 # Start with default configuration (SQLite)

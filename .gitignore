@@ -1,0 +1,7 @@
+cmd/gate-server/gate-server
+cmd/gate/gate
+internal/server/handlers/add_handler.disable
+cmd/gate-server/.env
+
+# Build outputs and releases
+bin/
