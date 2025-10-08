@@ -1,34 +1,37 @@
 package scheduled
 
 import (
-	"fmt"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
 	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/server/utils/logger"
 	"time"
 )
 
 func ScheduledNotWatchingMetabaseFetch() {
-	fmt.Println("Starting scheduled metadata fetch service...")
+	logger.Info("Starting scheduled non-watching metadata fetch service (interval: 24 hours)")
 	ticker := time.NewTicker(24 * time.Hour)
 	defer ticker.Stop()
 
 	for range ticker.C {
 		var links []model.Link
 		if err := database.DB.Where("watching = false").Find(&links).Error; err != nil {
-			fmt.Println("Error fetching links:", err)
+			logger.Error("Error fetching non-watching links: %v", err)
 			continue
 		}
+		logger.Info("Fetching metadata for %d non-watching links", len(links))
 		for i := range links {
 			link := &links[i]
-			fmt.Println("Fetching metadata for URL:", link.Url)
+			logger.Debug("Fetching metadata for URL: %s", link.Url)
 			title, desc, keywords, statusCode, _ := utils.CrawlMetadata(link.Url)
 			link.Title = title
 			link.Description = desc
 			link.Keywords = keywords
 			link.StatusCode = statusCode
 			if err := database.DB.Save(&link).Error; err != nil {
-				fmt.Println("Error updating link metadata:", err)
+				logger.Error("Error updating link metadata for URL %s: %v", link.Url, err)
+			} else {
+				logger.Success("Updated metadata for link: %s", link.Url)
 			}
 		}
 	}

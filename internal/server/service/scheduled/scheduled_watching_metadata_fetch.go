@@ -2,42 +2,42 @@ package scheduled
 
 import (
 	"errors"
-	"fmt"
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
 	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/server/utils/logger"
 	"time"
 
 	"gorm.io/gorm"
 )
 
 func ScheduledWatchingMetabaseFetch() {
-	fmt.Println("Starting scheduled metadata fetch service...")
+	logger.Info("Starting scheduled watching metadata fetch service (interval: 3 hours)")
 	ticker := time.NewTicker(3 * time.Hour)
 	defer ticker.Stop()
 
 	for range ticker.C {
 		var links []model.Link
 		if err := database.DB.Where("watching = true").Find(&links).Error; err != nil {
-			fmt.Println("Error fetching links:", err)
+			logger.Error("Error fetching watching links: %v", err)
 			continue
 		}
+		logger.Info("Fetching metadata for %d watching links", len(links))
 		for _, link := range links {
-			fmt.Println(link)
-			fmt.Println("Fetching metadata for URL:", link.Url)
+			logger.Debug("Processing link: ID=%d, URL=%s, UserID=%d", link.ID, link.Url, link.UserID)
 			var user model.User
 			if err := database.DB.First(&user, link.UserID).Error; err != nil {
 				if errors.Is(err, gorm.ErrRecordNotFound) {
-					fmt.Printf("User %d not found for link %s, skipping\n", link.UserID, link.Url)
+					logger.Warning("User %d not found for link %s, skipping", link.UserID, link.Url)
 				} else {
-					fmt.Println("Error fetching user:", err)
+					logger.Error("Error fetching user %d: %v", link.UserID, err)
 				}
 				continue
 			}
 
 			// 额外检查邮箱
 			if user.Email == "" {
-				fmt.Printf("User %d has no email, skipping notification\n", user.ID)
+				logger.Warning("User %d has no email, skipping notification", user.ID)
 				continue
 			}
 			title, desc, keywords, statusCode, _ := utils.CrawlMetadata(link.Url)
@@ -60,7 +60,9 @@ func ScheduledWatchingMetabaseFetch() {
 			link.Keywords = keywords
 			link.StatusCode = statusCode
 			if err := database.DB.Save(&link).Error; err != nil {
-				fmt.Println("Error updating link metadata:", err)
+				logger.Error("Error updating link metadata for URL %s: %v", link.Url, err)
+			} else {
+				logger.Success("Updated metadata for link: %s", link.Url)
 			}
 		}
 	}
