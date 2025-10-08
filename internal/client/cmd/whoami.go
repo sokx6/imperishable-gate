@@ -6,6 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"imperishable-gate/internal/client/service"
 	"imperishable-gate/internal/client/utils"
 	"imperishable-gate/internal/types/response"
 )
@@ -15,12 +16,22 @@ var whoamiCmd = &cobra.Command{
 	Short: "Display current authenticated user information",
 	Long:  "Display information about the currently authenticated user, including user ID and username",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// 使用全局的 accessToken 和 addr（在 PersistentPreRunE 中已验证）
-		client := utils.NewAPIClient(addr, accessToken)
+		// 尝试获取有效的 token（不提示用户登录）
+		validToken, err := service.GetTokenAutomatically(addr, accessToken)
+
+		// 如果无法获取有效 token，显示未登录状态
+		if err != nil {
+			fmt.Println("Not logged in")
+			fmt.Println("Please run 'gate login' to authenticate")
+			return nil
+		}
+
+		// 使用有效的 token 发送请求
+		client := utils.NewAPIClient(addr, validToken)
 
 		// 发送请求
 		var result response.WhoamiResponse
-		err := client.DoRequest("GET", "/api/v1/whoami", nil, &result)
+		err = client.DoRequest("GET", "/api/v1/whoami", nil, &result)
 		if err != nil {
 			return fmt.Errorf("request failed: %w", err)
 		}

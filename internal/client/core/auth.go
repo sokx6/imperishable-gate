@@ -16,6 +16,7 @@ var CommandsWithoutAuth = []string{
 	"ping",
 	"pwd",
 	"gate",
+	"whoami",
 }
 
 // ShouldSkipAuth 判断命令是否应该跳过认证
