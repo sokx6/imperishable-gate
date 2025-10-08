@@ -27,6 +27,7 @@ func NewServer(addr, dsn string) *Server {
 	// 创建新的echo实例
 	e := echo.New()
 	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
 	// 初始化数据库
 	if err := database.InitDB(dsn); err != nil {
