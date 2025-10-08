@@ -12,9 +12,8 @@ var registerCmd = &cobra.Command{
 	Long:  "Register a new user account with username, email, and password",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		if addr == "" {
-			addr = "localhost:4514" // 默认地址
-		}
+		// addr 已经在 PersistentPreRunE 中通过 core.LoadServerAddr 设置了
+		// 不需要再次处理，直接使用全局变量 addr
 
 		// 使用模块化的注册处理函数
 		if err := register.HandleRegister(addr); err != nil {

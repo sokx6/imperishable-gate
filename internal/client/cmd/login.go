@@ -17,7 +17,8 @@ var loginCmd = &cobra.Command{
 	Long:  "Login to the server with your username and password, and securely store the refresh token in the system keyring",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		addr, _ = cmd.Flags().GetString("addr")
+		// addr 已经在 PersistentPreRunE 中通过 core.LoadServerAddr 设置了
+		// 不需要再次获取，直接使用全局变量 addr
 
 		reader := bufio.NewScanner(os.Stdin)
 
