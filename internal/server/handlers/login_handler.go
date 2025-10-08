@@ -26,6 +26,8 @@ func LoginHandler(c echo.Context) error {
 			return response.UserNotFoundResponse
 		case errors.Is(err, service.ErrInvalidPassword):
 			return response.AuthenticationFailedResponse
+		case errors.Is(err, service.ErrEmailNotVerified):
+			return response.EmailNotVerifiedResponse
 		case errors.Is(err, service.ErrDatabase):
 			return response.DatabaseErrorResponse
 		default:
