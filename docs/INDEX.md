@@ -168,7 +168,7 @@
 
 ### 🌸 *"经过七天的紧张开发，你的神秘妙妙软件终于发布了 1.0 版本"* 🌸
 
-**[⬆ 返回主页](../README.md)** | **[GitHub 仓库](https://github.com/locxl/imperishable-gate)**
+**[⬆ 返回主页](../README.md)** | **[GitHub 仓库](https://github.com/sokx6/imperishable-gate)**
 
 *Made with ❤️ and 🌸 | Inspired by Touhou Project © 上海アリス幻樂団*
 

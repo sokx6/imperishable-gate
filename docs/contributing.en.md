@@ -46,7 +46,7 @@ git clone https://github.com/your-username/imperishable-gate.git
 cd imperishable-gate
 
 # Add upstream repository
-git remote add upstream https://github.com/locxl/imperishable-gate.git
+git remote add upstream https://github.com/sokx6/imperishable-gate.git
 ```
 
 #### 2. Create a Branch

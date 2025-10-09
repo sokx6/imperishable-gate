@@ -107,4 +107,4 @@ export GATE_SERVER_ADDR=localhost:4514
 
 ---
 
-有问题？查看[常见问题](#-常见问题)或在 [GitHub Issues](https://github.com/locxl/imperishable-gate/issues) 提问。
+有问题？查看[常见问题](#-常见问题)或在 [GitHub Issues](https://github.com/sokx6/imperishable-gate/issues) 提问。

@@ -13,17 +13,21 @@
 
 ## 📚 Table of Contents
 
-- [Stage 6 | Authentication API](#stage-6--authentication-api)
-- [Stage 2-3 | Link Management API](#stage-2-3--link-management-api)
-- [Stage 3 | Name (Alias) Management API](#stage-3--name-alias-management-api)
-- [Stage 3 | Tag Management API](#stage-3--tag-management-api)
-- [Stage 3 | Remark Management API](#stage-3--remark-management-api)
-- [Stage 6 | Email Verification API](#stage-6--email-verification-api)
-- [Stage 1 | Public API](#stage-1--public-api)
+- [Authentication API](#authentication-api)
+- [Link Management API](#link-management-api)
+- [Name Management API](#name-management-api)
+- [Tag Management API](#tag-management-api)
+- [Remark Management API](#remark-management-api)
+- [Email Verification API](#email-verification-api)
+- [Public API](#public-api)
+- [Data Models](#data-models)
+- [Error Code Reference](#error-code-reference)
+- [Authentication Guide](#authentication-guide)
+- [Important Notes](#important-notes)
 
 ---
 
-## Stage 6 | Authentication API
+## Authentication API
 
 > 🔐 *"The Netherworld Princess's Remains - Complete User Authentication System"*
 
@@ -259,7 +263,7 @@ curl -X GET http://localhost:4514/api/v1/whoami \
 
 **Endpoint**: `POST /api/v1/links`
 
-**Description**: Add a new link with optional names, tags, and remark
+**Description**: Add a new link (URL only, use separate APIs to add names, tags, or remarks)
 
 **Authentication**: Required (Bearer Token)
 
@@ -271,11 +275,7 @@ Authorization: Bearer <access_token>
 **Request Body**:
 ```json
 {
-  "link": "string",      // Required, URL to add
-  "names": ["string"],   // Optional, list of names
-  "tags": ["string"],    // Optional, list of tags
-  "remark": "string",    // Optional, remark
-  "name": "string"       // Optional, single name
+  "link": "string"      // Required, URL to add
 }
 ```
 
@@ -299,12 +299,6 @@ Authorization: Bearer <access_token>
     "message": "Link already exists"
   }
   ```
-- `409 Conflict`: Name already exists
-  ```json
-  {
-    "message": "Name already exists"
-  }
-  ```
 - `401 Unauthorized`: Not authenticated or invalid token
 
 **Example**:
@@ -313,10 +307,7 @@ curl -X POST http://localhost:4514/api/v1/links \
   -H "Authorization: Bearer <your_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "link": "https://example.com",
-    "names": ["example"],
-    "tags": ["website", "demo"],
-    "remark": "Example website"
+    "link": "https://example.com"
   }'
 ```
 
@@ -540,7 +531,7 @@ curl -X GET "http://localhost:4514/api/v1/tags/website?page=1&page_size=10" \
 
 **Endpoint**: `DELETE /api/v1/links`
 
-**Description**: Delete link by URL
+**Description**: Delete one or more links by URL (via query parameters)
 
 **Authentication**: Required (Bearer Token)
 
@@ -549,12 +540,8 @@ curl -X GET "http://localhost:4514/api/v1/tags/website?page=1&page_size=10" \
 Authorization: Bearer <access_token>
 ```
 
-**Request Body**:
-```json
-{
-  "url": "string"  // Required, URL of the link to delete
-}
-```
+**Query Parameters**:
+- `link`: URL of the link to delete (can be repeated multiple times to delete multiple links)
 
 **Success Response** (200 OK):
 ```json
@@ -564,6 +551,7 @@ Authorization: Bearer <access_token>
 ```
 
 **Error Responses**:
+- `400 Bad Request`: Invalid URL format
 - `404 Not Found`: Link not found
   ```json
   {
@@ -574,12 +562,13 @@ Authorization: Bearer <access_token>
 
 **Example**:
 ```bash
-curl -X DELETE http://localhost:4514/api/v1/links \
-  -H "Authorization: Bearer <your_token>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://example.com"
-  }'
+# Delete single link
+curl -X DELETE "http://localhost:4514/api/v1/links?link=https://example.com" \
+  -H "Authorization: Bearer <your_token>"
+
+# Delete multiple links
+curl -X DELETE "http://localhost:4514/api/v1/links?link=https://example.com&link=https://test.com" \
+  -H "Authorization: Bearer <your_token>"
 ```
 
 ---
@@ -746,7 +735,7 @@ Authorization: Bearer <access_token>
 **Request Body**:
 ```json
 {
-  "url": "string",       // Required, link URL
+  "link": "string",      // Required, link URL
   "names": ["string"]    // Required, list of names to add
 }
 ```
@@ -759,12 +748,7 @@ Authorization: Bearer <access_token>
 ```
 
 **Error Responses**:
-- `404 Not Found`: Link not found
-  ```json
-  {
-    "message": "Link not found"
-  }
-  ```
+- `400 Bad Request`: Invalid link URL format
 - `409 Conflict`: Name already exists
   ```json
   {
@@ -779,7 +763,7 @@ curl -X POST http://localhost:4514/api/v1/names \
   -H "Authorization: Bearer <your_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://example.com",
+    "link": "https://example.com",
     "names": ["example", "demo"]
   }'
 ```
@@ -852,8 +836,8 @@ Authorization: Bearer <access_token>
 **Request Body**:
 ```json
 {
-  "url": "string",      // Required, link URL
-  "tags": ["string"]    // Required, list of tags to add
+  "link": "string",      // Required, link URL
+  "tags": ["string"]     // Required, list of tags to add
 }
 ```
 
@@ -865,12 +849,7 @@ Authorization: Bearer <access_token>
 ```
 
 **Error Responses**:
-- `404 Not Found`: Link not found
-  ```json
-  {
-    "message": "Link not found"
-  }
-  ```
+- `400 Bad Request`: Invalid link URL format
 - `401 Unauthorized`: Not authenticated or invalid token
 
 **Example**:
@@ -879,7 +858,7 @@ curl -X POST http://localhost:4514/api/v1/tags \
   -H "Authorization: Bearer <your_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://example.com",
+    "link": "https://example.com",
     "tags": ["website", "demo"]
   }'
 ```
@@ -1050,7 +1029,7 @@ Authorization: Bearer <access_token>
 **Request Body**:
 ```json
 {
-  "url": "string",       // Required, link URL
+  "link": "string",      // Required, link URL
   "remark": "string"     // Required, remark content
 }
 ```
@@ -1063,18 +1042,7 @@ Authorization: Bearer <access_token>
 ```
 
 **Error Responses**:
-- `404 Not Found`: Link not found
-  ```json
-  {
-    "message": "Link not found"
-  }
-  ```
-- `409 Conflict`: Remark already exists
-  ```json
-  {
-    "message": "Remark already exists"
-  }
-  ```
+- `400 Bad Request`: Invalid link URL format or empty remark
 - `401 Unauthorized`: Not authenticated or invalid token
 
 **Example**:
@@ -1083,7 +1051,7 @@ curl -X POST http://localhost:4514/api/v1/remarks \
   -H "Authorization: Bearer <your_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://example.com",
+    "link": "https://example.com",
     "remark": "This is an example website"
   }'
 ```
@@ -1587,6 +1555,6 @@ POST /api/v1/refresh
 
 ---
 
-**Documentation Generated**: October 8, 2025
+**Documentation Generated**: October 9, 2025
 
 **API Version**: v1
