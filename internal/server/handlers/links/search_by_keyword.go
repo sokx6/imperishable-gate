@@ -17,6 +17,12 @@ func SearchByKeywordHandler(c echo.Context) error {
 		return response.InvalidRequestResponse
 	}
 	pageSize, err := utils.GetContentInt(c, "page_size")
+	if pageSize <= 0 {
+		pageSize = 10
+	}
+	if pageSize > 100 {
+		pageSize = 100
+	}
 	if err != nil {
 		return response.InvalidRequestResponse
 	}
