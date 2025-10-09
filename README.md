@@ -112,7 +112,7 @@
 
 ```bash
 # 1. 克隆项目
-git clone https://github.com/locxl/imperishable-gate.git
+git clone https://github.com/sokx6/imperishable-gate.git
 cd imperishable-gate
 
 # 2. 安装依赖
@@ -315,8 +315,7 @@ export GATE_SERVER_ADDR=http://localhost:4514
 
 ## 📞 联系方式
 
-- **GitHub Issues**: [提交问题](https://github.com/locxl/imperishable-gate/issues)
-- **GitHub Discussions**: [参与讨论](https://github.com/locxl/imperishable-gate/discussions)
+- **GitHub Issues**: [提交问题](https://github.com/sokx6/imperishable-gate/issues)
 - **作者**: QQ 2841929072
 
 ---
@@ -327,7 +326,7 @@ export GATE_SERVER_ADDR=http://localhost:4514
 
 **[⬆ 回到顶部](#imperishable-gate--不朽之门)**
 
-Made with ❤️ and 🌸 by [locxl](https://github.com/locxl)
+Made with ❤️ and 🌸 by [locxl](https://github.com/sokx6)
 
 *Inspired by Touhou Project © 上海アリス幻樂団 (Team Shanghai Alice)*
 

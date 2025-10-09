@@ -13,17 +13,21 @@
 
 ## 📚 目录
 
-- [Stage 6 | 认证相关 API](#stage-6--认证相关-api)
-- [Stage 2-3 | 链接管理 API](#stage-2-3--链接管理-api)
-- [Stage 3 | 名称（别名）管理 API](#stage-3--名称别名管理-api)
-- [Stage 3 | 标签管理 API](#stage-3--标签管理-api)
-- [Stage 3 | 备注管理 API](#stage-3--备注管理-api)
-- [Stage 6 | 邮箱验证 API](#stage-6--邮箱验证-api)
-- [Stage 1 | 公共 API](#stage-1--公共-api)
+- [认证相关 API](#认证相关-api)
+- [链接管理 API](#链接管理-api)
+- [名称管理 API](#名称管理-api)
+- [标签管理 API](#标签管理-api)
+- [备注管理 API](#备注管理-api)
+- [邮箱验证 API](#邮箱验证-api)
+- [公共 API](#公共-api)
+- [数据模型](#数据模型)
+- [错误码说明](#错误码说明)
+- [认证说明](#认证说明)
+- [注意事项](#注意事项)
 
 ---
 
-## Stage 6 | 认证相关 API
+## 认证相关 API
 
 > 🔐 *"冥界大小姐的亡骸 - 完整的用户认证系统"*
 
@@ -259,7 +263,7 @@ curl -X GET http://localhost:4514/api/v1/whoami \
 
 **端点**: `POST /api/v1/links`
 
-**描述**: 添加一个新链接，可同时添加名称、标签和备注
+**描述**: 添加一个新链接（仅添加URL，如需添加名称、标签、备注请使用对应的API）
 
 **认证**: 需要 (Bearer Token)
 
@@ -271,11 +275,7 @@ Authorization: Bearer <access_token>
 **请求体**:
 ```json
 {
-  "link": "string",      // 必填，要添加的链接URL
-  "names": ["string"],   // 可选，名称列表
-  "tags": ["string"],    // 可选，标签列表
-  "remark": "string",    // 可选，备注
-  "name": "string"       // 可选，单个名称
+  "link": "string"      // 必填，要添加的链接URL
 }
 ```
 
@@ -299,12 +299,6 @@ Authorization: Bearer <access_token>
     "message": "Link already exists"
   }
   ```
-- `409 Conflict`: 名称已存在
-  ```json
-  {
-    "message": "Name already exists"
-  }
-  ```
 - `401 Unauthorized`: 未认证或令牌无效
 
 **示例**:
@@ -313,10 +307,7 @@ curl -X POST http://localhost:4514/api/v1/links \
   -H "Authorization: Bearer <your_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "link": "https://example.com",
-    "names": ["example"],
-    "tags": ["website", "demo"],
-    "remark": "Example website"
+    "link": "https://example.com"
   }'
 ```
 
@@ -540,7 +531,7 @@ curl -X GET "http://localhost:4514/api/v1/tags/website?page=1&page_size=10" \
 
 **端点**: `DELETE /api/v1/links`
 
-**描述**: 根据URL删除链接
+**描述**: 根据URL删除一个或多个链接（通过查询参数）
 
 **认证**: 需要 (Bearer Token)
 
@@ -549,12 +540,8 @@ curl -X GET "http://localhost:4514/api/v1/tags/website?page=1&page_size=10" \
 Authorization: Bearer <access_token>
 ```
 
-**请求体**:
-```json
-{
-  "url": "string"  // 必填，要删除的链接URL
-}
-```
+**查询参数**:
+- `link`: 要删除的链接URL（可以重复多次以删除多个链接）
 
 **成功响应** (200 OK):
 ```json
@@ -564,6 +551,7 @@ Authorization: Bearer <access_token>
 ```
 
 **错误响应**:
+- `400 Bad Request`: URL格式无效
 - `404 Not Found`: 链接不存在
   ```json
   {
@@ -574,12 +562,13 @@ Authorization: Bearer <access_token>
 
 **示例**:
 ```bash
-curl -X DELETE http://localhost:4514/api/v1/links \
-  -H "Authorization: Bearer <your_token>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://example.com"
-  }'
+# 删除单个链接
+curl -X DELETE "http://localhost:4514/api/v1/links?link=https://example.com" \
+  -H "Authorization: Bearer <your_token>"
+
+# 删除多个链接
+curl -X DELETE "http://localhost:4514/api/v1/links?link=https://example.com&link=https://test.com" \
+  -H "Authorization: Bearer <your_token>"
 ```
 
 ---
@@ -746,7 +735,7 @@ Authorization: Bearer <access_token>
 **请求体**:
 ```json
 {
-  "url": "string",       // 必填，链接URL
+  "link": "string",      // 必填，链接URL
   "names": ["string"]    // 必填，要添加的名称列表
 }
 ```
@@ -759,12 +748,7 @@ Authorization: Bearer <access_token>
 ```
 
 **错误响应**:
-- `404 Not Found`: 链接不存在
-  ```json
-  {
-    "message": "Link not found"
-  }
-  ```
+- `400 Bad Request`: 链接URL格式无效
 - `409 Conflict`: 名称已存在
   ```json
   {
@@ -779,7 +763,7 @@ curl -X POST http://localhost:4514/api/v1/names \
   -H "Authorization: Bearer <your_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://example.com",
+    "link": "https://example.com",
     "names": ["example", "demo"]
   }'
 ```
@@ -852,8 +836,8 @@ Authorization: Bearer <access_token>
 **请求体**:
 ```json
 {
-  "url": "string",      // 必填，链接URL
-  "tags": ["string"]    // 必填，要添加的标签列表
+  "link": "string",      // 必填，链接URL
+  "tags": ["string"]     // 必填，要添加的标签列表
 }
 ```
 
@@ -865,12 +849,7 @@ Authorization: Bearer <access_token>
 ```
 
 **错误响应**:
-- `404 Not Found`: 链接不存在
-  ```json
-  {
-    "message": "Link not found"
-  }
-  ```
+- `400 Bad Request`: 链接URL格式无效
 - `401 Unauthorized`: 未认证或令牌无效
 
 **示例**:
@@ -879,7 +858,7 @@ curl -X POST http://localhost:4514/api/v1/tags \
   -H "Authorization: Bearer <your_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://example.com",
+    "link": "https://example.com",
     "tags": ["website", "demo"]
   }'
 ```
@@ -1050,7 +1029,7 @@ Authorization: Bearer <access_token>
 **请求体**:
 ```json
 {
-  "url": "string",       // 必填，链接URL
+  "link": "string",      // 必填，链接URL
   "remark": "string"     // 必填，备注内容
 }
 ```
@@ -1063,18 +1042,7 @@ Authorization: Bearer <access_token>
 ```
 
 **错误响应**:
-- `404 Not Found`: 链接不存在
-  ```json
-  {
-    "message": "Link not found"
-  }
-  ```
-- `409 Conflict`: 备注已存在
-  ```json
-  {
-    "message": "Remark already exists"
-  }
-  ```
+- `400 Bad Request`: 链接URL格式无效或备注为空
 - `401 Unauthorized`: 未认证或令牌无效
 
 **示例**:
@@ -1083,7 +1051,7 @@ curl -X POST http://localhost:4514/api/v1/remarks \
   -H "Authorization: Bearer <your_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://example.com",
+    "link": "https://example.com",
     "remark": "This is an example website"
   }'
 ```
@@ -1587,6 +1555,6 @@ POST /api/v1/refresh
 
 ---
 
-**文档生成时间**: 2025-10-08
+**文档生成时间**: 2025-10-09
 
 **API版本**: v1

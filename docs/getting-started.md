@@ -27,7 +27,7 @@
 
 #### 1. 下载可执行文件
 
-访问 [GitHub Releases](https://github.com/locxl/imperishable-gate/releases) 页面，根据您的操作系统下载对应的文件：
+访问 [GitHub Releases](https://github.com/sokx6/imperishable-gate/releases) 页面，根据您的操作系统下载对应的文件：
 
 **客户端 (gate)**：
 - **Linux AMD64**: `gate-linux-amd64`
@@ -75,7 +75,6 @@ fish_add_path ~/.local/bin
 
 # 5. 验证安装
 gate --version
-gate-server --version
 ```
 
 ##### Windows
@@ -97,7 +96,6 @@ $newPath = "$oldPath;$env:USERPROFILE\bin"
 
 # 4. 重启 PowerShell/CMD，然后验证
 gate --version
-gate-server --version
 ```
 
 **方法 2：使用图形界面**
@@ -137,7 +135,7 @@ gate add https://example.com
 ##### 1. 获取项目
 
 ```sh
-git clone https://github.com/locxl/imperishable-gate.git
+git clone https://github.com/sokx6/imperishable-gate.git
 cd imperishable-gate
 ```
 
