@@ -1,6 +1,7 @@
 package email
 
 import (
+	"crypto/tls"
 	"fmt"
 	"imperishable-gate/internal/server/utils/logger"
 	"mime"
@@ -33,13 +34,79 @@ func SendEmail(to, subject, htmlBody string) error {
 
 	// 发送邮件
 	logger.Info("Sending email to: %s, subject: %s", to, subject)
-	err = smtp.SendMail(config.GetSMTPAddress(), auth, config.From, []string{to}, []byte(message))
+
+	// 根据端口选择发送方式
+	if config.SMTPPort == "465" {
+		// 使用 SSL/TLS 加密连接（端口 465）
+		err = sendMailWithTLS(config, auth, []string{to}, []byte(message))
+	} else {
+		// 使用 STARTTLS（端口 587）或明文（端口 25，不推荐）
+		err = smtp.SendMail(config.GetSMTPAddress(), auth, config.From, []string{to}, []byte(message))
+	}
+
 	if err != nil {
 		logger.Error("Failed to send email to %s: %v", to, err)
 		return err
 	}
 	logger.Success("Email sent successfully to: %s", to)
 	return nil
+}
+
+// sendMailWithTLS 使用 TLS 加密连接发送邮件（用于端口 465）
+func sendMailWithTLS(config *Config, auth smtp.Auth, to []string, msg []byte) error {
+	// 创建 TLS 配置
+	tlsConfig := &tls.Config{
+		ServerName: config.SMTPHost,
+	}
+
+	// 建立 TLS 连接
+	conn, err := tls.Dial("tcp", config.GetSMTPAddress(), tlsConfig)
+	if err != nil {
+		return fmt.Errorf("TLS connection failed: %v", err)
+	}
+	defer conn.Close()
+
+	// 创建 SMTP 客户端
+	client, err := smtp.NewClient(conn, config.SMTPHost)
+	if err != nil {
+		return fmt.Errorf("SMTP client creation failed: %v", err)
+	}
+	defer client.Close()
+
+	// 认证
+	if err = client.Auth(auth); err != nil {
+		return fmt.Errorf("SMTP authentication failed: %v", err)
+	}
+
+	// 设置发件人
+	if err = client.Mail(config.From); err != nil {
+		return fmt.Errorf("setting sender failed: %v", err)
+	}
+
+	// 设置收件人
+	for _, addr := range to {
+		if err = client.Rcpt(addr); err != nil {
+			return fmt.Errorf("setting recipient failed: %v", err)
+		}
+	}
+
+	// 发送邮件内容
+	w, err := client.Data()
+	if err != nil {
+		return fmt.Errorf("data command failed: %v", err)
+	}
+
+	_, err = w.Write(msg)
+	if err != nil {
+		return fmt.Errorf("writing message failed: %v", err)
+	}
+
+	err = w.Close()
+	if err != nil {
+		return fmt.Errorf("closing data writer failed: %v", err)
+	}
+
+	return client.Quit()
 }
 
 // SendVerificationEmail 发送验证邮件
