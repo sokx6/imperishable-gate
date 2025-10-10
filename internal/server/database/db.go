@@ -6,11 +6,13 @@ import (
 	"imperishable-gate/internal/server/utils/logger"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/glebarez/sqlite"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	gormLogger "gorm.io/gorm/logger"
 )
 
 var DB *gorm.DB
@@ -49,7 +51,16 @@ func InitDB(dsn string) error {
 	// SQLite: 例如 "gate.db" 或 "/path/to/gate.db" 或 "file:gate.db?cache=shared&mode=rwc"
 	// MySQL: 例如 "user:password@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
 	// PostgreSQL: 例如 "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
-	db, err := gorm.Open(dialector, &gorm.Config{})
+
+	// 获取日志级别配置
+	logLevel := getGormLogLevel()
+
+	// 创建自定义 GORM logger
+	gormLog := logger.NewGormLogger(logLevel, 200*time.Millisecond)
+
+	db, err := gorm.Open(dialector, &gorm.Config{
+		Logger: gormLog,
+	})
 	if err != nil {
 		logger.Error("Failed to connect to database: %v", err)
 		return fmt.Errorf("failed to connect database: %w", err)
@@ -76,4 +87,24 @@ func InitDB(dsn string) error {
 
 	logger.Success("Database migrations completed successfully")
 	return nil
+}
+
+// getGormLogLevel 根据环境变量获取 GORM 日志级别
+func getGormLogLevel() gormLogger.LogLevel {
+	logLevel := strings.ToLower(os.Getenv("LOG_LEVEL"))
+	switch logLevel {
+	case "debug":
+		return gormLogger.Info // GORM Info 级别会记录所有 SQL
+	case "info":
+		return gormLogger.Warn // 只记录慢查询和错误
+	case "warn", "warning":
+		return gormLogger.Warn
+	case "error":
+		return gormLogger.Error
+	case "silent":
+		return gormLogger.Silent
+	default:
+		// 默认为 Warn 级别，只记录慢查询和错误
+		return gormLogger.Warn
+	}
 }
