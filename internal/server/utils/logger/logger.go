@@ -10,7 +10,6 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-var echoInstance *echo.Echo
 var currentLogLevel LogLevel
 
 // LogLevel 定义日志级别
@@ -24,10 +23,8 @@ const (
 	SILENT
 )
 
-// InitLogger 初始化日志器，需要传入 Echo 实例
+// InitLogger 初始化日志器,设置 Echo 的日志级别
 func InitLogger(e *echo.Echo) {
-	echoInstance = e
-
 	// 根据环境变量设置日志级别
 	currentLogLevel = getLogLevelFromEnv()
 
@@ -107,11 +104,7 @@ func Info(format string, args ...interface{}) {
 	}
 	message := fmt.Sprintf(format, args...)
 	log := formatLog("INFO", ColorInfo, message)
-	if echoInstance != nil {
-		echoInstance.Logger.Info(log)
-	} else {
-		fmt.Println(log)
-	}
+	fmt.Println(log)
 }
 
 // Success 记录成功日志
@@ -121,11 +114,7 @@ func Success(format string, args ...interface{}) {
 	}
 	message := fmt.Sprintf(format, args...)
 	log := formatLog("SUCCESS", ColorSuccess, message)
-	if echoInstance != nil {
-		echoInstance.Logger.Info(log)
-	} else {
-		fmt.Println(log)
-	}
+	fmt.Println(log)
 }
 
 // Warning 记录警告日志
@@ -135,11 +124,7 @@ func Warning(format string, args ...interface{}) {
 	}
 	message := fmt.Sprintf(format, args...)
 	log := formatLog("WARNING", ColorWarning, message)
-	if echoInstance != nil {
-		echoInstance.Logger.Warn(log)
-	} else {
-		fmt.Println(log)
-	}
+	fmt.Println(log)
 }
 
 // Error 记录错误日志
@@ -149,11 +134,7 @@ func Error(format string, args ...interface{}) {
 	}
 	message := fmt.Sprintf(format, args...)
 	log := formatLog("ERROR", ColorError, message)
-	if echoInstance != nil {
-		echoInstance.Logger.Error(log)
-	} else {
-		fmt.Println(log)
-	}
+	fmt.Println(log)
 }
 
 // Debug 记录调试日志
@@ -163,9 +144,5 @@ func Debug(format string, args ...interface{}) {
 	}
 	message := fmt.Sprintf(format, args...)
 	log := formatLog("DEBUG", ColorDebug, message)
-	if echoInstance != nil {
-		echoInstance.Logger.Debug(log)
-	} else {
-		fmt.Println(log)
-	}
+	fmt.Println(log)
 }
