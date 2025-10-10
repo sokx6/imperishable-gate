@@ -1,8 +1,8 @@
 # Imperishable Gate API 文档 | RESTful API 完整参考
 
-**[📖 简体中文](api.md) | [📘 English](api.en.md)**
+**[简体中文](api.md) | [English](api.en.md)**
 
-> 🔌 *"通往白玉楼链接管理系统的API之门"*
+> *"通往白玉楼链接管理系统的API之门"*
 
 ## 基础信息
 
@@ -11,7 +11,7 @@
 - **Content-Type**: `application/json`
 - **架构风格**: RESTful API（Stage 1-2 设计）
 
-## 📚 目录
+## 目录
 
 - [认证相关 API](#认证相关-api)
 - [链接管理 API](#链接管理-api)
@@ -29,7 +29,7 @@
 
 ## 认证相关 API
 
-> 🔐 *"冥界大小姐的亡骸 - 完整的用户认证系统"*
+> *"冥界大小姐的亡骸 - 完整的用户认证系统"*
 
 ### 1. 用户注册
 
@@ -336,7 +336,6 @@ Authorization: Bearer <access_token>
   "message": "Links retrieved successfully",
   "links": [
     {
-      "id": 1,
       "url": "https://example.com",
       "tags": ["website", "demo"],
       "names": ["example"],
@@ -387,7 +386,6 @@ Authorization: Bearer <access_token>
   "message": "Links retrieved successfully",
   "links": [
     {
-      "id": 1,
       "url": "https://example.com",
       "tags": ["website"],
       "names": ["example"],
@@ -436,7 +434,6 @@ Authorization: Bearer <access_token>
   "message": "Link retrieved successfully",
   "links": [
     {
-      "id": 1,
       "url": "https://example.com",
       "tags": ["website"],
       "names": ["example"],
@@ -494,7 +491,6 @@ Authorization: Bearer <access_token>
   "message": "Links retrieved successfully",
   "links": [
     {
-      "id": 1,
       "url": "https://example.com",
       "tags": ["website", "demo"],
       "names": ["example"],
@@ -1486,7 +1482,6 @@ curl -X POST http://localhost:4514/api/v1/ping \
 
 ```json
 {
-  "id": 1,                    // 链接ID
   "url": "string",            // 链接URL
   "tags": ["string"],         // 标签列表
   "names": ["string"],        // 名称列表

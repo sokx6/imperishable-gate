@@ -1,8 +1,8 @@
 # Imperishable Gate API Documentation | Complete RESTful API Reference
 
-**[📖 简体中文](api.md) | [📘 English](api.en.md)**
+**[简体中文](api.md) | [English](api.en.md)**
 
-> 🔌 *"The API Gateway to Hakugyokurou Link Management System"*
+> *"The API Gateway to Hakugyokurou Link Management System"*
 
 ## Basic Information
 
@@ -11,7 +11,7 @@
 - **Content-Type**: `application/json`
 - **Architecture**: RESTful API (Designed in Stage 1-2)
 
-## 📚 Table of Contents
+## Table of Contents
 
 - [Authentication API](#authentication-api)
 - [Link Management API](#link-management-api)
@@ -29,7 +29,7 @@
 
 ## Authentication API
 
-> 🔐 *"The Netherworld Princess's Remains - Complete User Authentication System"*
+> *"The Netherworld Princess's Remains - Complete User Authentication System"*
 
 ### 1. User Registration
 
@@ -336,7 +336,6 @@ Authorization: Bearer <access_token>
   "message": "Links retrieved successfully",
   "links": [
     {
-      "id": 1,
       "url": "https://example.com",
       "tags": ["website", "demo"],
       "names": ["example"],
@@ -387,7 +386,6 @@ Authorization: Bearer <access_token>
   "message": "Links retrieved successfully",
   "links": [
     {
-      "id": 1,
       "url": "https://example.com",
       "tags": ["website"],
       "names": ["example"],
@@ -436,7 +434,6 @@ Authorization: Bearer <access_token>
   "message": "Link retrieved successfully",
   "links": [
     {
-      "id": 1,
       "url": "https://example.com",
       "tags": ["website"],
       "names": ["example"],
@@ -494,7 +491,6 @@ Authorization: Bearer <access_token>
   "message": "Links retrieved successfully",
   "links": [
     {
-      "id": 1,
       "url": "https://example.com",
       "tags": ["website", "demo"],
       "names": ["example"],
@@ -1486,7 +1482,6 @@ curl -X POST http://localhost:4514/api/v1/ping \
 
 ```json
 {
-  "id": 1,                    // Link ID
   "url": "string",            // Link URL
   "tags": ["string"],         // List of tags
   "names": ["string"],        // List of names
