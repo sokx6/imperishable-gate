@@ -8,6 +8,6 @@ type RefreshToken struct {
 	Username  string    `gorm:"not null;index"`
 	Token     string    `gorm:"not null;uniqueIndex"`
 	ExpiresAt time.Time `gorm:"not null"`
-	Revoked   bool      `gorm:"default:false"` // 是否被撤回（登出）
+	Revoked   bool      `gorm:"default:false"`
 	CreatedAt time.Time
 }
