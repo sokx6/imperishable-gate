@@ -1,8 +1,8 @@
 # Getting Started | Stage 1: White & Pink Spring
 
-**[📖 简体中文](getting-started.md) | [📘 English](getting-started.en.md)**
+**[简体中文](getting-started.md) | [English](getting-started.en.md)**
 
-> 🌸 *"Let's start with some preparations!"* 🌸
+> *"Let's start with some preparations!"* 🌸
 
 This guide will help you quickly set up and run **Imperishable Gate**. Starting from scratch, complete the foundational framework of **Stage 1 "White & Pink Spring"**, and officially begin managing links as a gardener of Hakugyokurou!
 
@@ -12,7 +12,7 @@ Before you begin, ensure your system meets the following requirements:
 
 - Go 1.25.1 or higher
 - Database (choose one):
-  - **SQLite** (default, no additional installation required) ✨ Recommended for quick start
+  - **SQLite** (default, no additional installation required) Recommended for quick start
   - **MySQL** 5.7+ / 8.0+
   - **PostgreSQL** 12.0+
 - Git
@@ -337,7 +337,9 @@ Enter your username and password to log in. After successful login, the token wi
 
 ### Advanced Features
 
-#### Tag Management
+#### Tag Management (Core Feature of the Client)
+
+The tag system is a core feature of this client, supporting flexible link categorization and retrieval:
 
 ```sh
 # Add tags to link (by URL)
@@ -345,6 +347,15 @@ Enter your username and password to log in. After successful login, the token wi
 
 # Add tags to link (by alias)
 ./bin/gate add -n "mysite" -t "tech,news"
+
+# Search by tag combination
+./bin/gate search -t "tech,blog"
+
+# List all links under a specific tag
+./bin/gate list -t "tech"
+
+# Quickly open link by tag
+./bin/gate open -t "tech"
 ```
 
 #### Watch Management
@@ -396,7 +407,7 @@ Enter your username and password to log in. After successful login, the token wi
 export GATE_SERVER_ADDR=http://localhost:4514
 
 # Wrong configuration (missing protocol)
-export GATE_SERVER_ADDR=localhost:4514  # ❌ Will be parsed as https://
+export GATE_SERVER_ADDR=localhost:4514
 ```
 
 ### 2. Keyring Error on Linux

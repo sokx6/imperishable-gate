@@ -1,10 +1,10 @@
 # 快速开始 | Stage 1: 白銀之春
 
-**[📖 简体中文](getting-started.md) | [📘 English](getting-started.en.md)**
+**[简体中文](getting-started.md) | [English](getting-started.en.md)**
 
-> 🌸 *"首先来做一些准备工作吧！"* 🌸
+> *"让我们来做一些准备工作吧！"* 🌸
 
-本指南将帮助您快速搭建和运行 **Imperishable Gate（不朽之门）**。从零开始，完成 **Stage 1「白銀之春」** 的基础框架搭建，让您的白玉楼庭师身份正式开始管理链接！
+本指南将帮助您快速搭建和运行 **Imperishable Gate（不朽之门）**。从零开始，完成 **Stage 1「白銀之春」** 的基础框架搭建，正式开始白玉楼庭师的链接管理之旅！
 
 ## 前置要求
 
@@ -12,7 +12,7 @@
 
 - Go 1.25.1 或更高版本
 - 数据库（三选一）：
-  - **SQLite**（默认，无需额外安装）✨ 推荐用于快速开始
+  - **SQLite**（默认，无需额外安装）推荐用于快速开始
   - **MySQL** 5.7+ / 8.0+
   - **PostgreSQL** 12.0+
 - Git
@@ -298,7 +298,7 @@ gate <command> -a http://localhost:4514
 # 添加链接并设置备注
 ./bin/gate add -l "https://example.com" -r "我的示例网站"
 
-# 添加链接、标签和别名
+# 添加链接、标签和别名（标签是客户端特色功能）
 ./bin/gate add -l "https://example.com" -t "tech,blog" -N "mysite"
 ```
 
@@ -311,7 +311,7 @@ gate <command> -a http://localhost:4514
 # 通过别名查询
 ./bin/gate list -n "mysite"
 
-# 通过标签查询
+# 通过标签查询（标签系统特色）
 ./bin/gate list -t "tech"
 ```
 
@@ -337,7 +337,9 @@ gate <command> -a http://localhost:4514
 
 ### 高级功能
 
-#### 标签管理
+#### 标签管理（客户端核心特色）
+
+标签系统是本客户端的核心特色，支持灵活的链接分类和检索：
 
 ```sh
 # 为链接添加标签（通过 URL）
@@ -345,6 +347,15 @@ gate <command> -a http://localhost:4514
 
 # 为链接添加标签（通过别名）
 ./bin/gate add -n "mysite" -t "tech,news"
+
+# 按标签组合搜索
+./bin/gate search -t "tech,blog"
+
+# 列出特定标签下的所有链接
+./bin/gate list -t "tech"
+
+# 按标签快速打开链接
+./bin/gate open -t "tech"
 ```
 
 #### 监控管理
@@ -396,7 +407,7 @@ gate <command> -a http://localhost:4514
 export GATE_SERVER_ADDR=http://localhost:4514
 
 # 错误的配置（缺少协议）
-export GATE_SERVER_ADDR=localhost:4514  # ❌ 会被解析为 https://
+export GATE_SERVER_ADDR=localhost:4514
 ```
 
 ### 2. Linux 下 keyring 错误
