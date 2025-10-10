@@ -36,13 +36,18 @@ func NewServer(addr, dsn string) *Server {
 	// 添加请求ID
 	e.Use(middleware.RequestID())
 
-	// 自定义日志中间件：带颜色和用户信息
+	// 自定义日志中间件：带颜色和用户信息（仅在 DEBUG 级别记录 HTTP 请求）
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			start := time.Now()
 
 			// 先执行下一个中间件/处理器（包括JWT中间件）
 			err := next(c)
+
+			// 只在 DEBUG 级别记录 HTTP 请求详情
+			if !logger.ShouldLogHTTP() {
+				return err
+			}
 
 			// 在这里，userInfo已经被JWT中间件设置了
 			// 获取请求信息
