@@ -23,7 +23,6 @@ func DeleteLinks(links []string, addr string, accessToken string) error {
 
 	// 构建完整路径
 	path := fmt.Sprintf("/api/v1/links?%s", q.Encode())
-	fmt.Printf("-- Sending DELETE request to: %s%s\n", addr, path)
 
 	// 使用 APIClient 发送请求
 	var result response.Response
