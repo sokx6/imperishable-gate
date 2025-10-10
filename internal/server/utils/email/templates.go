@@ -133,7 +133,6 @@ func GetVerificationEmailTemplate(code string) string {
         <div class="header">
             <h1>Imperishable Gate</h1>
             <div class="subtitle">不朽之门 · 白玉楼链接管理系统</div>
-            <div class="stage">Stage 6 | 冥界大小姐の亡骸</div>
         </div>
         <div class="content">
             <div class="greeting">
@@ -321,7 +320,6 @@ func GetWebsiteChangeEmailTemplate(
         <div class="header">
             <h1>Imperishable Gate</h1>
             <div class="subtitle">不朽之门 · 白玉楼链接管理系统</div>
-            <div class="stage">Stage 4 | 雪上の櫻花結界 - 智能监控</div>
         </div>
         <div class="content">
             <div class="alert-box">
