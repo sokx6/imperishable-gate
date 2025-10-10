@@ -1,10 +1,10 @@
 # Gate CLI Usage Guide | Complete Command Reference
 
-**[📖 简体中文](client-guide.md) | [📘 English](client-guide.en.md)**
+**[简体中文](client-guide.md) | [English](client-guide.en.md)**
 
-> 💻 *"Elegant command line, the gardener's reliable assistant"*
+> *"Elegant command line, the gardener's reliable assistant"*
 
-## 📖 Table of Contents
+## Table of Contents
 - [Introduction](#introduction)
 - [Installation & Configuration](#installation--configuration)
 - [Global Parameters](#global-parameters)
@@ -28,25 +28,38 @@
 
 `gate` is the command-line client tool for **Imperishable Gate**, enabling the gardeners of Hakugyokurou to elegantly manage their links!
 
-### ✨ Feature Highlights
+### Feature Highlights
 
 - **Stage 2-3**: CRUD operations for links, alias management, tag categorization
 - **Stage 4**: Link change monitoring, automatic metadata crawling
 - **Stage 5**: Search and quick link opening
 - **Stage 6**: User authentication, automatic token management
 
+### Core Feature: Rich Tag-Based Command System
+
+The client implements powerful link management functionality through a flexible tag system:
+
+- **Multi-dimensional Retrieval**: Quickly locate links through tags, URLs, or aliases
+- **Tag Combination Queries**: Search with multiple tag combinations
+- **Batch Tag Operations**: Add or remove tags for multiple links at once
+- **Smart Tag Commands**:
+  - `gate search -t "tag1,tag2"` - Search by tag combination
+  - `gate add -l url -t "tag1,tag2"` - Set tags when adding links
+  - `gate list -t tag` - List all links with a specific tag
+  - `gate add -n name -t "new_tag"` - Add tags to existing links
+
 ---
 
 ## Installation & Configuration
 
-### 🔨 Build the Client
+### Build the Client
 
 ```bash
 cd cmd/gate
 go build -o gate
 ```
 
-### ⚙️ Configure Server Address
+### Configure Server Address
 
 There are three ways to configure the server address (in priority order):
 
@@ -510,15 +523,77 @@ gate open --tag <tag> [--page <page>] [--page-size <size>]
    gate open -t tools -p 2 -s 5
    ```
 
-**Notes:**
-- When opening by name, directly opens the link corresponding to that name
-- When opening by tag, lists all matching links for selection
+**Note:**
+- When opening by name, it directly opens the link associated with that name
+- When opening by tag, it lists all matching links for selection
 
 ---
 
 ## Usage Examples
 
-### Complete Workflow
+### Advanced Tag System Applications (Client Feature)
+
+The tag system is a core feature of this client. Here are some advanced usage tips:
+
+#### 1. Tag Combination Queries
+```bash
+# Search by single tag
+gate search -t dev
+
+# Search by multiple tag combinations (comma-separated)
+gate search -t "dev,tools"
+gate search -t "dev,tools,favorite"
+```
+
+#### 2. Hierarchical Tag Management
+```bash
+# Add hierarchical tags for technical documentation
+gate add -l https://go.dev/doc -n godoc -t "dev,golang,docs"
+gate add -l https://docs.python.org -n pydoc -t "dev,python,docs"
+
+# Query all development-related documentation
+gate list -t dev
+gate list -t docs
+
+# Query documentation for specific languages
+gate list -t golang
+gate list -t python
+```
+
+#### 3. Batch Tag Operations
+```bash
+# Add the same tag to multiple links
+gate add -n github -t important
+gate add -n stackoverflow -t important
+gate add -n docs -t important
+
+# Batch delete tags
+gate delete -n github -t outdated
+gate delete -n oldsite -t outdated
+```
+
+#### 4. Quick Open by Tag
+```bash
+# Open links with a specific tag
+gate open -t dev
+
+# Open links with multiple tags
+gate open -t "dev,docs"
+```
+
+#### 5. Tag Search and Filtering
+```bash
+# Search for links containing a specific tag
+gate search -t "tutorial"
+
+# List all links under a specific tag
+gate list -t "golang"
+
+# View links under a tag with pagination
+gate list -t "dev" -p 1 -s 10
+```
+
+### Complete Workflow Example
 
 ```bash
 # 1. Register account
