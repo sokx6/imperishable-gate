@@ -7,7 +7,8 @@ import (
 )
 
 // PrintLinksList 打印链接列表的辅助函数
-func PrintLinksList(links []data.Link) {
+// concise: 为 true 时只显示链接和名字
+func PrintLinksList(links []data.Link, concise bool) {
 	if len(links) == 0 {
 		fmt.Println("No links found.")
 		return
@@ -17,16 +18,22 @@ func PrintLinksList(links []data.Link) {
 	for i, link := range links {
 		fmt.Printf("[%d] URL: %s\n", i+1, link.Url)
 
-		if len(link.Tags) > 0 {
-			fmt.Printf("    Tags: %v\n", link.Tags)
-		} else {
-			fmt.Printf("    Tags: (none)\n")
-		}
-
 		if len(link.Names) > 0 {
 			fmt.Printf("    Names: %v\n", link.Names)
 		} else {
 			fmt.Printf("    Names: (none)\n")
+		}
+
+		// 简洁模式下只显示链接和名字
+		if concise {
+			fmt.Println()
+			continue
+		}
+
+		if len(link.Tags) > 0 {
+			fmt.Printf("    Tags: %v\n", link.Tags)
+		} else {
+			fmt.Printf("    Tags: (none)\n")
 		}
 
 		if link.Remark != "" {
