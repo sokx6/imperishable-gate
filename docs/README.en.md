@@ -1,30 +1,30 @@
 # Documentation Index
 
-**[📖 简体中文](README.md) | [📘 English](README.en.md)**
+**[简体中文](README.md) | [English](README.en.md)**
 
 Welcome to the Imperishable Gate documentation!
 
-## 📚 Quick Navigation
+## Quick Navigation
 
-### 🎯 Getting Started
+### Getting Started
 
 1. **[Getting Started](getting-started.en.md)** - Installation and basic usage
 2. **[Configuration](configuration.en.md)** - Environment variables and settings
 3. **[Client Guide](client-guide.en.md)** - CLI command reference
 
-### 📖 User Documentation
+### User Documentation
 
 - **[API Documentation](api.en.md)** - RESTful API interface reference
 - **[Architecture Design](architecture.en.md)** - System architecture and tech stack
 - **[Security Features](security.en.md)** - Security mechanisms explained
 
-### 👨‍💻 Development
+### 👨‍Development
 
 - **[Architecture Design](architecture.en.md)** - System architecture and tech stack
 - **[Contributing Guide](contributing.en.md)** - How to contribute to the project
 - **[Deployment Guide](deployment.en.md)** - Server deployment methods
 
-## 🔍 Frequently Asked Questions
+## Frequently Asked Questions
 
 ### Installation & Configuration
 
@@ -44,23 +44,23 @@ Welcome to the Imperishable Gate documentation!
 - [Coding Standards](contributing.en.md#coding-standards)
 - [How to Contribute](contributing.en.md)
 
-## 📝 Important Notes
+## Important Notes
 
 ### Client Configuration
 
 When configuring the server address, **always include the protocol prefix**:
 
 ```bash
-# ✅ Correct
+# Correct
 export GATE_SERVER_ADDR=http://localhost:4514
 
-# ❌ Wrong (will default to https://)
+# Wrong (will default to https://)
 export GATE_SERVER_ADDR=localhost:4514
 ```
 
 See: [Client Configuration](configuration.en.md#client-configuration)
 
-## 📋 Document List
+## Document List
 
 ### User Documentation
 - [Getting Started](getting-started.en.md)
@@ -77,7 +77,7 @@ See: [Client Configuration](configuration.en.md#client-configuration)
 - [Contributing Guide](contributing.en.md)
 - [Deployment Guide](deployment.en.md)
 
-## 🔗 External Resources
+## External Resources
 
 ### Go Learning
 - [Official Go Documentation](https://go.dev/doc/)
@@ -88,7 +88,7 @@ See: [Client Configuration](configuration.en.md#client-configuration)
 - [GORM Documentation](https://gorm.io/docs/)
 - [Cobra Documentation](https://github.com/spf13/cobra)
 
-## 💡 Suggested Reading Order
+## Suggested Reading Order
 
 **New Users**:
 1. Getting Started

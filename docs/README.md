@@ -1,30 +1,30 @@
 # 文档索引
 
-**[📖 简体中文](README.md) | [📘 English](README.en.md)**
+**[简体中文](README.md) | [English](README.en.md)**
 
 欢迎查看 Imperishable Gate 的文档！
 
-## 📚 快速导航
+## 快速导航
 
-### 🎯 新手入门
+### 新手入门
 
 1. **[快速开始](getting-started.md)** - 安装和基本使用
 2. **[配置说明](configuration.md)** - 环境变量和配置
 3. **[客户端指南](client-guide.md)** - CLI 命令参考
 
-### 📖 使用文档
+### 使用文档
 
 - **[API 文档](api.md)** - RESTful API 接口说明
 - **[架构设计](architecture.md)** - 系统架构和技术栈
 - **[安全特性](security.md)** - 安全机制说明
 
-### 👨‍💻 开发相关
+### 👨‍开发相关
 
 - **[架构设计](architecture.md)** - 系统架构和技术栈
 - **[贡献指南](contributing.md)** - 如何为项目做贡献
 - **[部署指南](deployment.md)** - 服务器部署方法
 
-## 🔍 常见问题
+## 常见问题
 
 ### 安装配置
 
@@ -44,23 +44,23 @@
 - [编码规范](contributing.md#代码规范)
 - [如何贡献](contributing.md)
 
-## 📝 重要提示
+## 重要提示
 
 ### 客户端配置
 
 配置服务器地址时**务必包含协议前缀**：
 
 ```bash
-# ✅ 正确
+# 正确
 export GATE_SERVER_ADDR=http://localhost:4514
 
-# ❌ 错误（会默认使用 https://）
+# 错误（会默认使用 https://）
 export GATE_SERVER_ADDR=localhost:4514
 ```
 
 详见：[客户端配置](configuration.md#客户端配置)
 
-## 📋 文档列表
+## 文档列表
 
 ### 用户文档
 - [快速开始](getting-started.md)
@@ -77,7 +77,7 @@ export GATE_SERVER_ADDR=localhost:4514
 - [贡献指南](contributing.md)
 - [部署指南](deployment.md)
 
-## 🔗 外部资源
+## 外部资源
 
 ### Go 学习
 - [Go 官方文档](https://go.dev/doc/)
@@ -88,7 +88,7 @@ export GATE_SERVER_ADDR=localhost:4514
 - [GORM 文档](https://gorm.io/docs/)
 - [Cobra 文档](https://github.com/spf13/cobra)
 
-## 💡 建议阅读顺序
+## 建议阅读顺序
 
 **新用户**：
 1. 快速开始
