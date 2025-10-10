@@ -1,8 +1,8 @@
 # Simple Deployment Guide | Deploying Your Service in Gensokyo
 
-**[📖 简体中文](deployment.md) | [📘 English](deployment.en.md)**
+**[简体中文](deployment.md) | [English](deployment.en.md)**
 
-> 🚀 *"It's time to let Hakugyokurou's link management system serve all of Gensokyo!"*
+> *"It's time to let Hakugyokurou's link management system serve all of Gensokyo!"*
 
 This document provides simple server deployment methods suitable for learning and small-scale projects. If you're building a "massive data center" to serve all of Gensokyo, this guide will help you!
 
@@ -15,7 +15,7 @@ This document provides simple server deployment methods suitable for learning an
   - **PostgreSQL**: 12.0+
 - **Operating System**: Linux / macOS (Linux server recommended)
 
-## 🌸 Stage 1-2 | Basic Deployment Steps
+## Stage 1-2 | Basic Deployment Steps
 
 ### 1. Server Preparation
 

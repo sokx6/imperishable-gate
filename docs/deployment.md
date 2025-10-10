@@ -1,10 +1,10 @@
 # 简易部署指南 | 在幻想乡部署你的服务
 
-**[📖 简体中文](deployment.md) | [📘 English](deployment.en.md)**
+**[简体中文](deployment.md) | [English](deployment.en.md)**
 
-> 🚀 *"是时候让白玉楼的链接管理系统服务整个幻想乡了！"*
+> *"是时候让白玉楼的链接管理系统服务整个幻想乡了！"*
 
-本文档提供简单的服务器部署方法，适合学习和小型项目使用。如果你要搭建"巨大数据中心"为整个幻想乡提供服务，这份指南会帮助你！
+本文档提供简单的服务器部署方法，适合学习和小型项目使用。如果你要建个"大型数据中心"来服务全幻想乡，这份指南会帮到你！
 
 ## 系统要求
 
@@ -15,7 +15,7 @@
   - **PostgreSQL**: 12.0+
 - **操作系统**: Linux / macOS（推荐 Linux 服务器）
 
-## 🌸 Stage 1-2 | 基础部署步骤
+## Stage 1-2 | 基础部署步骤
 
 ### 1. 服务器准备
 
@@ -157,7 +157,7 @@ server {
     server_name your-domain.com;
 
     location / {
-        proxy_pass http://localhost:4514\;
+        proxy_pass http://localhost:4514;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
