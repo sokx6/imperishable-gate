@@ -1,6 +1,37 @@
 # Environment Requirements & Configuration | Stage 1-6 Configuration Guide
 
-**[📖 简体中文](configuration.md) | [📘 English](configuration.en.md)**
+**[📖 简体中文](configuration.md)#### 📝 Logging Configuration (Optional)
+
+| Environment Variable | Description | Available Values | Required |
+|---------------------|-------------|-----------------|----------|
+| `LOG_LEVEL` | Logging level | `debug`, `info`, `warn`, `error`, `silent` | ❌ (Default: `warn`) |
+
+**Log Level Descriptions**:
+- `debug`: Log everything, including:
+  - ✅ All SQL queries with execution time (INFO level)
+  - ✅ HTTP request details (method, path, status code, response time, user info)
+  - ✅ Debug information
+  - ⚠️ **Development only - generates extensive logs**
+- `info`: Log general information and slow queries (recommended for development)
+  - ✅ Application startup, database connections, and important events
+  - ✅ Slow queries (> 200ms)
+  - ❌ No regular SQL queries
+  - ❌ No HTTP request details
+- `warn`: Log warnings, errors, and slow queries only (**default**, recommended for production) ✨
+  - ✅ Warnings and errors
+  - ✅ Slow queries (> 200ms)
+  - ❌ No regular SQL queries
+  - ❌ No HTTP request details
+- `error`: Log errors only
+  - ✅ Database errors, application errors
+  - ❌ No SQL queries logged
+- `silent`: Complete silence, no logs at all
+
+> **Performance Tips**:
+> - Use `warn` or `error` level in production environments
+> - `debug` level logs all SQL queries and HTTP requests, which may impact performance and generate large log files
+> - Slow query threshold is fixed at 200ms
+> - HTTP request logs are only shown at `debug` levelonfiguration.en.md)**
 
 > ⚙️ *"The operational experience from the previous life can finally be put to good use in this one!"*
 
@@ -103,7 +134,25 @@ DSN=host=localhost user=postgres password=postgres dbname=gate_db port=5432 sslm
 > - Generate a secure key with: `openssl rand -base64 64`
 > - Never commit `.env` files containing real credentials to version control
 
-#### 📧 Email Service Configuration (Optional)
+#### � Logging Configuration (Optional)
+
+| Environment Variable | Description | Available Values | Required |
+|---------------------|-------------|-----------------|----------|
+| `LOG_LEVEL` | Logging level | `debug`, `info`, `warn`, `error`, `silent` | ❌ (Default: `warn`) |
+
+**Log Level Descriptions**:
+- `debug`: Log all SQL queries and debug information (development only)
+- `info`: Log general information and slow queries (development environment)
+- `warn`: Log warnings, errors, and slow queries only (default, recommended for production)
+- `error`: Log errors only
+- `silent`: No database logs
+
+> **Performance Tips**:
+> - Use `warn` or `error` level in production environments
+> - `debug` level logs all SQL queries and may impact performance
+> - Slow query threshold is fixed at 200ms
+
+#### �📧 Email Service Configuration (Optional)
 
 For email verification and link monitoring change notifications:
 
