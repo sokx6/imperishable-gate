@@ -1,39 +1,8 @@
 # 环境要求与配置 | Stage 1-6 配置指南
 
-**[📖 简体中文](configuration.md) | [📘 English](configuration.en.md)**
+**[简体中文](configuration.md) | [English](configuration.en.md)**
 
-> ⚙️ *"上#### 📝 日志配置（可选）
-
-| 环境变量 | 说明 | 可选值 | 必需 |
-|---------|------|--------|------|
-| `LOG_LEVEL` | 日志级别 | `debug`, `info`, `warn`, `error`, `silent` | ❌（默认 `warn`） |
-
-**日志级别说明**：
-- `debug`: 记录所有信息，包括：
-  - ✅ 所有 SQL 查询和执行时间（INFO 级别）
-  - ✅ HTTP 请求详情（方法、路径、状态码、响应时间、用户信息）
-  - ✅ 调试信息
-  - ⚠️ **仅用于开发调试，会产生大量日志**
-- `info`: 记录一般信息和慢查询（开发环境推荐）
-  - ✅ 应用启动、数据库连接等重要信息
-  - ✅ 慢查询（> 200ms）
-  - ❌ 不记录常规 SQL 查询
-  - ❌ 不记录 HTTP 请求详情
-- `warn`: 仅记录警告、错误和慢查询（**默认**，生产环境推荐）✨
-  - ✅ 警告和错误信息
-  - ✅ 慢查询（> 200ms）
-  - ❌ 不记录常规 SQL 查询
-  - ❌ 不记录 HTTP 请求详情
-- `error`: 仅记录错误信息
-  - ✅ 数据库错误、应用错误
-  - ❌ 不记录任何 SQL 查询
-- `silent`: 完全静默，不输出任何日志
-
-> **性能提示**：
-> - 生产环境推荐使用 `warn` 或 `error` 级别
-> - `debug` 级别会记录所有 SQL 查询和 HTTP 请求，可能影响性能和产生大量日志
-> - 慢查询阈值固定为 200ms
-> - HTTP 请求日志仅在 `debug` 级别显示场了！"*
+> *"前世运维的经验，终于可以在今生派上用场了！"*
 
 本文档介绍 **Imperishable Gate** 从 Stage 1 到 Stage 6 的完整配置方法。
 
@@ -42,7 +11,7 @@
 ### 基础要求
 - **Go**: 1.25.1 或更高版本
 - **数据库**（三选一，Stage 2 实现）:
-  - **SQLite**: 3.x+（默认，无需额外安装）✨ 推荐新手使用
+  - **SQLite**: 3.x+（默认，无需额外安装）推荐新手使用
   - **MySQL**: 5.7+ / 8.0+
   - **PostgreSQL**: 12.0+
 - **操作系统**: Linux / macOS / Windows
@@ -90,12 +59,12 @@ sudo pacman -S gnome-keyring libsecret
 
 ### 配置项说明
 
-#### 📊 数据库配置
+#### 数据库配置
 
 | 环境变量 | 说明 | 示例值 | 必需 |
 |---------|------|--------|------|
-| `DB_TYPE` | 数据库类型：`sqlite`（默认）、`mysql`、`postgres` | `sqlite` | ❌（默认 SQLite） |
-| `DSN` | 数据库连接字符串（根据数据库类型而定） | 见下方示例 | ✅ |
+| `DB_TYPE` | 数据库类型：`sqlite`（默认）、`mysql`、`postgres` | `sqlite` | 否（默认 SQLite） |
+| `DSN` | 数据库连接字符串（根据数据库类型而定） | 见下方示例 | |
 
 **SQLite 配置（默认，推荐用于开发/小型项目）**：
 ```bash
@@ -117,28 +86,28 @@ DB_TYPE=postgres
 DSN=host=localhost user=postgres password=postgres dbname=gate_db port=5432 sslmode=disable TimeZone=Asia/Shanghai
 ```
 
-#### 🌐 服务器配置
+#### 服务器配置
 
 | 环境变量 | 说明 | 示例值 | 必需 |
 |---------|------|--------|------|
-| `SERVER_ADDR` | 服务器监听地址 | `localhost:4514` 或 `:4514` | ✅ |
+| `SERVER_ADDR` | 服务器监听地址 | `localhost:4514` 或 `:4514` | |
 
-#### 🔐 JWT 安全配置
+#### JWT 安全配置
 
 | 环境变量 | 说明 | 示例值 | 必需 |
 |---------|------|--------|------|
-| `JWT_SECRET` | JWT 签名密钥（生产环境务必修改！） | 使用 `openssl rand -base64 64` 生成 | ⚠️ 推荐 |
+| `JWT_SECRET` | JWT 签名密钥（生产环境务必修改！） | 使用 `openssl rand -base64 64` 生成 | 推荐 |
 
 > **安全提示**：
 > - 生产环境务必设置强随机 `JWT_SECRET`
 > - 使用命令生成安全密钥：`openssl rand -base64 64`
 > - 切勿将包含真实密钥的 `.env` 文件提交到版本控制系统
 
-#### � 日志配置（可选）
+#### 日志配置（可选）
 
 | 环境变量 | 说明 | 可选值 | 必需 |
 |---------|------|--------|------|
-| `LOG_LEVEL` | 日志级别 | `debug`, `info`, `warn`, `error`, `silent` | ❌（默认 `warn`） |
+| `LOG_LEVEL` | 日志级别 | `debug`, `info`, `warn`, `error`, `silent` | 否（默认 `warn`） |
 
 **日志级别说明**：
 - `debug`: 记录所有 SQL 查询和调试信息（仅用于开发调试）
@@ -152,16 +121,16 @@ DSN=host=localhost user=postgres password=postgres dbname=gate_db port=5432 sslm
 > - `debug` 级别会记录所有 SQL 查询，可能影响性能
 > - 慢查询阈值固定为 200ms
 
-#### �📧 邮件服务配置（可选）
+#### 邮件服务配置（可选）
 
 用于邮箱验证和链接监控变化通知功能：
 
 | 环境变量 | 说明 | 示例值 | 必需 |
 |---------|------|--------|------|
-| `EMAIL_HOST` | SMTP 服务器地址 | `smtp.gmail.com` | 📧 |
-| `EMAIL_PORT` | SMTP 服务器端口 | `587` (TLS) 或 `465` (SSL) | 📧 |
-| `EMAIL_FROM` | 发件人邮箱地址 | `noreply@example.com` | 📧 |
-| `EMAIL_PASSWORD` | 邮箱密码或授权码 | `your-app-password` | 📧 |
+| `EMAIL_HOST` | SMTP 服务器地址 | `smtp.gmail.com` | |
+| `EMAIL_PORT` | SMTP 服务器端口 | `587` (TLS) 或 `465` (SSL) | |
+| `EMAIL_FROM` | 发件人邮箱地址 | `noreply@example.com` | |
+| `EMAIL_PASSWORD` | 邮箱密码或授权码 | `your-app-password` | |
 
 > **邮箱配置提示**：
 > - Gmail：使用应用专用密码（[获取方法](https://support.google.com/accounts/answer/185833)）
@@ -245,9 +214,9 @@ export DSN="host=localhost..."
 > - 如果不指定协议，默认会使用 `https://`，这可能导致本地开发时连接失败
 > - 优先级：`GATE_SERVER_ADDR` > `SERVER_ADDR`
 > - 示例：
->   - ✅ 正确：`http://localhost:4514`
->   - ✅ 正确：`https://api.example.com`
->   - ❌ 错误：`localhost:4514`（会被解析为 `https://localhost:4514`）
+>   - 正确：`http://localhost:4514`
+>   - 正确：`https://api.example.com`
+>   - 错误：`localhost:4514`（会被解析为 `https://localhost:4514`）
 
 ### 配置文件示例
 
