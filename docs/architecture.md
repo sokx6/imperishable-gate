@@ -1,14 +1,14 @@
 # 架构设计 | Stage 1-6 系统演进
 
-**[📖 简体中文](architecture.md) | [📘 English](architecture.en.md)**
+**[简体中文](architecture.md) | [English](architecture.en.md)**
 
-> 🏯 *"从简单的客户端-服务端框架，到完整的用户认证系统..."*
+> *"从简单的客户端服务端框架到完整的用户认证系统..."*
 
 ## 项目背景与设计理念
 
-**Imperishable Gate（不朽之门）** 采用**前后端分离架构**，整个系统的设计灵感来源于东方妖妖梦（Perfect Cherry Blossom）的 Stage 结构，从 **Stage 1「白銀之春」** 到 **Stage 6「冥界大小姐的亡骸」** 逐步演进。
+**Imperishable Gate（不朽之门）** 采用**前后端分离架构**，整个系统的设计灵感来源于东方妖妖梦（Perfect Cherry Blossom）的 Stage 结构，从 **Stage 1「白銀之春」** 到 **Stage 6「冥界大小姐の亡骸」** 逐步演进。
 
-### 🌸 架构演进路线图
+### 架构演进路线图
 
 - **Stage 1**: 白銀之春 - 基础客户端/服务端通信框架（Ping）
 - **Stage 2**: 迷途之家の黒猫 - 数据库集成，支持 SQLite/MySQL/PostgreSQL
@@ -23,6 +23,7 @@
 
 - **后端服务（gate-server）**：基于 Go + Echo + GORM 的高性能 RESTful API 服务
 - **CLI 客户端（gate）**：基于 Cobra 框架的命令行工具，跨平台支持
+  - **特色功能**：通过灵活的标签系统，实现了丰富的命令功能，支持多维度链接管理
 - **数据库层**：支持 SQLite（默认）/ MySQL / PostgreSQL 三种数据库
 
 ## 架构图
@@ -61,7 +62,7 @@
 └─────────────────────────────┼───────────────────────────────┘
                               │
 ┌─────────────────────────────┼───────────────────────────────┐
-│                       PostgreSQL                            │
+│            Database (SQLite / MySQL / PostgreSQL)           │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐     │
 │  │  users   │  │  links   │  │   tags   │  │  names   │     │
 │  └──────────┘  └──────────┘  └──────────┘  └──────────┘     │
@@ -132,11 +133,17 @@ internal/
 - 参数解析
 - 子命令管理
 
-#### 2. 系统 Keyring 集成
+#### 2. 标签系统集成（客户端特色）
+- 基于标签的丰富命令功能
+- 支持多维度链接检索和管理
+- 标签组合查询
+- 批量标签操作
+
+#### 3. 系统 Keyring 集成
 - 安全存储令牌
 - 跨平台支持（Linux/macOS/Windows）
 
-#### 3. HTTP 客户端
+#### 4. HTTP 客户端
 - RESTful API 调用
 - 自动令牌管理
 - 错误处理
@@ -190,7 +197,7 @@ internal/
 - **Go 1.25.1+**：编程语言
 - **Echo v4**：Web 框架
 - **GORM**：ORM 框架
-- **PostgreSQL**：关系型数据库
+- **SQLite / MySQL / PostgreSQL**：关系型数据库（三选一）
 - **golang-jwt/jwt v5**：JWT 认证
 - **goquery**：网页抓取
 - **bcrypt**：密码加密

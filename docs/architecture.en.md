@@ -1,14 +1,14 @@
 # Architecture Design | Stage 1-6 System Evolution
 
-**[📖 简体中文](architecture.md) | [📘 English](architecture.en.md)**
+**[简体中文](architecture.md) | [English](architecture.en.md)**
 
-> 🏯 *"From simple client-server framework to complete user authentication system..."*
+> *"From simple client-server framework to complete user authentication system..."*
 
 ## Project Background and Design Philosophy
 
 **Imperishable Gate** adopts a **frontend-backend separation architecture**. The entire system's design is inspired by the Stage structure of Touhou Perfect Cherry Blossom, evolving progressively from **Stage 1 "White & Pink Spring"** to **Stage 6 "The Corpse of the Netherworld Mistress"**.
 
-### 🌸 Architecture Evolution Roadmap
+### Architecture Evolution Roadmap
 
 - **Stage 1**: White & Pink Spring - Basic client/server communication framework (Ping)
 - **Stage 2**: Black Cat of the Lost Home - Database integration, supporting SQLite/MySQL/PostgreSQL
@@ -23,6 +23,7 @@
 
 - **Backend Service (gate-server)**: High-performance RESTful API service based on Go + Echo + GORM
 - **CLI Client (gate)**: Command-line tool based on Cobra framework with cross-platform support
+  - **Featured Functionality**: Through a flexible tag system, implements rich command features supporting multi-dimensional link management
 - **Database Layer**: Supports SQLite (default) / MySQL / PostgreSQL
 
 ## Architecture Diagram
@@ -61,7 +62,7 @@
 └─────────────────────────────┼───────────────────────────────┘
                               │
 ┌─────────────────────────────┼───────────────────────────────┐
-│                       PostgreSQL                            │
+│            Database (SQLite / MySQL / PostgreSQL)           │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐     │
 │  │  users   │  │  links   │  │   tags   │  │  names   │     │
 │  └──────────┘  └──────────┘  └──────────┘  └──────────┘     │
@@ -132,11 +133,17 @@ internal/
 - Parameter parsing
 - Subcommand management
 
-#### 2. System Keyring Integration
+#### 2. Tag System Integration (Client Feature)
+- Rich tag-based command functionality
+- Multi-dimensional link retrieval and management
+- Tag combination queries
+- Batch tag operations
+
+#### 3. System Keyring Integration
 - Secure token storage
 - Cross-platform support (Linux/macOS/Windows)
 
-#### 3. HTTP Client
+#### 4. HTTP Client
 - RESTful API calls
 - Automatic token management
 - Error handling
@@ -190,7 +197,7 @@ internal/
 - **Go 1.25.1+**: Programming language
 - **Echo v4**: Web framework
 - **GORM**: ORM framework
-- **PostgreSQL**: Relational database
+- **SQLite / MySQL / PostgreSQL**: Relational database (choose one)
 - **golang-jwt/jwt v5**: JWT authentication
 - **goquery**: Web scraping
 - **bcrypt**: Password encryption
