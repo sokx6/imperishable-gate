@@ -4,6 +4,7 @@ import (
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
 	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/server/utils/logger"
 	"imperishable-gate/internal/types/data"
 	"imperishable-gate/internal/types/response"
 	"net/http"
@@ -15,10 +16,12 @@ func ListHandler(c echo.Context) error {
 	var links []model.Link
 	page, err := utils.GetContentInt(c, "page")
 	if err != nil {
+		logger.Warning("Invalid page parameter")
 		return response.InvalidRequestResponse
 	}
 	pageSize, err := utils.GetContentInt(c, "page_size")
 	if err != nil {
+		logger.Warning("Invalid page_size parameter")
 		return response.InvalidRequestResponse
 	}
 	// 查询记录
@@ -33,6 +36,7 @@ func ListHandler(c echo.Context) error {
 		Limit(pageSize).
 		Offset((page - 1) * pageSize).
 		Find(&links).Error; err != nil {
+		logger.Error("Database error while retrieving links for user %d: %v", userId, err)
 		return response.DatabaseErrorResponse
 	}
 	var linkList []data.Link
@@ -51,6 +55,7 @@ func ListHandler(c echo.Context) error {
 		})
 	}
 	// 返回成功响应
+	logger.Success("Links retrieved successfully for user %d", userId)
 	return c.JSON(http.StatusOK, response.Response{
 		Message: "Links retrieved successfully",
 		Links:   linkList,

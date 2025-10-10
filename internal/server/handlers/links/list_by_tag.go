@@ -5,6 +5,7 @@ import (
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
 	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/server/utils/logger"
 	"imperishable-gate/internal/types/data"
 	"imperishable-gate/internal/types/response"
 	"net/http"
@@ -17,10 +18,12 @@ func ListByTagHandler(c echo.Context) error {
 	tagName := c.Param("tag")
 	page, err := utils.GetContentInt(c, "page")
 	if err != nil {
+		logger.Warning("Invalid page parameter")
 		return response.InvalidRequestResponse
 	}
 	pageSize, err := utils.GetContentInt(c, "page_size")
 	if err != nil {
+		logger.Warning("Invalid page_size parameter")
 		return response.InvalidRequestResponse
 	}
 	userId, ok := utils.GetUserID(c)
@@ -33,8 +36,10 @@ func ListByTagHandler(c echo.Context) error {
 	result := database.DB.First(&tag, "name = ? AND user_id = ?", tagName, userId)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			logger.Warning("Tag not found: %s for user %d", tagName, userId)
 			return response.TagNotFoundResponse
 		}
+		logger.Error("Database error while retrieving tag %s for user %d: %v", tagName, userId, result.Error)
 		return response.DatabaseErrorResponse
 	}
 
@@ -50,6 +55,7 @@ func ListByTagHandler(c echo.Context) error {
 		Preload("Names").
 		Find(&links).Error
 	if err != nil {
+		logger.Error("Database error while retrieving links for tag %s and user %d: %v", tagName, userId, err)
 		return response.DatabaseErrorResponse
 	}
 
@@ -69,6 +75,7 @@ func ListByTagHandler(c echo.Context) error {
 		})
 	}
 
+	logger.Success("Links retrieved successfully for tag %s and user %d", tagName, userId)
 	return c.JSON(http.StatusOK, response.Response{
 		Message: "Links retrieved successfully",
 		Links:   linkList,

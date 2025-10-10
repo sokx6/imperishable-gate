@@ -3,6 +3,7 @@ package links
 import (
 	linksService "imperishable-gate/internal/server/service/links"
 	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/server/utils/logger"
 	"imperishable-gate/internal/types/response"
 	"net/http"
 
@@ -10,7 +11,6 @@ import (
 )
 
 func SearchByKeywordHandler(c echo.Context) error {
-	var resp response.Response
 	keyword := c.QueryParam("keyword")
 	page, err := utils.GetContentInt(c, "page")
 	if err != nil {
@@ -33,10 +33,13 @@ func SearchByKeywordHandler(c echo.Context) error {
 
 	linkList, err := linksService.ListLinksByKeyword(userId, keyword, page, pageSize)
 	if err != nil {
+		logger.Error("Database error while searching links by keyword '%s' for user %d: %v", keyword, userId, err)
 		return response.DatabaseErrorResponse
 	}
-	resp.Links = linkList
-	resp.Message = "Links retrieved successfully"
 
-	return c.JSON(http.StatusOK, resp)
+	logger.Success("Links retrieved successfully by keyword '%s' for user %d", keyword, userId)
+	return c.JSON(http.StatusOK, response.Response{
+		Message: "Links retrieved successfully",
+		Links:   linkList,
+	})
 }

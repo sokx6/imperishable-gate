@@ -12,6 +12,7 @@ import (
 	"imperishable-gate/internal/model"
 	"imperishable-gate/internal/server/database"
 	"imperishable-gate/internal/server/utils"
+	"imperishable-gate/internal/server/utils/logger"
 	"imperishable-gate/internal/types/response"
 )
 
@@ -21,18 +22,21 @@ func DeleteHandler(c echo.Context) error {
 	// 从查询参数中获取所有 "link=" 参数值
 	links := c.QueryParams()["link"] // 获取同名多个 query 值
 	if len(links) == 0 {
+		logger.Warning("Delete failed: no link parameters provided")
 		return response.InvalidRequestResponse
 	}
 
-	// 可选：验证每个 link 是否为合法 URL
+	// 验证每个 link 是否为合法 URL
 	for _, rawLink := range links {
 		u, err := url.ParseRequestURI(rawLink)
 		if err != nil || (u.Scheme != "http" && u.Scheme != "https") {
+			logger.Warning("Invalid URL format: %s", rawLink)
 			return response.InvalidUrlFormatResponse
 		}
 	}
 	userId, ok := utils.GetUserID(c)
 	if !ok {
+		logger.Warning("Delete failed: user not authenticated")
 		return response.AuthenticationFailedResponse
 	}
 	var deletedCount int64
@@ -47,11 +51,13 @@ func DeleteHandler(c echo.Context) error {
 	})
 
 	if err != nil {
+		logger.Error("Database error while deleting links for user %d: %v", userId, err)
 		return response.DatabaseErrorResponse
 	}
 
 	// 返回响应
 	if deletedCount == 0 {
+		logger.Warning("Delete failed: no matching links found for user %d", userId)
 		return response.LinkNotFoundResponse
 	}
 
