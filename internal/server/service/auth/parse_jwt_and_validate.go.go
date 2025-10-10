@@ -3,12 +3,13 @@ package auth
 import (
 	"imperishable-gate/internal/types/data"
 
-	"github.com/golang-jwt/jwt/v5"
 	"imperishable-gate/internal/server/service/common"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // ParseJWT 解析并验证 JWT token
-func ParseJWT(tokenString, secret string) (data.UserInfo, error) {
+func ParseJWTAndValidate(tokenString, secret string) (data.UserInfo, error) {
 	var userInfo data.UserInfo
 
 	// 解析 token

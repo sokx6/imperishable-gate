@@ -21,7 +21,7 @@ func JwtAuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 		tokenString := authHeader[7:]
 
-		if userInfo, err := authService.ParseJWT(tokenString, string(authService.JWTSecret)); err != nil {
+		if userInfo, err := authService.ParseJWTAndValidate(tokenString, string(authService.JWTSecret)); err != nil {
 			return echo.NewHTTPError(http.StatusUnauthorized, "Invalid or expired token")
 		} else {
 			c.Logger().Infof("Authenticated user: %s (ID: %d)", userInfo.Username, userInfo.UserID)
