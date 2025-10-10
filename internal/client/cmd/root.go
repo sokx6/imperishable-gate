@@ -42,7 +42,7 @@ var rootCmd = &cobra.Command{
 		}
 		fmt.Println("Welcome to gate CLI tool. Use -h for help.")
 	},
-	Version: "1.0.0",
+	Version: "1.0.1",
 }
 
 func init() {

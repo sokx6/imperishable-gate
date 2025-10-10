@@ -5,9 +5,10 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "gate-server",
-	Short: "Imperishable Gate Server",
-	Long:  `A simple server that responds to ping requests.`,
+	Use:     "gate-server",
+	Short:   "Imperishable Gate Server",
+	Long:    `Imperishable Gate Server - A link management service with authentication and tagging support.`,
+	Version: "1.0.1",
 }
 
 func Execute() error {
