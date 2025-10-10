@@ -56,7 +56,7 @@ func (h *InteractiveModeHandler) Run() {
 		}
 
 		// 特殊处理 help 命令
-		if parts[0] == "help" {
+		if parts[0] == "help" || parts[0] == "--help" || parts[0] == "-h" {
 			h.handleHelpCommand(parts)
 			fmt.Println()
 			continue

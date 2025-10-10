@@ -52,7 +52,7 @@ func init() {
 
 // Execute 执行根命令
 func Execute() {
-	// 为所有命令设置静默模式，我们自己处理错误和用法的显示顺序
+	// 为所有命令设置静默模式
 	silencer := &core.CommandSilencer{
 		InInteractiveMode: &inInteractiveMode,
 	}

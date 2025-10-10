@@ -44,8 +44,7 @@ var loginCmd = &cobra.Command{
 			return fmt.Errorf("login failed: %w", err)
 		}
 		// 存储 refresh token 到系统密钥链
-		utils.SaveRefreshToken(refreshToken)
-		_, err = utils.LoadRefreshToken()
+		err = utils.SaveRefreshToken(refreshToken)
 		if err != nil {
 			return fmt.Errorf("failed to save refresh token: %w", err)
 		}
