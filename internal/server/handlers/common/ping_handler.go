@@ -3,6 +3,7 @@ package common
 import (
 	"net/http"
 
+	"imperishable-gate/internal/server/utils/logger"
 	"imperishable-gate/internal/types/request"
 	"imperishable-gate/internal/types/response"
 
@@ -13,6 +14,7 @@ func PingHandler(c echo.Context) error {
 	var req request.PingRequest
 
 	if err := c.Bind(&req); err != nil || req.Action != "ping" {
+		logger.Warning("Invalid ping request: %v", err)
 		return response.InvalidRequestResponse
 	}
 
