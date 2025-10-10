@@ -24,19 +24,20 @@ var listCmd = &cobra.Command{
 		name, _ := cmd.Flags().GetString("name")
 		page, _ := cmd.Flags().GetInt("page")
 		pageSize, _ := cmd.Flags().GetInt("page-size")
+		concise, _ := cmd.Flags().GetBool("concise")
 
 		// 场景1: 通过标签查询
 		if tag != "" {
-			return list.HandleListByTag(tag, page, pageSize, addr, accessToken)
+			return list.HandleListByTag(tag, page, pageSize, addr, accessToken, concise)
 		}
 
 		// 场景2: 通过名称查询
 		if name != "" {
-			return list.HandleListByName(name, page, pageSize, addr, accessToken)
+			return list.HandleListByName(name, page, pageSize, addr, accessToken, concise)
 		}
 
 		// 场景3: 列出所有链接（默认）
-		return list.HandleListAllLinks(page, pageSize, addr, accessToken)
+		return list.HandleListAllLinks(page, pageSize, addr, accessToken, concise)
 	},
 }
 
@@ -46,5 +47,6 @@ func init() {
 	listCmd.Flags().StringP("name", "n", "", "Filter link by name")
 	listCmd.Flags().IntP("page", "p", 1, "Page number for pagination")
 	listCmd.Flags().IntP("page-size", "s", 20, "Number of items per page")
+	listCmd.Flags().BoolP("concise", "c", false, "Show only URL and names (concise output)")
 	rootCmd.AddCommand(listCmd)
 }
