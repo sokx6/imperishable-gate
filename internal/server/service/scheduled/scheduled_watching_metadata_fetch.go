@@ -13,7 +13,7 @@ import (
 
 func ScheduledWatchingMetabaseFetch() {
 	logger.Info("Starting scheduled watching metadata fetch service (interval: 3 hours)")
-	ticker := time.NewTicker(3 * time.Hour)
+	ticker := time.NewTicker(3 * time.Second)
 	defer ticker.Stop()
 
 	for range ticker.C {
