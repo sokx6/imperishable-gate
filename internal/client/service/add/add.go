@@ -14,12 +14,12 @@ func HandleAddByName(names []string, tags []string, remark string, addr string, 
 
 	// 优先级：tags > remark
 	if len(tags) > 0 {
-		fmt.Println("Adding tags to link with name:", name)
+		fmt.Printf("Adding tags %v to link with name: %s\n", tags, name)
 		return AddTagsByName(name, tags, addr, accessToken)
 	}
 
 	if remark != "" {
-		fmt.Println("Adding remark to link with name:", name)
+		fmt.Printf("Adding remark to link with name: %s\n", name)
 		return AddRemarkByName(name, remark, addr, accessToken)
 	}
 
@@ -30,25 +30,23 @@ func HandleAddByName(names []string, tags []string, remark string, addr string, 
 func HandleAddByLink(link string, tags []string, remark string, addr string, accessToken string) error {
 	// 优先级：tags > remark > 添加新链接
 	if len(tags) > 0 {
-		fmt.Println("Adding tags to link:", link)
+		fmt.Printf("Adding tags %v to link: %s\n", tags, link)
 		return AddTagsByLink(link, tags, addr, accessToken)
 	}
 
 	if remark != "" {
-		fmt.Println("Adding remark to link:", link)
+		fmt.Printf("Adding remark to link: %s\n", link)
 		return AddRemarkByLink(link, remark, addr, accessToken)
 	}
 
 	// 只有 link，没有其他参数：添加新链接
-	fmt.Println("Adding new link:", link)
-	fmt.Println("Server:", addr)
+	fmt.Printf("Adding new link: %s\n", link)
 	return AddLink(link, addr, accessToken)
 }
 
 // HandleAddLinkWithNames 处理同时提供 link 和 name 的场景
 func HandleAddLinkWithNames(link string, names []string, tags []string, remark string, addr string, accessToken string) error {
-	fmt.Println("Adding new link:", link)
-	fmt.Println("Server:", addr)
+	fmt.Printf("Adding new link: %s\n", link)
 
 	// 尝试添加链接，如果已存在则忽略该错误
 	if err := AddLink(link, addr, accessToken); err != nil {
@@ -59,20 +57,20 @@ func HandleAddLinkWithNames(link string, names []string, tags []string, remark s
 		fmt.Println("Link already exists, continuing to add names...")
 	}
 
-	fmt.Println("Adding names to link:", names)
+	fmt.Printf("Adding names %v to link: %s\n", names, link)
 	if err := AddNames(link, names, addr, accessToken); err != nil {
 		return fmt.Errorf("failed to add names: %w", err)
 	}
 
 	if len(tags) > 0 {
-		fmt.Println("Adding tags to link:", tags)
+		fmt.Printf("Adding tags %v to link: %s\n", tags, link)
 		if err := AddTagsByLink(link, tags, addr, accessToken); err != nil {
 			return fmt.Errorf("failed to add tags: %w", err)
 		}
 	}
 
 	if remark != "" {
-		fmt.Println("Adding remark to link:", remark)
+		fmt.Printf("Adding remark to link: %s\n", link)
 		if err := AddRemarkByLink(link, remark, addr, accessToken); err != nil {
 			return fmt.Errorf("failed to add remark: %w", err)
 		}
