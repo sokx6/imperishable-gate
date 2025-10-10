@@ -1,21 +1,21 @@
 # Security Features | Stage 6: The Corpse of the Netherworld Mistress
 
-**[📖 简体中文](security.md) | [📘 English](security.en.md)**
+**[简体中文](security.md) | [English](security.en.md)**
 
-> 🔐 *"Want to pass through this gate? Prove your identity first!"*
+> *"Want to pass through this gate? Prove your identity first!"*
 
-This document details the security mechanisms implemented in **Stage 6「The Corpse of the Netherworld Mistress」**. As the gardener of Hakugyokurou, the cryptographic knowledge you learned in your previous life finally comes in handy!
+This document details the security mechanisms implemented in **Stage 6「The Corpse of the Netherworld Mistress」**. As the gardener of Hakugyokurou, the cryptographic knowledge I learned in my previous life finally comes in handy!
 
 ## Authentication System Overview
 
 This project implements a complete **JWT (JSON Web Token)** authentication system, including:
-- ✅ Dual-token mechanism (Access Token + Refresh Token)
-- ✅ bcrypt password encryption (surely no one stores passwords in plaintext?)
-- ✅ System Keyring secure storage
-- ✅ Automatic token refresh
-- ✅ Email verification
+- Dual-token mechanism (Access Token + Refresh Token)
+- bcrypt password encryption (surely no one stores passwords in plaintext?)
+- System Keyring secure storage
+- Automatic token refresh
+- Email verification
 
-## 🔑 JWT Dual-Token Mechanism
+## JWT Dual-Token Mechanism
 
 ### Token Types
 
@@ -120,10 +120,10 @@ echo ".env" >> .gitignore
 Use GORM parameterized queries:
 
 ```go
-// ✅ Safe
+// Safe
 db.Where("url = ?", url).First(&link)
 
-// ❌ Dangerous (don't do this)
+// Dangerous (don't do this)
 db.Raw("SELECT * FROM links WHERE url = '" + url + "'")
 ```
 
@@ -164,10 +164,10 @@ if err != nil {
 Don't log sensitive information:
 
 ```go
-// ❌ Unsafe
+// Unsafe
 log.Printf("User: %s, password: %s", username, password)
 
-// ✅ Safe
+// Safe
 log.Printf("User logged in: %s", username)
 ```
 
