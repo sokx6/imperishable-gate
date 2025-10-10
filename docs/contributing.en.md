@@ -1,14 +1,14 @@
 # Contributing Guide
 
-**[📖 简体中文](contributing.md) | [📘 English](contributing.en.md)**
+**[简体中文](contributing.md) | [English](contributing.en.md)**
 
-> 🤝 *"Everyone in Gensokyo starred your repo and opened issues!"*
+> *"Everyone in Gensokyo starred your repo and opened issues!"*
 
 Thank you for considering contributing to **Imperishable Gate**! Whether it's reporting bugs, proposing new features, improving documentation, or contributing code, we welcome all contributions!
 
-## 🌸 Project Standards
+## Project Standards
 
-From your past life of learning programming, you know the importance of following standards. This project follows these conventions:
+From my past life of learning programming, I know the importance of following standards. This project follows these conventions:
 
 - **Code Organization**: Don't put all code in one file (MVC pattern)
 - **Commit Messages**: Use prefixes like `feat:`, `fix:`, `docs:`, `refactor:`, etc.
@@ -17,7 +17,7 @@ From your past life of learning programming, you know the importance of followin
 
 ## How to Contribute
 
-### 📝 Reporting Bugs
+### Reporting Bugs
 
 Found a bug? Please create an issue including:
 
@@ -27,7 +27,7 @@ Found a bug? Please create an issue including:
 - Environment information (OS, Go version, database type, etc.)
 - Relevant log output
 
-### 💡 Proposing New Features
+### Proposing New Features
 
 Have a great idea? (Maybe for Stage 7?)
 
@@ -36,7 +36,7 @@ Have a great idea? (Maybe for Stage 7?)
 3. Explain why this feature is needed
 4. If possible, indicate which Stage this feature should belong to
 
-### 🔨 Submitting Code
+### Submitting Code
 
 #### 1. Fork the Project
 
@@ -109,23 +109,23 @@ go fmt ./...
 
 1. **Naming**: Use meaningful variable names
    ```go
-   // ✅ Good
+   // Good
    userID := 123
    userName := "Alice"
    
-   // ❌ Bad
+   // Bad
    u := 123
    n := "Alice"
    ```
 
 2. **Error Handling**: Don't ignore errors
    ```go
-   // ✅ Good
+   // Good
    if err != nil {
        return err
    }
    
-   // ❌ Bad
+   // Bad
    _ = someFunction()
    ```
 
@@ -170,4 +170,4 @@ Before submitting a PR, confirm:
 
 ---
 
-Thank you again for your contribution! Every contribution makes the project better 🎉
+Thank you again for your contribution! Every contribution makes the project better
